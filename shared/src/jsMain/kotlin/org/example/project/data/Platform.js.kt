@@ -1,4 +1,4 @@
-package org.example.project
+package org.example.project.data
 
 import web.navigator.navigator
 

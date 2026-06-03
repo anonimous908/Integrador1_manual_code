@@ -1,4 +1,4 @@
-package org.example.project
+package org.example.project.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
-
+import org.example.project.data.repository.GreetingRepositoryImpl
 import kotlinproject.shared.generated.resources.Res
 import kotlinproject.shared.generated.resources.compose_multiplatform
 
@@ -35,13 +35,14 @@ fun App() {
                 Text("Click me!")
             }
             AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
+                val repository = remember { GreetingRepositoryImpl() }
+                val greeting = remember { Greeting(repository) }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+                    Text("Compose: ${greeting.greet()}")
                 }
             }
         }

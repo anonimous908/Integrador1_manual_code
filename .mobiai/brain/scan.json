@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "project_name": "Integrador",
+  "project_type": "kmp",
+  "platforms": [
+    "android",
+    "shared"
+  ],
+  "build_systems": [
+    "gradle"
+  ],
+  "ui": [
+    "compose_multiplatform"
+  ],
+  "di": [],
+  "network": [],
+  "persistence": [],
+  "serialization": [],
+  "testing": [
+    "espresso",
+    "junit"
+  ],
+  "integrations": [],
+  "ci_cd": [],
+  "detected_files": {
+    "android_manifest": "androidApp/src/main/AndroidManifest.xml",
+    "settings_gradle": "settings.gradle.kts"
+  },
+  "warnings": [],
+  "created_at": "2026-06-03T14:55:56Z",
+  "updated_at": "2026-06-03T14:55:56Z"
+}

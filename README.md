@@ -1,41 +1,74 @@
-This is a Kotlin Multiplatform project targeting Android, Web, Desktop (JVM).
+# CodeStash
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Sistema de Gestión de Conocimiento Técnico (Knowledge Management System).
 
-### Running the apps
+Bloc de notas técnico, indexado y categorizado, diseñado para optimizar el flujo de trabajo del desarrollador. Permite almacenar, organizar y recuperar fragmentos de código (snippets) en cuestión de segundos.
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+## Stack Tecnológico
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- Desktop app:
-  - Hot reload: `./gradlew :desktopApp:hotRun --auto`
-  - Standard run: `./gradlew :desktopApp:run`
-- Web app:
-  - Wasm target (faster, modern browsers): `./gradlew :webApp:wasmJsBrowserDevelopmentRun`
-  - JS target (slower, supports older browsers): `./gradlew :webApp:jsBrowserDevelopmentRun`
+| Tecnología | Versión |
+|-----------|---------|
+| Kotlin Multiplatform | 2.3.21 |
+| Compose Multiplatform | 1.11.0 |
+| AGP | 9.2.1 |
+| MinSdk / TargetSdk | 24 / 36 |
 
-### Running tests
+## Plataformas
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+- **Android** — app nativa
+- **Desktop** (JVM) — Windows, macOS, Linux
+- **Web** — WasmJS (navegadores modernos) + JS (navegadores legacy)
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- Desktop tests: `./gradlew :shared:jvmTest`
-- Web tests:
-  - Wasm target: `./gradlew :shared:wasmJsTest`
-  - JS target: `./gradlew :shared:jsTest`
+## Arquitectura
 
----
+El proyecto sigue una arquitectura de **Capas Simples (Package by Layer)** en el módulo `shared`:
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+```
+shared/src/commonMain/kotlin/org/example/project/
+├── domain/          → Lógica pura, entidades, interfaces de repositorio
+├── data/            → Implementaciones concretas (Room, platform APIs)
+└── presentation/    → ViewModels, Composables, UI
+```
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+**Regla de dependencia**: `domain/` no conoce `data/` ni `presentation/`.
+
+## Módulos
+
+| Módulo | Descripción |
+|--------|-------------|
+| `shared` | Código compartido entre todas las plataformas |
+| `androidApp` | Aplicación Android |
+| `desktopApp` | Aplicación de escritorio (JVM) |
+| `webApp` | Aplicación web (JS + WasmJS) |
+
+## Cómo ejecutar
+
+```bash
+# Android
+./gradlew :androidApp:assembleDebug
+
+# Desktop (hot reload)
+./gradlew :desktopApp:hotRun --auto
+
+# Desktop (standard)
+./gradlew :desktopApp:run
+
+# Web (Wasm — modern browsers)
+./gradlew :webApp:wasmJsBrowserDevelopmentRun
+
+# Web (JS — legacy browsers)
+./gradlew :webApp:jsBrowserDevelopmentRun
+```
+
+## Tests
+
+```bash
+# Todos los tests
+./gradlew :shared:allTests
+
+# Por plataforma
+./gradlew :shared:testAndroidHostTest   # Android
+./gradlew :shared:jvmTest               # Desktop
+./gradlew :shared:wasmJsTest            # Web Wasm
+./gradlew :shared:jsTest                # Web JS
+```

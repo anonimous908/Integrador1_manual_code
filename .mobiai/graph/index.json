@@ -1,0 +1,287 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-03T14:56:32.4928174Z",
+  "root": "C:\\Users\\borge\\GENERAL_UTTT\\AndroidStudioProjects\\Integrador",
+  "files": [
+    {
+      "path": "androidApp/src/main/kotlin/org/example/project/MainActivity.kt",
+      "language": "kotlin",
+      "lines": 25,
+      "imports": [
+        "android.os.Bundle",
+        "androidx.activity.ComponentActivity",
+        "androidx.activity.compose.setContent",
+        "androidx.activity.enableEdgeToEdge",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.ui.tooling.preview.Preview"
+      ],
+      "symbols": [
+        {
+          "name": "MainActivity",
+          "kind": "class",
+          "line": 10
+        },
+        {
+          "name": "onCreate",
+          "kind": "fun",
+          "line": 11,
+          "container": "MainActivity",
+          "modifiers": [
+            "override"
+          ]
+        },
+        {
+          "name": "AppAndroidPreview",
+          "kind": "fun",
+          "line": 23
+        }
+      ]
+    },
+    {
+      "path": "desktopApp/bin/main/org/example/project/main.kt",
+      "language": "kotlin",
+      "lines": 13,
+      "imports": [
+        "androidx.compose.ui.window.Window",
+        "androidx.compose.ui.window.application"
+      ],
+      "symbols": [
+        {
+          "name": "main",
+          "kind": "fun",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "desktopApp/src/main/kotlin/org/example/project/main.kt",
+      "language": "kotlin",
+      "lines": 13,
+      "imports": [
+        "androidx.compose.ui.window.Window",
+        "androidx.compose.ui.window.application"
+      ],
+      "symbols": [
+        {
+          "name": "main",
+          "kind": "fun",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "shared/src/androidHostTest/kotlin/org/example/project/SharedLogicAndroidHostTest.kt",
+      "language": "kotlin",
+      "lines": 12,
+      "imports": [
+        "kotlin.test.Test",
+        "kotlin.test.assertEquals"
+      ],
+      "symbols": [
+        {
+          "name": "SharedLogicAndroidHostTest",
+          "kind": "class",
+          "line": 6
+        },
+        {
+          "name": "example",
+          "kind": "fun",
+          "line": 9,
+          "container": "SharedLogicAndroidHostTest"
+        }
+      ]
+    },
+    {
+      "path": "shared/src/androidMain/kotlin/org/example/project/Platform.android.kt",
+      "language": "kotlin",
+      "lines": 9,
+      "imports": [
+        "android.os.Build"
+      ],
+      "symbols": [
+        {
+          "name": "AndroidPlatform",
+          "kind": "class",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/App.kt",
+      "language": "kotlin",
+      "lines": 49,
+      "imports": [
+        "androidx.compose.animation.AnimatedVisibility",
+        "androidx.compose.foundation.Image",
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.layout.Column",
+        "androidx.compose.foundation.layout.fillMaxSize",
+        "androidx.compose.foundation.layout.fillMaxWidth",
+        "androidx.compose.foundation.layout.safeContentPadding",
+        "androidx.compose.material3.Button",
+        "androidx.compose.material3.MaterialTheme",
+        "androidx.compose.material3.Text",
+        "androidx.compose.runtime.*",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.tooling.preview.Preview",
+        "org.jetbrains.compose.resources.painterResource",
+        "kotlinproject.shared.generated.resources.Res",
+        "kotlinproject.shared.generated.resources.compose_multiplatform"
+      ],
+      "symbols": [
+        {
+          "name": "App",
+          "kind": "fun",
+          "line": 24
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/Greeting.kt",
+      "language": "kotlin",
+      "lines": 9,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "Greeting",
+          "kind": "class",
+          "line": 3
+        },
+        {
+          "name": "greet",
+          "kind": "fun",
+          "line": 6,
+          "container": "Greeting"
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/GreetingUtil.kt",
+      "language": "kotlin",
+      "lines": 4,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "sayHello",
+          "kind": "fun",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/Platform.kt",
+      "language": "kotlin",
+      "lines": 7,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "Platform",
+          "kind": "interface",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonTest/kotlin/org/example/project/SharedCommonTest.kt",
+      "language": "kotlin",
+      "lines": 12,
+      "imports": [
+        "kotlin.test.Test",
+        "kotlin.test.assertEquals"
+      ],
+      "symbols": [
+        {
+          "name": "SharedCommonTest",
+          "kind": "class",
+          "line": 6
+        },
+        {
+          "name": "example",
+          "kind": "fun",
+          "line": 9,
+          "container": "SharedCommonTest"
+        }
+      ]
+    },
+    {
+      "path": "shared/src/jsMain/kotlin/org/example/project/Platform.js.kt",
+      "language": "kotlin",
+      "lines": 14,
+      "imports": [
+        "web.navigator.navigator"
+      ],
+      "symbols": [
+        {
+          "name": "JsPlatform",
+          "kind": "class",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "path": "shared/src/jvmMain/kotlin/org/example/project/Platform.jvm.kt",
+      "language": "kotlin",
+      "lines": 7,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "JVMPlatform",
+          "kind": "class",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "shared/src/jvmTest/kotlin/org/example/project/SharedLogicDesktopTest.kt",
+      "language": "kotlin",
+      "lines": 12,
+      "imports": [
+        "kotlin.test.Test",
+        "kotlin.test.assertEquals"
+      ],
+      "symbols": [
+        {
+          "name": "SharedLogicDesktopTest",
+          "kind": "class",
+          "line": 6
+        },
+        {
+          "name": "example",
+          "kind": "fun",
+          "line": 9,
+          "container": "SharedLogicDesktopTest"
+        }
+      ]
+    },
+    {
+      "path": "shared/src/wasmJsMain/kotlin/org/example/project/Platform.wasmJs.kt",
+      "language": "kotlin",
+      "lines": 7,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "WasmPlatform",
+          "kind": "class",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "path": "webApp/src/webMain/kotlin/org/example/project/main.kt",
+      "language": "kotlin",
+      "lines": 11,
+      "imports": [
+        "androidx.compose.ui.ExperimentalComposeUiApi",
+        "androidx.compose.ui.window.ComposeViewport"
+      ],
+      "symbols": [
+        {
+          "name": "main",
+          "kind": "fun",
+          "line": 7
+        }
+      ]
+    }
+  ]
+}
