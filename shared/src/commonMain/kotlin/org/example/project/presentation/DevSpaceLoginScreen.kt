@@ -387,7 +387,7 @@ fun DevSpaceLoginScreen() {
             }
 
             // ---- Protection Spacer: evita que el contenido quede detrás del brand fijo ----
-            Spacer(modifier = Modifier.height(56.dp * scaleFactor))
+            Spacer(modifier = Modifier.height(80.dp * scaleFactor))
         }
 
         /* ========================================================
@@ -422,6 +422,13 @@ fun DevSpaceLoginScreen() {
                     fontSize = (DevSpaceLoginBrand.textSize * scaleFactor)
                         .coerceIn(DevSpaceLoginBrand.textMin, DevSpaceLoginBrand.textMax).sp,
                     fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "version 1.0",
+                    color = DevSpaceLoginColors.onSurfaceVariant.copy(alpha = 0.6f),
+                    fontSize = (10 * scaleFactor).sp,
+                    fontWeight = FontWeight.Normal
                 )
             }
         }

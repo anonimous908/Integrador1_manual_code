@@ -1,0 +1,51 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Tech stack: Kotlin Multiplatform (KMP) + Compose Multiplatform
+  Kotlin 2.4.0, AGP 9.2.1, Compose Multiplatform 1.11.1
+  Targets: Android (minSdk 24, targetSdk 36), Desktop (JVM), Web (JS + WASM)
+  Architecture: Package-by-layer (domain/data/presentation)
+  No DI framework (manual DI currently)
+  Testing: kotlin.test (KMP native), no coverage/lint/formatter tools configured
+  Style: kotlin.code.style=official
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Consider KMP multiplatform constraints for auth/supabase decisions
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+    - Note platform-specific constraints (Android vs Desktop vs Web)
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+    - Include test tasks for each implementation task
+  apply:
+    - Follow existing code patterns (domain/data/presentation layering)
+    tdd: true
+    test_command: ./gradlew :shared:allTests
+  verify:
+    test_command: ./gradlew :shared:allTests
+    build_command: ./gradlew build
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
+
+testing:
+  strict_tdd: true
+  runner:
+    command: ./gradlew :shared:allTests
+    framework: kotlin.test
+  layers:
+    unit: true
+    integration: false
+    e2e: false
+  coverage: false
+  linter: false
+  type_checker: true
+  formatter: false
