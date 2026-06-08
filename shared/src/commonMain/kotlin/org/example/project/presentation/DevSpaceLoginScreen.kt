@@ -37,7 +37,7 @@ import org.jetbrains.compose.resources.painterResource
 import kotlinproject.shared.generated.resources.Bison_Logo_Studios
 import org.example.project.presentation.theme.DevSpaceLoginBrand
 import org.example.project.presentation.theme.DevSpaceLoginColors
-
+import kotlinproject.shared.generated.resources.google_logo
 /**
  * Calcula el padding para el brand fijo en la esquina inferior derecha.
  * Garantiza un mínimo de 16dp, escalando proporcionalmente al tamaño
@@ -179,16 +179,16 @@ fun DevSpaceLoginScreen() {
             Text(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = DevSpaceLoginColors.onSurfaceVariant)) {
-                        append("En donde la mente ")
+                        append("¡Donde la mente ")
                     }
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = DevSpaceLoginColors.onSurfaceVariant)) {
-                        append("crea")
+                        append("Crea,")
                     }
                     withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = DevSpaceLoginColors.onSurfaceVariant)) {
                         append(" el programa ")
                     }
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = DevSpaceLoginColors.onSurfaceVariant)) {
-                        append("guarda")
+                        append("Guarda!")
                     }
                 },
                 fontSize = 14.sp
@@ -208,8 +208,8 @@ fun DevSpaceLoginScreen() {
                 border = BorderStroke(1.dp, DevSpaceLoginColors.outlineVariant.copy(alpha = 0.5f))
             ) {
                 // Aquí idealmente usarías un painterResource para el logo de Google SVG
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
+                Image(
+                    painter = painterResource(Res.drawable.google_logo),
                     contentDescription = "Google",
                     modifier = Modifier.size(20.dp * scaleFactor)
                 )
@@ -218,7 +218,6 @@ fun DevSpaceLoginScreen() {
             }
 
             Spacer(modifier = Modifier.height(16.dp * scaleFactor))
-
             // ---- Divider "o continúa con correo electrónico" ----
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -226,10 +225,10 @@ fun DevSpaceLoginScreen() {
             ) {
                 HorizontalDivider(modifier = Modifier.weight(1f), color = DevSpaceLoginColors.outlineVariant.copy(alpha = 0.4f))
                 Text(
-                    text = "o continúa con correo electrónico",
+                    text = "o",
                     color = DevSpaceLoginColors.onSurfaceVariant,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(horizontal = 16.dp * scaleFactor)
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp * scaleFactor)
                 )
                 HorizontalDivider(modifier = Modifier.weight(1f), color = DevSpaceLoginColors.outlineVariant.copy(alpha = 0.4f))
             }
@@ -263,22 +262,21 @@ fun DevSpaceLoginScreen() {
 
             Spacer(modifier = Modifier.height(16.dp * scaleFactor))
 
-            // ---- Formulario - Contraseña ----
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Contraseña", color = DevSpaceLoginColors.onSurfaceVariant, fontSize = 12.sp)
                     Text(
-                        text = "¿Has olvidado tu contraseña?",
-                        color = DevSpaceLoginColors.primary,
-                        fontSize = 12.sp,
-                        modifier = Modifier.clickable { /* TODO */ }
+                        "Contraseña",
+                        color = DevSpaceLoginColors.onSurfaceVariant,
+                        fontSize = 12.sp
                     )
                 }
+
                 Spacer(modifier = Modifier.height(4.dp * scaleFactor))
+
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
@@ -297,7 +295,9 @@ fun DevSpaceLoginScreen() {
                         unfocusedTextColor = DevSpaceLoginColors.onSurface
                     ),
                     trailingIcon = {
-                        val image = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                        val image = if (passwordVisible) Icons.Default.Visibility
+                        else Icons.Default.VisibilityOff
+
                         Icon(
                             imageVector = image,
                             contentDescription = "Toggle password visibility",
@@ -308,21 +308,30 @@ fun DevSpaceLoginScreen() {
                         )
                     }
                 )
-            }
 
-            Spacer(modifier = Modifier.height(24.dp * scaleFactor))
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "¿Has olvidado tu contraseña?",
+                    color = DevSpaceLoginColors.primary,
+                    fontSize = 12.sp,
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .clickable { /* TODO */ }
+                )
+            }
 
             // ---- Botón Iniciar Sesión ----
             Button(
                 onClick = { /* TODO: Submit Login */ },
-                modifier = Modifier.fillMaxWidth().height(48.dp * scaleFactor),
+                modifier = Modifier.fillMaxWidth().height(40.dp * scaleFactor),
                 shape = RoundedCornerShape(4.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DevSpaceLoginColors.primaryContainer,
                     contentColor = DevSpaceLoginColors.onPrimaryContainer
                 )
             ) {
-                Text("Iniciar sesión", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Text("Iniciar sesión", fontSize = 14.sp, fontWeight = FontWeight.Bold)
             }
 
             /* ========================================================
