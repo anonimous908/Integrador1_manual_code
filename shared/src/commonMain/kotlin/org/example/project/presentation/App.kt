@@ -1,11 +1,15 @@
 package org.example.project.presentation
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import org.example.project.presentation.theme.DevSpaceTheme
+import cafe.adriel.voyager.navigator.Navigator
+import org.koin.compose.KoinContext
 
 @Composable
 fun App() {
-    MaterialTheme {
-        DevSpaceLoginScreen()
+    KoinContext {
+        DevSpaceTheme {
+            Navigator(DevSpaceLoginScreen())
+        }
     }
 }

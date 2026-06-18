@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
  *
  * Basados en los colores del tailwind.config del proyecto original.
  */
-object DevSpaceLoginColors {
+object DevSpaceColors {
     val background = Color(0xFF131313)
     val primary = Color(0xFF98cbff)
     val primaryContainer = Color(0xFF00a3ff)
@@ -23,6 +23,17 @@ object DevSpaceLoginColors {
     val onSurfaceVariant = Color(0xFFbec7d4)
     val outline = Color(0xFF88919d)
     val outlineVariant = Color(0xFF3f4852)
+
+    // Additions from Register
+    val InputBackground   = Color(0xFF0A0A0A)
+    val GlassPanel        = Color(0xFF252525).copy(alpha = 0.70f)
+    val PrimaryGlow       = Color(0xFF98CBFF).copy(alpha = 0.05f)
+
+    // Additions for Home and others
+    val GoogleRed         = Color(0xFFEA4335)
+    val GoogleYellow      = Color(0xFFFBBC05)
+    val GoogleGreen       = Color(0xFF34A853)
+    val GoogleBlue        = Color(0xFF4285F4)
 }
 
 /** Dimensiones del brand (logo + "Ztrene Studios") en la esquina inferior derecha. */

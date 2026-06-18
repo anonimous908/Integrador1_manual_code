@@ -1,0 +1,61 @@
+%%{init: {'theme': 'dark', 'themeVariables': { 'fontSize': '14px' }}}%%
+graph TB
+    subgraph Gradle["⚙️ Gradle Build System"]
+        Root["build.gradle.kts\nrootProject"]
+        Settings["settings.gradle.kts\nKotlinProject"]
+        Catalog["gradle/libs.versions.toml\nVersion Catalog"]
+    end
+
+    subgraph Shared["📦 :shared — Core Multiplataforma"]
+        BS["build.gradle.kts\nKMP Library"]
+        
+        subgraph Sources["Source Sets"]
+            CM["commonMain\nCompose Runtime + Foundation\nMaterial3 + Lifecycle VM"]
+            CT["commonTest\nkotlin.test"]
+            AM["androidMain"]
+            JM["jvmMain"]
+            JSM["jsMain\nwrappers.browser"]
+            W["wasmJsMain"]
+            AHT["androidHostTest"]
+        end
+
+        CM --> AM
+        CM --> JM
+        CM --> JSM
+        CM --> W
+        CM --> CT
+        AM --> AHT
+    end
+
+    subgraph AndroidApp["📱 :androidApp"]
+        AA["Android Application\ncompileSdk 36, minSdk 24\napplicationId: org.example.project"]
+    end
+
+    subgraph DesktopApp["🖥️ :desktopApp"]
+        DA["Compose Desktop"]
+    end
+
+    subgraph WebApp["🌐 :webApp"]
+        WA["Kotlin/JS Browser"]
+    end
+
+    subgraph Outputs["📁 Outputs"]
+        APK["APK / AAB"]
+        JAR["JAR"]
+        WB["JS Bundle"]
+        WASM["WASM + JS Glue"]
+    end
+
+    Settings --> Shared
+    Settings --> AndroidApp
+    Settings --> DesktopApp
+    Settings --> WebApp
+
+    Shared --> AndroidApp
+    Shared --> DesktopApp
+    Shared --> WebApp
+
+    AndroidApp --> APK
+    DesktopApp --> JAR
+    WebApp --> WB
+    Shared --> WASM

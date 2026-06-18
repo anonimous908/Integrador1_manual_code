@@ -13,6 +13,8 @@ kotlin {
 }
 dependencies {
     implementation(projects.shared)
+    implementation("io.insert-koin:koin-core:4.0.0")
+    implementation("io.insert-koin:koin-android:4.0.0")
 
     implementation(libs.androidx.activity.compose)
 
@@ -22,12 +24,12 @@ dependencies {
 
 android {
     namespace = "org.example.project"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "org.example.project"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
     }
@@ -38,7 +40,8 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
     compileOptions {
