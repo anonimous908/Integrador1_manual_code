@@ -10,10 +10,15 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import com.russhwolf.settings.Settings
 
+import org.example.project.domain.usecase.ValidateEmailUseCase
+import org.example.project.domain.usecase.ValidatePasswordUseCase
+
 val appModule = module {
     single { Settings() }
     single<AuthRepository> { AuthRepositoryImpl(settings = get()) }
     factoryOf(::LoginWithEmailUseCase)
+    factoryOf(::ValidateEmailUseCase)
+    factoryOf(::ValidatePasswordUseCase)
     factoryOf(::RegisterUseCase)
     factoryOf(::LoginViewModel)
     factoryOf(::RegisterViewModel)

@@ -6,7 +6,20 @@ import androidx.compose.ui.window.ComposeViewport
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    org.example.project.di.initKoin()
+    setupDependencyInjection()
+    launchWebApp()
+}
+
+private fun setupDependencyInjection() {
+    try {
+        org.example.project.di.initKoin()
+    } catch (e: Exception) {
+        // Ya inicializado
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+private fun launchWebApp() {
     ComposeViewport {
         App()
     }
