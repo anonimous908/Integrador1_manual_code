@@ -281,7 +281,7 @@ class DevSpaceLoginScreen : Screen {
                         )
                     } else {
                         Text(
-                            text = "version 1.0",
+                            text = "version 1.1",
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                             fontSize = (10 * scaleFactor).sp,
                             fontWeight = FontWeight.Normal
