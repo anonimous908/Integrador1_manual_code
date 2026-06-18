@@ -26,6 +26,8 @@
 | 13 | [Build](#13-estructura-del-build) | Archivos de Gradle |
 | 14 | [Decisiones Técnicas](#14-decisiones-técnicas-y-por-qué) | Tradeoffs y alternativas |
 | 15 | [Roadmap](#15-roadmap-del-proyecto) | Plan a futuro |
+| 16 | [Logo](#16-logo) | Branding Bison Studios |
+| 17 | [Diagramas de Flujo](#17-diagramas-de-flujo) | Cómo se comunican los componentes |
 
 ---
 
@@ -388,6 +390,173 @@ Cada módulo `*App/` es un **wrapper mínimo** que arranca la plataforma y llama
 
 ---
 
-> **📌 Última actualización:** 6 de junio de 2026
-> **🧑‍💻 Mantenido por: Ztrene Studios
+## 17. Diagramas de Flujo
 
+### 🗂️ 17.1 — Dependencia entre Módulos
+
+Cómo cada plataforma depende del módulo `shared`:
+
+```mermaid
+graph TD
+    subgraph "🤖 androidApp"
+        MA["MainActivity\n(ComponentActivity)"]
+    end
+
+    subgraph "💻 desktopApp"
+        MD["main.kt\n(JVM Window)"]
+    end
+
+    subgraph "🌐 webApp"
+        MJS["main.kt — JS\n(ComposeViewport)"]
+        MWASM["main.kt — WasmJS\n(ComposeViewport)"]
+    end
+
+    subgraph "📦 shared"
+        APP["App.kt\n@Composable fun App()"]
+    end
+
+    MA -->|"setContent { App() }"| APP
+    MD -->|"Window { App() }"| APP
+    MJS -->|"ComposeViewport { App() }"| APP
+    MWASM -->|"ComposeViewport { App() }"| APP
+
+    style MA fill:#4CAF50,color:#fff
+    style MD fill:#2196F3,color:#fff
+    style MJS fill:#FF9800,color:#fff
+    style MWASM fill:#FF9800,color:#fff
+    style APP fill:#9C27B0,color:#fff
+```
+
+### 🔄 17.2 — Flujo Interno Completo (Capas)
+
+Cómo se comunican las 3 capas dentro de `shared/`:
+
+```mermaid
+graph TB
+    subgraph PRESENTATION["🎨 presentation/"]
+        APP2["App.kt"]
+        LOGIN["DevSpaceLoginScreen.kt"]
+        GREETING_CLASS["Greeting.kt\n⚠️ ORPHANED"]
+        THEME["theme/DevSpaceLoginColors.kt"]
+        BRAND["DevSpaceLoginBrand"]
+    end
+
+    subgraph DOMAIN["❤️ domain/"]
+        REPO_IF["GreetingRepository\n(interface)"]
+        UTIL["GreetingUtil.kt\nfun sayHello()"]
+    end
+
+    subgraph DATA["🔧 data/"]
+        REPO_IMPL["GreetingRepositoryImpl"]
+        PLATFORM_IF["Platform\n(interface + expect fun)"]
+        PLATFORM_ANDROID["Platform.android.kt"]
+        PLATFORM_JVM["Platform.jvm.kt"]
+        PLATFORM_JS["Platform.js.kt"]
+        PLATFORM_WASM["Platform.wasmJs.kt"]
+    end
+
+    subgraph RESOURCES["📁 composeResources/drawable/"]
+        LOGO["Bison_Logo_Studios.png"]
+        GOOGLE["google_logo.png"]
+    end
+
+    %% Flujo activo (lo que realmente se ejecuta hoy)
+    APP2 ==>|"llama"| LOGIN
+    LOGIN ==>|"usa colores"| THEME
+    LOGIN ==>|"usa dimensiones"| BRAND
+    LOGIN ==>|"painterResource"| LOGO
+    LOGIN ==>|"painterResource"| GOOGLE
+
+    %% Flujo inactivo (scaffolding existente pero sin usar)
+    GREETING_CLASS -.->|"usa"| REPO_IF
+    REPO_IMPL -.->|"implements"| REPO_IF
+    REPO_IMPL -.->|"llama"| UTIL
+    REPO_IMPL -.->|"llama"| PLATFORM_IF
+    PLATFORM_ANDROID -.->|"actual"| PLATFORM_IF
+    PLATFORM_JVM -.->|"actual"| PLATFORM_IF
+    PLATFORM_JS -.->|"actual"| PLATFORM_IF
+    PLATFORM_WASM -.->|"actual"| PLATFORM_IF
+
+    %% Estilos
+    style PRESENTATION fill:#1a1a2e,color:#e0e0e0,stroke:#9C27B0
+    style DOMAIN fill:#1a1a2e,color:#e0e0e0,stroke:#E91E63
+    style DATA fill:#1a1a2e,color:#e0e0e0,stroke:#FF9800
+    style RESOURCES fill:#1a1a2e,color:#e0e0e0,stroke:#4CAF50
+    style GREETING_CLASS fill:#555,color:#aaa,stroke:#777,stroke-dasharray: 5 5
+```
+
+> **Leyenda:**
+> - **Líneas sólidas (═══)** = flujo activo (se ejecuta hoy)
+> - **Líneas punteadas (- - -)** = scaffolding existente pero **no conectado a la UI**
+> - ⚠️ `Greeting.kt` está huérfano — existe pero ningún componente lo usa
+
+### 👤 17.3 — Flujo de Interacción del Usuario
+
+Qué pasa cuando el usuario abre la app e interactúa:
+
+```mermaid
+flowchart TD
+    START(["👤 Usuario abre la app"]) --> ENTRY{"¿Qué plataforma?"}
+
+    ENTRY -->|Android| ANDROID["MainActivity.onCreate()\nenableEdgeToEdge()\nsetContent..."]
+    ENTRY -->|Desktop| DESKTOP["main()\napplication Window..."]
+    ENTRY -->|Web| WEB["main()\nComposeViewport..."]
+
+    ANDROID --> APPFN["App()"]
+    DESKTOP --> APPFN
+    WEB --> APPFN
+
+    APPFN --> MATERIAL["MaterialTheme"]
+    MATERIAL --> LOGINSCREEN["DevSpaceLoginScreen()"]
+
+    LOGINSCREEN --> RESPONSIVE["BoxWithConstraints\ncalcula scaleFactor"]
+    RESPONSIVE --> GLOW["💡 Glow ambiental\nRadialGradient"]
+    RESPONSIVE --> SCROLL["📋 Column scrolleable"]
+
+    SCROLL --> TERMINAL["📦 Icono Terminal"]
+    SCROLL --> TITLE["🔤 DevSpace"]
+    SCROLL --> SLOGAN["🔤 Slogan"]
+    SCROLL --> GOOGLE_BTN["🔘 Iniciar con Google\n⚠️ TODO"]
+    SCROLL --> DIVIDER["➖ Divider"]
+    SCROLL --> EMAIL_INPUT["📧 Campo Email\nremember mutableStateOf"]
+    SCROLL --> PASS_INPUT["🔒 Campo Password\nremember mutableStateOf"]
+    SCROLL --> LOGIN_BTN["🟦 Iniciar sesión\n⚠️ TODO"]
+    SCROLL --> FOOTER["📜 Footer links\n⚠️ TODO"]
+    SCROLL --> BRAND_AREA["🏷️ Logo Bison + Ztrene Studios"]
+
+    EMAIL_INPUT -->|"usuario escribe"| STATE_EMAIL["email = texto"]
+    PASS_INPUT -->|"usuario escribe"| STATE_PASS["password = texto"]
+    PASS_INPUT -->|"toggle 👁️"| STATE_VIS["passwordVisible = !visible"]
+
+    GOOGLE_BTN -->|"onClick"| TODO1["❌ Sin implementar"]
+    LOGIN_BTN -->|"onClick"| TODO2["❌ Sin implementar"]
+
+    style START fill:#4CAF50,color:#fff
+    style TODO1 fill:#f44336,color:#fff
+    style TODO2 fill:#f44336,color:#fff
+    style STATE_EMAIL fill:#2196F3,color:#fff
+    style STATE_PASS fill:#2196F3,color:#fff
+    style STATE_VIS fill:#2196F3,color:#fff
+```
+
+### 📊 17.4 — Resumen de Comunicación
+
+| Desde | Hacia | Tipo | Estado |
+|:------|:------|:-----|:------:|
+| `androidApp` | `shared/App()` | Dependencia de módulo | ✅ Activo |
+| `desktopApp` | `shared/App()` | Dependencia de módulo | ✅ Activo |
+| `webApp` | `shared/App()` | Dependencia de módulo | ✅ Activo |
+| `App.kt` | `DevSpaceLoginScreen` | Composable call | ✅ Activo |
+| `DevSpaceLoginScreen` | `DevSpaceLoginColors` | Constantes de color | ✅ Activo |
+| `DevSpaceLoginScreen` | `DevSpaceLoginBrand` | Constantes de tamaño | ✅ Activo |
+| `DevSpaceLoginScreen` | `Res.drawable.*` | Compose Resources | ✅ Activo |
+| `Greeting` | `GreetingRepository` | Interfaz dominio | ⚠️ Huérfano |
+| `GreetingRepositoryImpl` | `getPlatform()` | Expect/actual | ⚠️ Huérfano |
+| `GreetingRepositoryImpl` | `sayHello()` | Utilidad dominio | ⚠️ Huérfano |
+| `DevSpaceLoginScreen` | ViewModel | State management | ❌ No existe aún |
+| `DevSpaceLoginScreen` | Navegación | Router/Navigator | ❌ No existe aún |
+
+---
+
+> **📌 Última actualización:** 16 de junio de 2026
+> **🧑‍💻 Mantenido por:** Bison / Ztrene Studios
