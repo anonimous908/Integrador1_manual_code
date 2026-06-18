@@ -36,6 +36,7 @@ fun DevSpaceTextField(
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     trailingIcon: @Composable (() -> Unit)? = null,
+    error: String? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
@@ -73,7 +74,11 @@ fun DevSpaceTextField(
                 fontFamily = Inter,
                 fontSize   = 14.sp,
             ),
-            trailingIcon = trailingIcon
+            trailingIcon = trailingIcon,
+            isError = error != null,
+            supportingText = error?.let {
+                { Text(text = it, color = MaterialTheme.colorScheme.error, fontSize = 10.sp) }
+            }
         )
     }
 }
@@ -85,6 +90,7 @@ fun PasswordTextField(
     onValueChange: (String) -> Unit,
     visible: Boolean,
     onToggleVisible: () -> Unit,
+    error: String? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
@@ -122,6 +128,10 @@ fun PasswordTextField(
                 focusedTextColor         = DevSpaceColors.onSurface,
             ),
             textStyle = TextStyle(fontFamily = Inter, fontSize = 14.sp),
+            isError = error != null,
+            supportingText = error?.let {
+                { Text(text = it, color = MaterialTheme.colorScheme.error, fontSize = 10.sp) }
+            }
         )
     }
 }

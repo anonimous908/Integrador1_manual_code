@@ -10,7 +10,7 @@ class AuthRepositoryImpl(
 ) : AuthRepository {
 
     override suspend fun register(name: String, email: String, pass: String): Result<Unit> {
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.Default) {
             kotlinx.coroutines.delay(800)
 
             val storedData = settings.getStringOrNull("user_$email")
@@ -28,7 +28,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun login(email: String, pass: String): Result<Unit> {
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.Default) {
             kotlinx.coroutines.delay(800)
 
             val storedData = settings.getStringOrNull("user_$email")

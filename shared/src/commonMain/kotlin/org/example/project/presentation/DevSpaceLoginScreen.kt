@@ -281,7 +281,7 @@ class DevSpaceLoginScreen : Screen {
                         )
                     } else {
                         Text(
-                            text = "version 1.1",
+                            text = "version 1.2",
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                             fontSize = (10 * scaleFactor).sp,
                             fontWeight = FontWeight.Normal
@@ -316,7 +316,8 @@ private fun DevSpaceLoginForm(
             onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
             placeholder = stringResource(Res.string.email_placeholder),
             keyboardType = KeyboardType.Email,
-            trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Email", tint = DevSpaceColors.outline, modifier = Modifier.size(18.dp * scaleFactor)) }
+            trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Email", tint = DevSpaceColors.outline, modifier = Modifier.size(18.dp * scaleFactor)) },
+            error = state.emailError
         )
     }
 
@@ -342,7 +343,8 @@ private fun DevSpaceLoginForm(
             value = state.pass,
             onValueChange = { viewModel.onEvent(LoginEvent.PassChanged(it)) },
             visible = passwordVisible,
-            onToggleVisible = { passwordVisible = !passwordVisible }
+            onToggleVisible = { passwordVisible = !passwordVisible },
+            error = state.passError
         )
 
         Spacer(modifier = Modifier.height(4.dp))
