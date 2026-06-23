@@ -40,7 +40,7 @@ class HomeScreen(val email: String) : Screen {
             ) {
                 when (selectedTab) {
                     "My Recipes" -> WelcomeContent(email)
-                    "Shared Manuals" -> PlaceholderContent("Estás en la pantalla de Manuales Compartidos")
+                    "Community Examples" -> PlaceholderContent("Estás en la pantalla de Manuales Compartidos")
                     "Recent" -> PlaceholderContent("Estás en la pantalla de Recientes")
                     "Settings" -> PlaceholderContent("Estás en la pantalla de Configuración")
                     "Documentation" -> PlaceholderContent("Estás en la pantalla de Documentación")
