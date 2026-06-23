@@ -75,7 +75,7 @@ fun DevSpaceSidebar(
 
         // Navigation Items
         SidebarItem("My Recipes", Icons.Default.Book, selectedTab == "My Recipes") { onTabSelected("My Recipes") }
-        SidebarItem("Shared Manuals", Icons.Default.Group, selectedTab == "Shared Manuals") { onTabSelected("Shared Manuals") }
+        SidebarItem("Community Examples", Icons.Default.Group, selectedTab == "Community Examples") { onTabSelected("Community Examples") }
         SidebarItem("Recent", Icons.Default.History, selectedTab == "Recent") { onTabSelected("Recent") }
         SidebarItem("Settings", Icons.Default.Settings, selectedTab == "Settings") { onTabSelected("Settings") }
 
