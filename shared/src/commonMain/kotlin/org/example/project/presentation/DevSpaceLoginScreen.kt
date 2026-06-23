@@ -182,7 +182,7 @@ class DevSpaceLoginScreen : Screen {
 
                 Spacer(modifier = Modifier.height(16.dp * scaleFactor))
                 
-                EmailDivider()
+                EmailDivider(text = stringResource(Res.string.login_divider))
 
                 DevSpaceLoginForm(viewModel, scaleFactor, state)
 
@@ -324,19 +324,6 @@ private fun DevSpaceLoginForm(
     Spacer(modifier = Modifier.height(16.dp * scaleFactor))
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                stringResource(Res.string.password_label),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 12.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(4.dp * scaleFactor))
 
         PasswordTextField(
             label = stringResource(Res.string.password_label),

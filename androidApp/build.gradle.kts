@@ -30,8 +30,8 @@ android {
         applicationId = "org.example.project"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.2"
+        versionCode = 2
+        versionName = "1.3"
     }
     packaging {
         resources {

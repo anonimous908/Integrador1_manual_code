@@ -36,7 +36,7 @@ class LoginViewModel(
             if (response != null) {
                 // Remove the "v" prefix if present and compare
                 val latestVersion = response.tag_name.removePrefix("v")
-                val currentVersion = "1.1" // Hardcoded current version
+                val currentVersion = "1.3" // Hardcoded current version
                 
                 if (latestVersion > currentVersion) {
                     _state.update { it.copy(
