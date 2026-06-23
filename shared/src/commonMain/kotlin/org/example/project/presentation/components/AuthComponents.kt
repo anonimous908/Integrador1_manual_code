@@ -137,11 +137,11 @@ fun PasswordTextField(
 }
 
 @Composable
-fun EmailDivider() {
+fun EmailDivider(text: String = stringResource(Res.string.email_divider)) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
         HorizontalDivider(modifier = Modifier.weight(1f), color = DevSpaceColors.outlineVariant, thickness = 1.dp)
         Text(
-            text = stringResource(Res.string.email_divider),
+            text = text,
             fontFamily = JetBrainsMono,
             fontWeight = FontWeight.Medium,
             fontSize = 12.sp,
