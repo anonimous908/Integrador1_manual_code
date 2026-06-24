@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import org.example.project.domain.usecase.LoginWithEmailUseCase
 import org.example.project.domain.usecase.ValidateEmailUseCase
 import org.example.project.domain.usecase.ValidatePasswordUseCase
-import org.example.project.data.network.GithubVersionChecker
 
 /**
  * ViewModel que gestiona el estado y la lógica de negocio de la pantalla de inicio de sesión.
@@ -24,29 +23,6 @@ class LoginViewModel(
 
     private val _state = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state.asStateFlow()
-    private val versionChecker = GithubVersionChecker()
-
-    init {
-        checkForUpdates()
-    }
-
-    private fun checkForUpdates() {
-        viewModelScope.launch {
-            val response = versionChecker.getLatestRelease()
-            if (response != null) {
-                // Remove the "v" prefix if present and compare
-                val latestVersion = response.tag_name.removePrefix("v")
-                val currentVersion = org.example.project.AppConfig.VERSION
-                
-                if (latestVersion > currentVersion) {
-                    _state.update { it.copy(
-                        updateAvailable = true,
-                        latestVersionUrl = response.html_url
-                    ) }
-                }
-            }
-        }
-    }
 
     /**
      * Procesa los eventos de intención (Intents) enviados desde la UI.

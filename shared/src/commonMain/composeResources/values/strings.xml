@@ -57,4 +57,9 @@
     <string name="logout">Cerrar Sesión</string>
     <string name="app_version">v1.4.2</string>
     <string name="placeholder_content">Estás en la pantalla de %1$s</string>
+
+    <!-- Errores -->
+    <string name="error_email_registered">El correo ya está registrado</string>
+    <string name="error_invalid_credentials">Correo o contraseña incorrectos</string>
+    <string name="error_session_expired">La sesión expiró o los datos son incompatibles. Por favor, regístrate de nuevo.</string>
 </resources>

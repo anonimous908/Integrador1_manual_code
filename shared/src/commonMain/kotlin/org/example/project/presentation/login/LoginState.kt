@@ -7,9 +7,7 @@ data class LoginState(
     val isLoggedIn: Boolean = false,
     val errorMessage: String? = null,
     val emailError: String? = null,
-    val passError: String? = null,
-    val updateAvailable: Boolean = false,
-    val latestVersionUrl: String? = null
+    val passError: String? = null
 )
 
 sealed interface LoginEvent {
