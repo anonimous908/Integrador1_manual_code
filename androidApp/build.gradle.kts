@@ -31,7 +31,7 @@ android {
         minSdk = 24
         targetSdk = 37
         versionCode = 3
-        versionName = "1.4.2"
+        versionName = project.properties["app.version"].toString()
     }
     packaging {
         resources {
