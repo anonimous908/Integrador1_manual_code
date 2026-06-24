@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.File
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,6 +8,24 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
+}
+
+val generateAppConfig by tasks.registering {
+    val version = project.properties["app.version"].toString()
+    val outputDir = layout.buildDirectory.dir("generated/appconfig/src/commonMain/kotlin")
+    outputs.dir(outputDir)
+    inputs.property("appVersion", version)
+    doLast {
+        val file = File(outputDir.get().asFile, "org/example/project/AppConfig.kt")
+        file.parentFile.mkdirs()
+        file.writeText("""
+            package org.example.project
+            
+            object AppConfig {
+                const val VERSION = "$version"
+            }
+        """.trimIndent())
+    }
 }
 
 kotlin {
@@ -46,8 +65,10 @@ kotlin {
             implementation(libs.ktor.client.cio)
             implementation("org.slf4j:slf4j-nop:2.0.13")
         }
-        commonMain.dependencies {
-            implementation(libs.compose.runtime)
+        val commonMain by getting {
+            kotlin.srcDir(generateAppConfig.map { it.outputs.files.singleFile })
+            dependencies {
+                implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
@@ -75,6 +96,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlincrypto.hash.sha2)
+            }
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

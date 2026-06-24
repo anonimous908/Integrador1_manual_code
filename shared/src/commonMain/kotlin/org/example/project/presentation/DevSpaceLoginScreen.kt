@@ -42,6 +42,7 @@ import androidx.compose.foundation.verticalScroll
 import org.jetbrains.compose.resources.stringResource
 import kotlinproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
+import org.example.project.AppConfig
 import org.example.project.presentation.theme.DevSpaceLoginBrand
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -281,7 +282,7 @@ class DevSpaceLoginScreen : Screen {
                         )
                     } else {
                         Text(
-                            text = "version 1.2",
+                            text = "version ${AppConfig.VERSION}",
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                             fontSize = (10 * scaleFactor).sp,
                             fontWeight = FontWeight.Normal

@@ -106,7 +106,12 @@ Antes de escribir código, verifica en los *Issues* si el problema o idea ya ha 
 ---
 
 <div align="center">
-  <img src="shared/src/commonMain/composeResources/drawable/Bison_Logo_Studios.png" alt="Bison Logo" width="150" />
-  <br>
-  <strong>Ztrene Studios</strong>
+
+![Bison Logo](shared/src/commonMain/composeResources/drawable/Bison_Logo_Studios.png) 
+![Wild Byte Studio Logo](shared/src/commonMain/composeResources/drawable/wild_byte_studio.png)
+![Owl Connect Logo](shared/src/commonMain/composeResources/drawable/owl_connect.png)
+
+<br>
+<strong>Ztrene Studios, Wild Byte Studio & Owl Connect</strong>
+
 </div>
