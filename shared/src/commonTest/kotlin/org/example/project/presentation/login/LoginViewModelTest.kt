@@ -8,6 +8,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.usecase.LoginWithEmailUseCase
+import org.example.project.domain.usecase.ValidateEmailUseCase
+import org.example.project.domain.usecase.ValidatePasswordUseCase
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -49,7 +51,7 @@ class LoginViewModelTest {
     fun `emailChanged updates state email`() = runTest {
         val fakeRepo = FakeAuthRepository()
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         viewModel.onEvent(LoginEvent.EmailChanged("algo@mail.com"))
 
@@ -60,7 +62,7 @@ class LoginViewModelTest {
     fun `emailChanged with different email updates state correctly`() = runTest {
         val fakeRepo = FakeAuthRepository()
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         viewModel.onEvent(LoginEvent.EmailChanged("otro@dominio.com"))
 
@@ -71,7 +73,7 @@ class LoginViewModelTest {
     fun `passChanged updates state pass`() = runTest {
         val fakeRepo = FakeAuthRepository()
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         viewModel.onEvent(LoginEvent.PassChanged("123"))
 
@@ -82,7 +84,7 @@ class LoginViewModelTest {
     fun `passChanged with different value updates state correctly`() = runTest {
         val fakeRepo = FakeAuthRepository()
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         viewModel.onEvent(LoginEvent.PassChanged("passwordSegura99"))
 
@@ -95,10 +97,10 @@ class LoginViewModelTest {
             loginResult = Result.success(Unit)
         }
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         viewModel.onEvent(LoginEvent.EmailChanged("test@example.com"))
-        viewModel.onEvent(LoginEvent.PassChanged("password123"))
+        viewModel.onEvent(LoginEvent.PassChanged("Password123"))
         viewModel.onEvent(LoginEvent.Submit)
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -114,10 +116,10 @@ class LoginViewModelTest {
             loginResult = Result.failure(Exception("Credenciales inválidas"))
         }
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         viewModel.onEvent(LoginEvent.EmailChanged("test@example.com"))
-        viewModel.onEvent(LoginEvent.PassChanged("password123"))
+        viewModel.onEvent(LoginEvent.PassChanged("Password123"))
         viewModel.onEvent(LoginEvent.Submit)
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -133,10 +135,10 @@ class LoginViewModelTest {
             loginResult = Result.failure(Exception("Usuario no encontrado"))
         }
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         viewModel.onEvent(LoginEvent.EmailChanged("test@example.com"))
-        viewModel.onEvent(LoginEvent.PassChanged("password123"))
+        viewModel.onEvent(LoginEvent.PassChanged("Password123"))
         viewModel.onEvent(LoginEvent.Submit)
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -148,7 +150,7 @@ class LoginViewModelTest {
     fun `reset returns state to initial values`() = runTest {
         val fakeRepo = FakeAuthRepository()
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         viewModel.onEvent(LoginEvent.EmailChanged("algo@mail.com"))
         viewModel.onEvent(LoginEvent.PassChanged("123"))
@@ -164,7 +166,7 @@ class LoginViewModelTest {
     fun `reset after event sequence clears previous state`() = runTest {
         val fakeRepo = FakeAuthRepository()
         val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase)
+        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
 
         // Accumulate state changes
         viewModel.onEvent(LoginEvent.EmailChanged("user@test.com"))
