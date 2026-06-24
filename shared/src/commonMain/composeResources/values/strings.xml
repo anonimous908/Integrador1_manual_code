@@ -44,4 +44,17 @@
     <string name="login_divider">o inicia sesión con correo electrónico</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
+
+    <!-- Sidebar Textos -->
+    <string name="new_snippet">New Snippet</string>
+    <string name="sidebar_my_recipes">My Recipes</string>
+    <string name="sidebar_community_examples">Community Examples</string>
+    <string name="sidebar_recent">Recent</string>
+    <string name="sidebar_settings">Settings</string>
+    <string name="sidebar_documentation">Documentation</string>
+    <string name="sidebar_support">Support</string>
+    <string name="pro_plan">Pro Plan</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="app_version">v1.4.2</string>
+    <string name="placeholder_content">Estás en la pantalla de %1$s</string>
 </resources>

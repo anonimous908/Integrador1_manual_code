@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,16 +15,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabNavigator
+import kotlinproject.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.example.project.presentation.theme.DevSpaceColors
 
 @Composable
 fun DevSpaceSidebar(
-    selectedTab: String,
-    onTabSelected: (String) -> Unit,
+    tabNavigator: TabNavigator,
     email: String,
     onLogout: () -> Unit
 ) {
@@ -50,8 +55,8 @@ fun DevSpaceSidebar(
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(text = "DevSpace", color = DevSpaceColors.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(text = "v1.3.0", color = DevSpaceColors.onSurfaceVariant, fontSize = 12.sp)
+                Text(text = stringResource(Res.string.app_name), color = DevSpaceColors.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = stringResource(Res.string.app_version), color = DevSpaceColors.onSurfaceVariant, fontSize = 12.sp)
             }
         }
 
@@ -70,14 +75,14 @@ fun DevSpaceSidebar(
         ) {
             Icon(Icons.Default.Add, contentDescription = "New", modifier = Modifier.size(18.dp))
             Spacer(modifier = Modifier.width(8.dp))
-            Text("New Snippet", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(stringResource(Res.string.new_snippet), fontWeight = FontWeight.Bold, fontSize = 14.sp)
         }
 
         // Navigation Items
-        SidebarItem("My Recipes", Icons.Default.Book, selectedTab == "My Recipes") { onTabSelected("My Recipes") }
-        SidebarItem("Community Examples", Icons.Default.Group, selectedTab == "Community Examples") { onTabSelected("Community Examples") }
-        SidebarItem("Recent", Icons.Default.History, selectedTab == "Recent") { onTabSelected("Recent") }
-        SidebarItem("Settings", Icons.Default.Settings, selectedTab == "Settings") { onTabSelected("Settings") }
+        TabNavigationItem(org.example.project.presentation.tabs.MyRecipesTab(email), tabNavigator)
+        TabNavigationItem(org.example.project.presentation.tabs.CommunityExamplesTab, tabNavigator)
+        TabNavigationItem(org.example.project.presentation.tabs.RecentTab, tabNavigator)
+        TabNavigationItem(org.example.project.presentation.tabs.SettingsTab, tabNavigator)
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -88,12 +93,12 @@ fun DevSpaceSidebar(
         )
 
         // Bottom Links
-        SidebarItem("Documentation", Icons.Default.HelpOutline, selectedTab == "Documentation") { onTabSelected("Documentation") }
-        SidebarItem("Support", Icons.Default.Info, selectedTab == "Support") { onTabSelected("Support") }
+        TabNavigationItem(org.example.project.presentation.tabs.DocumentationTab, tabNavigator)
+        TabNavigationItem(org.example.project.presentation.tabs.SupportTab, tabNavigator)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // User Profile
+        // User Profile / Logout
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -111,19 +116,31 @@ fun DevSpaceSidebar(
                 Icon(Icons.Default.Person, contentDescription = "User Avatar", tint = DevSpaceColors.onSurfaceVariant, modifier = Modifier.size(24.dp))
             }
             Spacer(modifier = Modifier.width(12.dp))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 val name = email.substringBefore("@").replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                 Text(text = name, color = DevSpaceColors.onSurface, fontWeight = FontWeight.Medium, fontSize = 14.sp)
-                Text(text = "Pro Plan", color = DevSpaceColors.primary, fontSize = 12.sp)
+                Text(text = stringResource(Res.string.logout), color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
             }
+            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Logout", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(20.dp))
         }
     }
 }
 
 @Composable
+private fun TabNavigationItem(tab: Tab, tabNavigator: TabNavigator) {
+    val isSelected = tabNavigator.current.key == tab.key
+    SidebarItem(
+        title = tab.options.title,
+        icon = tab.options.icon,
+        isSelected = isSelected,
+        onClick = { tabNavigator.current = tab }
+    )
+}
+
+@Composable
 private fun SidebarItem(
     title: String,
-    icon: ImageVector,
+    icon: Painter?,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -139,8 +156,10 @@ private fun SidebarItem(
             .clickable { onClick() }
             .padding(vertical = 12.dp, horizontal = 12.dp)
     ) {
-        Icon(icon, contentDescription = title, tint = contentColor, modifier = Modifier.size(20.dp))
-        Spacer(modifier = Modifier.width(12.dp))
+        if (icon != null) {
+            Icon(icon, contentDescription = title, tint = contentColor, modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.width(12.dp))
+        }
         Text(text = title, color = contentColor, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium, fontSize = 14.sp)
     }
 }

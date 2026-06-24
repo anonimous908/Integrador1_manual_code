@@ -65,6 +65,8 @@ kotlin {
 
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.transitions)
+            implementation(libs.voyager.koin)
+            implementation(libs.voyager.tab.navigator)
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.no.arg)
 
@@ -72,6 +74,7 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlincrypto.hash.sha2)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
