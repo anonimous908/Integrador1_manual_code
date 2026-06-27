@@ -32,12 +32,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.example.project.presentation.theme.DevSpaceColors
 import org.example.project.presentation.components.SnippetCard
-import org.example.project.presentation.components.SnippetCardData
+import org.example.project.domain.model.SnippetCardData
+import org.example.project.domain.service.SyntaxHighlighter
+import org.koin.compose.koinInject
 
 class AISearchScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val syntaxHighlighter = koinInject<SyntaxHighlighter>()
         val coroutineScope = rememberCoroutineScope()
         var query by remember { mutableStateOf("") }
         var isSearching by remember { mutableStateOf(false) }
@@ -224,9 +227,13 @@ class AISearchScreen : Screen {
                         var showCopiedNotice by remember { mutableStateOf(false) }
                         
                         Box(modifier = Modifier.fillMaxWidth()) {
-                            SnippetCard(card = snippet, onCopied = {
-                                showCopiedNotice = true
-                            })
+                            SnippetCard(
+                                card = snippet,
+                                syntaxHighlighter = syntaxHighlighter,
+                                onCopied = {
+                                    showCopiedNotice = true
+                                }
+                            )
 
                             if (showCopiedNotice) {
                                 LaunchedEffect(Unit) {

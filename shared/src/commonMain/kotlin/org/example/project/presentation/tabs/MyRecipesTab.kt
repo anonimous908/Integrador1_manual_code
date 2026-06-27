@@ -30,12 +30,14 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import org.example.project.domain.model.SnippetCardData
+import org.example.project.domain.repository.RecipeRepository
+import org.example.project.domain.service.SyntaxHighlighter
 import org.example.project.presentation.AISearchScreen
 import org.example.project.presentation.components.SnippetCard
-import org.example.project.presentation.components.SnippetCardData
-import org.example.project.presentation.components.sampleCards
 import org.example.project.presentation.theme.DevSpaceColors
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import kotlinproject.shared.generated.resources.*
 import kotlinx.coroutines.delay
 
@@ -57,16 +59,25 @@ data class MyRecipesTab(val email: String) : Tab {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val recipeRepository = koinInject<RecipeRepository>()
+        val syntaxHighlighter = koinInject<SyntaxHighlighter>()
+
         var searchQuery by remember { mutableStateOf("") }
         var showCopiedToast by remember { mutableStateOf(false) }
+        var rawCards by remember { mutableStateOf<List<SnippetCardData>>(emptyList()) }
+
+        // Cargar recetas desde el repositorio
+        LaunchedEffect(recipeRepository) {
+            rawCards = recipeRepository.getPersonalRecipes()
+        }
 
         // Filtrar tarjetas por título, lenguaje o etiquetas
-        val filteredCards = remember(searchQuery) {
+        val filteredCards = remember(searchQuery, rawCards) {
             if (searchQuery.isBlank()) {
-                sampleCards
+                rawCards
             } else {
                 val query = searchQuery.lowercase().trim()
-                sampleCards.filter { card ->
+                rawCards.filter { card ->
                     card.title.lowercase().contains(query) ||
                             card.languageTag.lowercase().contains(query) ||
                             card.secondaryTag.lowercase().contains(query) ||
@@ -89,6 +100,7 @@ data class MyRecipesTab(val email: String) : Tab {
                 // ContentCanvas
                 ContentCanvas(
                     cards = filteredCards,
+                    syntaxHighlighter = syntaxHighlighter,
                     onCopied = {
                         showCopiedToast = true
                     }
@@ -230,6 +242,7 @@ private fun IconButtonSlot(
 @Composable
 private fun ContentCanvas(
     cards: List<SnippetCardData>,
+    syntaxHighlighter: SyntaxHighlighter,
     onCopied: () -> Unit
 ) {
     Column(
@@ -315,7 +328,11 @@ private fun ContentCanvas(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(cards) { card ->
-                    SnippetCard(card = card, onCopied = onCopied)
+                    SnippetCard(
+                        card = card,
+                        syntaxHighlighter = syntaxHighlighter,
+                        onCopied = onCopied
+                    )
                 }
             }
         }
