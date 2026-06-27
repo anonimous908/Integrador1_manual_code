@@ -82,7 +82,7 @@ data class MyRecipesTab(val email: String) : Tab {
                     query = searchQuery,
                     onQueryChange = { searchQuery = it },
                     onAISearchClick = {
-                        navigator.push(AISearchScreen())
+                        navigator.parent?.push(AISearchScreen())
                     }
                 )
 
