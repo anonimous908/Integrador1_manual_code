@@ -132,55 +132,28 @@ class AISearchScreen : Screen {
                             isSearching = true
                             showResult = false
                             coroutineScope.launch {
-                                delay(1500) // Simulación de retraso de red de la API
+                                delay(1500) // Simulación de retraso de la API
                                 isSearching = false
                                 showResult = true
+                                hasMatch = true
                                 
-                                val normalizedQuery = query.lowercase()
-                                if (normalizedQuery.contains("boton") && normalizedQuery.contains("typescript")) {
-                                    hasMatch = true
-                                    aiExplanation = "Buscamos en tus recetas y no tienes un botón de TypeScript guardado. Sin embargo, encontramos tu receta de SQL 'Grupo A3' que gestiona analíticas de suscripciones. Como sugerencia inteligente de IA, hemos adaptado un botón de React TypeScript que consume dicha analítica:"
-                                    suggestedSnippet = SnippetCardData(
-                                        title = "Sugerencia: Analytics Button",
-                                        languageTag = "TypeScript",
-                                        secondaryTag = "AI Suggestion",
-                                        iconAccent = DevSpaceColors.primaryContainer,
-                                        activeLineIndex = 4,
-                                        footerLabel = "Adapted from 'Grupo A3'",
-                                        footerIcon = Icons.Filled.Visibility,
-                                        codeLines = listOf(
-                                            "import React, { useState } from 'react';",
-                                            "",
-                                            "interface AnalyticsButtonProps {",
-                                            "  cohortMonth: string;",
-                                            "  onFetchActiveUsers: (month: string) => Promise<number>;",
-                                            "}",
-                                            "",
-                                            "export const AnalyticsButton: React.FC<AnalyticsButtonProps> = ({ cohortMonth, onFetchActiveUsers }) => {",
-                                            "  const [loading, setLoading] = useState(false);",
-                                            "  const [count, setCount] = useState<number | null>(null);",
-                                            "",
-                                            "  const handleClick = async () => {",
-                                            "    setLoading(true);",
-                                            "    const users = await onFetchActiveUsers(cohortMonth);",
-                                            "    setCount(users);",
-                                            "    setLoading(false);",
-                                            "  };",
-                                            "",
-                                            "  return (",
-                                            "    <button onClick={handleClick} disabled={loading} className=\"btn-primary\">",
-                                            "      {loading ? 'Cargando...' : `Ver Usuarios (\${cohortMonth})`}",
-                                            "      {count !== null && <span className=\"badge\">{count}</span>}",
-                                            "    </button>",
-                                            "  );",
-                                            "};"
-                                        )
+                                aiExplanation = "Analizando tu base de datos de recetas locales para resolver tu consulta: '$query'.\n\n[PROTOTIPO]: En la siguiente fase, esta consulta se enviará a la API de DeepSeek (con temperatura de 0.2 para alta fidelidad) para analizar semánticamente tus códigos y adaptarlos a lo que necesitas."
+                                suggestedSnippet = SnippetCardData(
+                                    title = "Sugerencia para: $query",
+                                    languageTag = "AI Output",
+                                    secondaryTag = "Simulado",
+                                    iconAccent = DevSpaceColors.primaryContainer,
+                                    activeLineIndex = 2,
+                                    footerLabel = "Generado por DeepSeek",
+                                    footerIcon = Icons.Filled.Visibility,
+                                    codeLines = listOf(
+                                        "// Este es un prototipo de cómo se mostrará el código adaptado",
+                                        "// para tu búsqueda: \"$query\"",
+                                        "fun main() {",
+                                        "    println(\"DeepSeek procesará esta consulta de forma dinámica\")",
+                                        "}"
                                     )
-                                } else {
-                                    hasMatch = false
-                                    aiExplanation = "La API de IA no encontró coincidencias o adaptaciones lógicas para tu consulta en tus recetas SQL actuales. Intenta buscando 'botón en typescript' para ver la sugerencia adaptada."
-                                    suggestedSnippet = null
-                                }
+                                )
                             }
                         }
                     },
