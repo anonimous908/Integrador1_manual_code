@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 import org.jetbrains.compose.resources.stringResource
 import kotlinproject.shared.generated.resources.Res
 import kotlinproject.shared.generated.resources.hide_password
@@ -29,7 +29,7 @@ val Inter = FontFamily.Default
 val JetBrainsMono = FontFamily.Monospace
 
 @Composable
-fun DevSpaceTextField(
+fun CodeNestTextField(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
@@ -44,7 +44,7 @@ fun DevSpaceTextField(
             fontFamily = JetBrainsMono,
             fontWeight = FontWeight.Medium,
             fontSize   = 12.sp,
-            color      = DevSpaceColors.onSurfaceVariant,
+            color      = CodeNestColors.onSurfaceVariant,
         )
         OutlinedTextField(
             value         = value,
@@ -55,20 +55,20 @@ fun DevSpaceTextField(
                     text       = placeholder,
                     fontFamily = Inter,
                     fontSize   = 14.sp,
-                    color      = DevSpaceColors.outlineVariant,
+                    color      = CodeNestColors.outlineVariant,
                 )
             },
             singleLine    = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             shape         = RoundedCornerShape(4.dp),
             colors        = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor  = DevSpaceColors.InputBackground,
-                focusedContainerColor    = DevSpaceColors.InputBackground,
-                unfocusedBorderColor     = DevSpaceColors.outlineVariant,
-                focusedBorderColor       = DevSpaceColors.primary,
-                cursorColor              = DevSpaceColors.primary,
-                unfocusedTextColor       = DevSpaceColors.onSurface,
-                focusedTextColor         = DevSpaceColors.onSurface,
+                unfocusedContainerColor  = CodeNestColors.InputBackground,
+                focusedContainerColor    = CodeNestColors.InputBackground,
+                unfocusedBorderColor     = CodeNestColors.outlineVariant,
+                focusedBorderColor       = CodeNestColors.primary,
+                cursorColor              = CodeNestColors.primary,
+                unfocusedTextColor       = CodeNestColors.onSurface,
+                focusedTextColor         = CodeNestColors.onSurface,
             ),
             textStyle = TextStyle(
                 fontFamily = Inter,
@@ -98,13 +98,13 @@ fun PasswordTextField(
             fontFamily = JetBrainsMono,
             fontWeight = FontWeight.Medium,
             fontSize   = 12.sp,
-            color      = DevSpaceColors.onSurfaceVariant,
+            color      = CodeNestColors.onSurfaceVariant,
         )
         OutlinedTextField(
             value         = value,
             onValueChange = onValueChange,
             modifier      = Modifier.fillMaxWidth(),
-            placeholder   = { Text(text = "••••••••", color = DevSpaceColors.outlineVariant) },
+            placeholder   = { Text(text = "••••••••", color = CodeNestColors.outlineVariant) },
             singleLine            = true,
             visualTransformation  = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions       = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -113,19 +113,19 @@ fun PasswordTextField(
                     Icon(
                         imageVector  = if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = stringResource(if (visible) Res.string.hide_password else Res.string.show_password),
-                        tint = DevSpaceColors.onSurfaceVariant,
+                        tint = CodeNestColors.onSurfaceVariant,
                     )
                 }
             },
             shape  = RoundedCornerShape(4.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor  = DevSpaceColors.InputBackground,
-                focusedContainerColor    = DevSpaceColors.InputBackground,
-                unfocusedBorderColor     = DevSpaceColors.outlineVariant,
-                focusedBorderColor       = DevSpaceColors.primary,
-                cursorColor              = DevSpaceColors.primary,
-                unfocusedTextColor       = DevSpaceColors.onSurface,
-                focusedTextColor         = DevSpaceColors.onSurface,
+                unfocusedContainerColor  = CodeNestColors.InputBackground,
+                focusedContainerColor    = CodeNestColors.InputBackground,
+                unfocusedBorderColor     = CodeNestColors.outlineVariant,
+                focusedBorderColor       = CodeNestColors.primary,
+                cursorColor              = CodeNestColors.primary,
+                unfocusedTextColor       = CodeNestColors.onSurface,
+                focusedTextColor         = CodeNestColors.onSurface,
             ),
             textStyle = TextStyle(fontFamily = Inter, fontSize = 14.sp),
             isError = error != null,
@@ -139,15 +139,15 @@ fun PasswordTextField(
 @Composable
 fun EmailDivider(text: String = stringResource(Res.string.email_divider)) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-        HorizontalDivider(modifier = Modifier.weight(1f), color = DevSpaceColors.outlineVariant, thickness = 1.dp)
+        HorizontalDivider(modifier = Modifier.weight(1f), color = CodeNestColors.outlineVariant, thickness = 1.dp)
         Text(
             text = text,
             fontFamily = JetBrainsMono,
             fontWeight = FontWeight.Medium,
             fontSize = 12.sp,
-            color = DevSpaceColors.onSurfaceVariant,
+            color = CodeNestColors.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 12.dp)
         )
-        HorizontalDivider(modifier = Modifier.weight(1f), color = DevSpaceColors.outlineVariant, thickness = 1.dp)
+        HorizontalDivider(modifier = Modifier.weight(1f), color = CodeNestColors.outlineVariant, thickness = 1.dp)
     }
 }

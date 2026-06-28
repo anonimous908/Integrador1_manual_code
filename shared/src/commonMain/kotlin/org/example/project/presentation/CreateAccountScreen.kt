@@ -4,7 +4,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.painterResource
 import kotlinproject.shared.generated.resources.*
 import org.example.project.presentation.components.EmailDivider
-import org.example.project.presentation.components.DevSpaceTextField
+import org.example.project.presentation.components.CodeNestTextField
 import org.example.project.presentation.components.PasswordTextField
 import org.example.project.presentation.components.Inter
 import org.example.project.presentation.components.JetBrainsMono
@@ -30,7 +30,7 @@ import androidx.compose.ui.draw.clip
 
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -113,7 +113,7 @@ internal fun CreateAccountScreenContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DevSpaceColors.background)
+            .background(CodeNestColors.background)
     ) {
         // ── Decorative glow blob ──────────────────────────────────────────
         Box(
@@ -121,7 +121,7 @@ internal fun CreateAccountScreenContent(
                 .size(600.dp)
                 .align(Alignment.Center)
                 .blur(80.dp)
-                .background(DevSpaceColors.PrimaryGlow, CircleShape)
+                .background(CodeNestColors.PrimaryGlow, CircleShape)
         )
 
         Column(
@@ -131,7 +131,7 @@ internal fun CreateAccountScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // ── Header ───────────────────────────────────────────────────
-            DevSpaceHeader()
+            CodeNestHeader()
 
             // ── Auth card ────────────────────────────────────────────────
             Spacer(modifier = Modifier.weight(1f, fill = false))
@@ -169,7 +169,7 @@ internal fun CreateAccountScreenContent(
             Spacer(modifier = Modifier.weight(1f, fill = false))
 
             // ── Footer ───────────────────────────────────────────────────
-            DevSpaceFooter(
+            CodeNestFooter(
                 onTermsClick   = onTermsClick,
                 onPrivacyClick = onPrivacyClick,
             )
@@ -180,14 +180,14 @@ internal fun CreateAccountScreenContent(
 // ─── Header ──────────────────────────────────────────────────────────────────
 
 @Composable
-private fun DevSpaceHeader() {
+private fun CodeNestHeader() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(DevSpaceColors.surfaceContainer)
+            .background(CodeNestColors.surfaceContainer)
             .border(
                 width = 1.dp,
-                color = DevSpaceColors.outlineVariant.copy(alpha = 0.30f),
+                color = CodeNestColors.outlineVariant.copy(alpha = 0.30f),
                 shape = RoundedCornerShape(0.dp)
             )
             .padding(vertical = 24.dp),
@@ -198,7 +198,7 @@ private fun DevSpaceHeader() {
             fontFamily = Manrope,
             fontWeight = FontWeight.Bold,
             fontSize   = 24.sp,
-            color      = DevSpaceColors.primary,
+            color      = CodeNestColors.primary,
         )
     }
 }
@@ -222,13 +222,13 @@ private fun AuthCard(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(DevSpaceColors.GlassPanel)
+            .background(CodeNestColors.GlassPanel)
             .border(
                 width = 1.dp,
                 brush = Brush.verticalGradient(
                     listOf(
-                        DevSpaceColors.primary.copy(alpha = 0.20f),
-                        DevSpaceColors.outlineVariant.copy(alpha = 0.50f),
+                        CodeNestColors.primary.copy(alpha = 0.20f),
+                        CodeNestColors.outlineVariant.copy(alpha = 0.50f),
                     )
                 ),
                 shape = RoundedCornerShape(12.dp)
@@ -251,14 +251,14 @@ private fun AuthCard(
                     fontSize   = 32.sp,
                     lineHeight = 40.sp,
                     letterSpacing = (-0.02).sp,
-                    color      = DevSpaceColors.onSurface,
+                    color      = CodeNestColors.onSurface,
                     textAlign  = TextAlign.Center,
                 )
                 Text(
                     text       = stringResource(Res.string.create_account_subtitle),
                     fontFamily = Inter,
                     fontSize   = 14.sp,
-                    color      = DevSpaceColors.onSurfaceVariant,
+                    color      = CodeNestColors.onSurfaceVariant,
                     textAlign  = TextAlign.Center,
                 )
             }
@@ -270,14 +270,14 @@ private fun AuthCard(
             EmailDivider()
 
             // Form fields
-            DevSpaceTextField(
+            CodeNestTextField(
                 label       = stringResource(Res.string.full_name_label),
                 value       = name,
                 onValueChange = onNameChange,
                 placeholder = stringResource(Res.string.full_name_placeholder),
                 keyboardType = KeyboardType.Text,
             )
-            DevSpaceTextField(
+            CodeNestTextField(
                 label       = stringResource(Res.string.email_label),
                 value       = email,
                 onValueChange = onEmailChange,
@@ -308,9 +308,9 @@ private fun AuthCard(
                     .height(48.dp),
                 shape    = RoundedCornerShape(4.dp),
                 colors   = ButtonDefaults.buttonColors(
-                    containerColor = DevSpaceColors.primary,
-                    contentColor   = DevSpaceColors.onPrimaryContainer,
-                    disabledContainerColor = DevSpaceColors.primary.copy(alpha = 0.5f),
+                    containerColor = CodeNestColors.primary,
+                    contentColor   = CodeNestColors.onPrimaryContainer,
+                    disabledContainerColor = CodeNestColors.primary.copy(alpha = 0.5f),
                 ),
                 enabled  = termsAccepted,
             ) {
@@ -327,7 +327,7 @@ private fun AuthCard(
                 text      = stringResource(Res.string.already_have_account),
                 fontFamily = Inter,
                 fontSize   = 14.sp,
-                color      = DevSpaceColors.onSurfaceVariant,
+                color      = CodeNestColors.onSurfaceVariant,
                 textDecoration = TextDecoration.None,
                 modifier  = Modifier
                     .clickable { onNavigateToLogin() }
@@ -348,11 +348,11 @@ private fun GoogleSignInButton(onClick: () -> Unit) {
             .height(48.dp),
         shape     = RoundedCornerShape(4.dp),
         border    = BorderStroke(
-            1.dp, DevSpaceColors.outlineVariant
+            1.dp, CodeNestColors.outlineVariant
         ),
         colors    = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.Transparent,
-            contentColor   = DevSpaceColors.onSurface,
+            contentColor   = CodeNestColors.onSurface,
         ),
     ) {
         // Google "G" logo
@@ -396,9 +396,9 @@ fun TermsCheckbox(
             onCheckedChange = onTermsAcceptedChange,
             modifier        = Modifier.size(20.dp),
             colors          = CheckboxDefaults.colors(
-                checkedColor         = DevSpaceColors.primary,
-                uncheckedColor       = DevSpaceColors.outlineVariant,
-                checkmarkColor       = DevSpaceColors.onPrimaryContainer,
+                checkedColor         = CodeNestColors.primary,
+                uncheckedColor       = CodeNestColors.outlineVariant,
+                checkmarkColor       = CodeNestColors.onPrimaryContainer,
             ),
         )
         // Inline clickable spans for terms/privacy
@@ -407,7 +407,7 @@ fun TermsCheckbox(
             style = TextStyle(
                 fontFamily = Inter,
                 fontSize   = 14.sp,
-                color      = DevSpaceColors.onSurfaceVariant,
+                color      = CodeNestColors.onSurfaceVariant,
             ),
             onClick = { offset ->
                 termsText
@@ -433,7 +433,7 @@ private fun buildTermsAnnotatedString(
 
         withStyle(
             style = SpanStyle(
-                color = DevSpaceColors.primary,
+                color = CodeNestColors.primary,
                 fontWeight = FontWeight.Medium,
             )
         ) {
@@ -449,7 +449,7 @@ private fun buildTermsAnnotatedString(
         pushStringAnnotation("PRIVACY", "privacy")
         pushStyle(
             SpanStyle(
-                color          = DevSpaceColors.primary,
+                color          = CodeNestColors.primary,
                 textDecoration = TextDecoration.Underline,
             )
         )
@@ -464,7 +464,7 @@ private fun buildTermsAnnotatedString(
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 @Composable
-private fun DevSpaceFooter(
+private fun CodeNestFooter(
     onTermsClick: () -> Unit,
     onPrivacyClick: () -> Unit,
 ) {
@@ -481,7 +481,7 @@ private fun DevSpaceFooter(
                 fontFamily     = JetBrainsMono,
                 fontWeight     = FontWeight.Medium,
                 fontSize       = 12.sp,
-                color          = DevSpaceColors.onSurfaceVariant,
+                color          = CodeNestColors.onSurfaceVariant,
                 textDecoration = TextDecoration.Underline,
                 modifier       = Modifier.clickable { onTermsClick() },
             )
@@ -490,17 +490,17 @@ private fun DevSpaceFooter(
                 fontFamily     = JetBrainsMono,
                 fontWeight     = FontWeight.Medium,
                 fontSize       = 12.sp,
-                color          = DevSpaceColors.onSurfaceVariant,
+                color          = CodeNestColors.onSurfaceVariant,
                 textDecoration = TextDecoration.Underline,
                 modifier       = Modifier.clickable { onPrivacyClick() },
             )
         }
         Text(
-            text       = "© 2026 DevSpace. Todos los derechos reservados.",
+            text       = "© 2026 CodeNest. Todos los derechos reservados.",
             fontFamily = JetBrainsMono,
             fontWeight = FontWeight.Medium,
             fontSize   = 12.sp,
-            color      = DevSpaceColors.onSurfaceVariant,
+            color      = CodeNestColors.onSurfaceVariant,
         )
     }
 }

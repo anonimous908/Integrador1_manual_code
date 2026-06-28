@@ -5,7 +5,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import org.example.project.domain.service.SyntaxHighlighter
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 
 class DraculaSyntaxHighlighter : SyntaxHighlighter {
     private val SQL_KEYWORDS = setOf(
@@ -27,7 +27,7 @@ class DraculaSyntaxHighlighter : SyntaxHighlighter {
         if (trimmed.startsWith("#") || trimmed.startsWith("--") ||
             (trimmed.startsWith("\"\"\"") && trimmed.endsWith("\"\"\"") && trimmed.length > 3)
         ) {
-            withStyle(SpanStyle(color = DevSpaceColors.codeComment)) { append(line) }
+            withStyle(SpanStyle(color = CodeNestColors.codeComment)) { append(line) }
             return@buildAnnotatedString
         }
 
@@ -44,12 +44,12 @@ class DraculaSyntaxHighlighter : SyntaxHighlighter {
             }
             val token = match.value
             val style = when {
-                token.startsWith("\"") || token.startsWith("'") -> SpanStyle(color = DevSpaceColors.codeString)
-                token.firstOrNull()?.isDigit() == true -> SpanStyle(color = DevSpaceColors.codeNumber)
+                token.startsWith("\"") || token.startsWith("'") -> SpanStyle(color = CodeNestColors.codeString)
+                token.firstOrNull()?.isDigit() == true -> SpanStyle(color = CodeNestColors.codeNumber)
                 token.uppercase() in SQL_KEYWORDS || token in GENERIC_KEYWORDS ->
-                    SpanStyle(color = DevSpaceColors.codeKeyword)
-                token.firstOrNull()?.isUpperCase() == true -> SpanStyle(color = DevSpaceColors.codeType)
-                else -> SpanStyle(color = DevSpaceColors.onSurfaceVariant)
+                    SpanStyle(color = CodeNestColors.codeKeyword)
+                token.firstOrNull()?.isUpperCase() == true -> SpanStyle(color = CodeNestColors.codeType)
+                else -> SpanStyle(color = CodeNestColors.onSurfaceVariant)
             }
             withStyle(style) { append(token) }
             lastIndex = match.range.last + 1

@@ -1,30 +1,57 @@
 {
   "version": 1,
-  "generatedAt": "2026-06-03T14:56:32.4928174Z",
+  "generatedAt": "2026-06-27T22:34:04.7686653Z",
   "root": "C:\\Users\\borge\\GENERAL_UTTT\\AndroidStudioProjects\\Integrador",
   "files": [
     {
+      "path": "androidApp/src/main/kotlin/org/example/project/CodeNestApplication.kt",
+      "language": "kotlin",
+      "lines": 18,
+      "imports": [
+        "android.app.Application",
+        "org.example.project.di.initKoin",
+        "org.koin.android.ext.koin.androidContext"
+      ],
+      "symbols": [
+        {
+          "name": "CodeNestApplication",
+          "kind": "class",
+          "line": 7
+        },
+        {
+          "name": "onCreate",
+          "kind": "fun",
+          "line": 8,
+          "container": "CodeNestApplication",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
       "path": "androidApp/src/main/kotlin/org/example/project/MainActivity.kt",
       "language": "kotlin",
-      "lines": 25,
+      "lines": 26,
       "imports": [
         "android.os.Bundle",
         "androidx.activity.ComponentActivity",
         "androidx.activity.compose.setContent",
         "androidx.activity.enableEdgeToEdge",
         "androidx.compose.runtime.Composable",
-        "androidx.compose.ui.tooling.preview.Preview"
+        "androidx.compose.ui.tooling.preview.Preview",
+        "org.example.project.presentation.App"
       ],
       "symbols": [
         {
           "name": "MainActivity",
           "kind": "class",
-          "line": 10
+          "line": 11
         },
         {
           "name": "onCreate",
           "kind": "fun",
-          "line": 11,
+          "line": 12,
           "container": "MainActivity",
           "modifiers": [
             "override"
@@ -33,7 +60,7 @@
         {
           "name": "AppAndroidPreview",
           "kind": "fun",
-          "line": 23
+          "line": 24
         }
       ]
     },
@@ -56,16 +83,33 @@
     {
       "path": "desktopApp/src/main/kotlin/org/example/project/main.kt",
       "language": "kotlin",
-      "lines": 13,
+      "lines": 27,
       "imports": [
         "androidx.compose.ui.window.Window",
+        "org.example.project.presentation.App",
         "androidx.compose.ui.window.application"
       ],
       "symbols": [
         {
           "name": "main",
           "kind": "fun",
-          "line": 6
+          "line": 7
+        },
+        {
+          "name": "setupDependencyInjection",
+          "kind": "fun",
+          "line": 12,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "launchDesktopApp",
+          "kind": "fun",
+          "line": 20,
+          "modifiers": [
+            "private"
+          ]
         }
       ]
     },
@@ -92,143 +136,1756 @@
       ]
     },
     {
-      "path": "shared/src/androidMain/kotlin/org/example/project/Platform.android.kt",
+      "path": "shared/src/commonMain/kotlin/org/example/project/data/formatter/DraculaSyntaxHighlighter.kt",
       "language": "kotlin",
-      "lines": 9,
+      "lines": 61,
       "imports": [
-        "android.os.Build"
+        "androidx.compose.ui.text.AnnotatedString",
+        "androidx.compose.ui.text.SpanStyle",
+        "androidx.compose.ui.text.buildAnnotatedString",
+        "androidx.compose.ui.text.withStyle",
+        "org.example.project.domain.service.SyntaxHighlighter",
+        "org.example.project.presentation.theme.DevSpaceColors"
       ],
       "symbols": [
         {
-          "name": "AndroidPlatform",
+          "name": "DraculaSyntaxHighlighter",
           "kind": "class",
-          "line": 5
-        }
-      ]
-    },
-    {
-      "path": "shared/src/commonMain/kotlin/org/example/project/App.kt",
-      "language": "kotlin",
-      "lines": 49,
-      "imports": [
-        "androidx.compose.animation.AnimatedVisibility",
-        "androidx.compose.foundation.Image",
-        "androidx.compose.foundation.background",
-        "androidx.compose.foundation.layout.Column",
-        "androidx.compose.foundation.layout.fillMaxSize",
-        "androidx.compose.foundation.layout.fillMaxWidth",
-        "androidx.compose.foundation.layout.safeContentPadding",
-        "androidx.compose.material3.Button",
-        "androidx.compose.material3.MaterialTheme",
-        "androidx.compose.material3.Text",
-        "androidx.compose.runtime.*",
-        "androidx.compose.ui.Alignment",
-        "androidx.compose.ui.Modifier",
-        "androidx.compose.ui.tooling.preview.Preview",
-        "org.jetbrains.compose.resources.painterResource",
-        "kotlinproject.shared.generated.resources.Res",
-        "kotlinproject.shared.generated.resources.compose_multiplatform"
-      ],
-      "symbols": [
-        {
-          "name": "App",
-          "kind": "fun",
-          "line": 24
-        }
-      ]
-    },
-    {
-      "path": "shared/src/commonMain/kotlin/org/example/project/Greeting.kt",
-      "language": "kotlin",
-      "lines": 9,
-      "imports": [],
-      "symbols": [
-        {
-          "name": "Greeting",
-          "kind": "class",
-          "line": 3
+          "line": 10
         },
         {
-          "name": "greet",
+          "name": "highlight",
           "kind": "fun",
-          "line": 6,
-          "container": "Greeting"
+          "line": 20,
+          "container": "DraculaSyntaxHighlighter",
+          "modifiers": [
+            "override"
+          ]
         }
       ]
     },
     {
-      "path": "shared/src/commonMain/kotlin/org/example/project/GreetingUtil.kt",
+      "path": "shared/src/commonMain/kotlin/org/example/project/data/network/GithubVersionChecker.kt",
       "language": "kotlin",
-      "lines": 4,
-      "imports": [],
+      "lines": 26,
+      "imports": [
+        "io.ktor.client.*",
+        "io.ktor.client.call.*",
+        "io.ktor.client.request.*",
+        "kotlinx.serialization.Serializable",
+        "io.github.aakira.napier.Napier"
+      ],
       "symbols": [
         {
-          "name": "sayHello",
+          "name": "GithubReleaseResponse",
+          "kind": "class",
+          "line": 10,
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "GithubVersionChecker",
+          "kind": "class",
+          "line": 15
+        },
+        {
+          "name": "getLatestRelease",
           "kind": "fun",
-          "line": 3
+          "line": 18,
+          "modifiers": [
+            "suspend"
+          ]
         }
       ]
     },
     {
-      "path": "shared/src/commonMain/kotlin/org/example/project/Platform.kt",
+      "path": "shared/src/commonMain/kotlin/org/example/project/data/repository/AuthRepositoryImpl.kt",
+      "language": "kotlin",
+      "lines": 63,
+      "imports": [
+        "com.russhwolf.settings.Settings",
+        "kotlinx.coroutines.Dispatchers",
+        "kotlinx.coroutines.withContext",
+        "kotlinx.serialization.Serializable",
+        "kotlinx.serialization.encodeToString",
+        "kotlinx.serialization.json.Json",
+        "org.example.project.domain.repository.AuthRepository",
+        "org.example.project.domain.service.HashService",
+        "org.jetbrains.compose.resources.getString",
+        "kotlinproject.shared.generated.resources.Res",
+        "kotlinproject.shared.generated.resources.error_email_registered",
+        "kotlinproject.shared.generated.resources.error_invalid_credentials",
+        "kotlinproject.shared.generated.resources.error_session_expired"
+      ],
+      "symbols": [
+        {
+          "name": "UserData",
+          "kind": "class",
+          "line": 18,
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "AuthRepositoryImpl",
+          "kind": "class",
+          "line": 20
+        },
+        {
+          "name": "register",
+          "kind": "fun",
+          "line": 25,
+          "modifiers": [
+            "override",
+            "suspend"
+          ]
+        },
+        {
+          "name": "login",
+          "kind": "fun",
+          "line": 42,
+          "modifiers": [
+            "override",
+            "suspend"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/data/repository/MockRecipeRepositoryImpl.kt",
+      "language": "kotlin",
+      "lines": 96,
+      "imports": [
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.Visibility",
+        "org.example.project.domain.model.SnippetCardData",
+        "org.example.project.domain.repository.RecipeRepository",
+        "org.example.project.presentation.theme.DevSpaceColors"
+      ],
+      "symbols": [
+        {
+          "name": "MockRecipeRepositoryImpl",
+          "kind": "class",
+          "line": 9
+        },
+        {
+          "name": "getPersonalRecipes",
+          "kind": "fun",
+          "line": 93,
+          "container": "MockRecipeRepositoryImpl",
+          "modifiers": [
+            "override",
+            "suspend"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/data/security/HashServiceImpl.kt",
+      "language": "kotlin",
+      "lines": 11,
+      "imports": [
+        "org.example.project.domain.service.HashService",
+        "org.kotlincrypto.hash.sha2.SHA256"
+      ],
+      "symbols": [
+        {
+          "name": "HashServiceImpl",
+          "kind": "class",
+          "line": 6
+        },
+        {
+          "name": "hash",
+          "kind": "fun",
+          "line": 8,
+          "container": "HashServiceImpl",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/di/AppModule.kt",
+      "language": "kotlin",
+      "lines": 58,
+      "imports": [
+        "org.example.project.data.repository.AuthRepositoryImpl",
+        "org.example.project.domain.repository.AuthRepository",
+        "org.example.project.domain.usecase.LoginWithEmailUseCase",
+        "org.example.project.domain.usecase.RegisterUseCase",
+        "org.example.project.presentation.login.LoginViewModel",
+        "org.example.project.presentation.register.RegisterViewModel",
+        "org.example.project.presentation.AppViewModel",
+        "org.koin.core.module.dsl.factoryOf",
+        "org.koin.dsl.module",
+        "com.russhwolf.settings.Settings",
+        "org.example.project.domain.usecase.ValidateEmailUseCase",
+        "org.example.project.domain.usecase.ValidatePasswordUseCase",
+        "org.example.project.domain.service.HashService",
+        "org.example.project.data.security.HashServiceImpl",
+        "org.example.project.data.network.GithubVersionChecker",
+        "io.ktor.client.HttpClient",
+        "io.ktor.client.plugins.contentnegotiation.ContentNegotiation",
+        "io.ktor.serialization.kotlinx.json.json",
+        "kotlinx.serialization.json.Json",
+        "org.example.project.domain.service.SyntaxHighlighter",
+        "org.example.project.data.formatter.DraculaSyntaxHighlighter",
+        "org.example.project.domain.repository.RecipeRepository",
+        "org.example.project.data.repository.MockRecipeRepositoryImpl"
+      ],
+      "symbols": []
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/di/KoinInit.kt",
+      "language": "kotlin",
+      "lines": 11,
+      "imports": [
+        "org.koin.core.context.startKoin",
+        "org.koin.dsl.KoinAppDeclaration"
+      ],
+      "symbols": [
+        {
+          "name": "initKoin",
+          "kind": "fun",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/model/SnippetCardData.kt",
+      "language": "kotlin",
+      "lines": 17,
+      "imports": [
+        "androidx.compose.ui.graphics.Color",
+        "androidx.compose.ui.graphics.vector.ImageVector"
+      ],
+      "symbols": [
+        {
+          "name": "SnippetCardData",
+          "kind": "class",
+          "line": 6,
+          "modifiers": [
+            "data"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/model/User.kt",
       "language": "kotlin",
       "lines": 7,
       "imports": [],
       "symbols": [
         {
-          "name": "Platform",
+          "name": "User",
+          "kind": "class",
+          "line": 3,
+          "modifiers": [
+            "data"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/repository/AuthRepository.kt",
+      "language": "kotlin",
+      "lines": 40,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "AuthRepository",
+          "kind": "interface",
+          "line": 6
+        },
+        {
+          "name": "login",
+          "kind": "fun",
+          "line": 22,
+          "container": "AuthRepository",
+          "modifiers": [
+            "suspend"
+          ]
+        },
+        {
+          "name": "register",
+          "kind": "fun",
+          "line": 39,
+          "container": "AuthRepository",
+          "modifiers": [
+            "suspend"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/repository/RecipeRepository.kt",
+      "language": "kotlin",
+      "lines": 7,
+      "imports": [
+        "org.example.project.domain.model.SnippetCardData"
+      ],
+      "symbols": [
+        {
+          "name": "RecipeRepository",
+          "kind": "interface",
+          "line": 5
+        },
+        {
+          "name": "getPersonalRecipes",
+          "kind": "fun",
+          "line": 6,
+          "container": "RecipeRepository",
+          "modifiers": [
+            "suspend"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/service/HashService.kt",
+      "language": "kotlin",
+      "lines": 5,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "HashService",
           "kind": "interface",
           "line": 3
+        },
+        {
+          "name": "hash",
+          "kind": "fun",
+          "line": 4,
+          "container": "HashService"
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/service/SyntaxHighlighter.kt",
+      "language": "kotlin",
+      "lines": 7,
+      "imports": [
+        "androidx.compose.ui.text.AnnotatedString"
+      ],
+      "symbols": [
+        {
+          "name": "SyntaxHighlighter",
+          "kind": "interface",
+          "line": 5
+        },
+        {
+          "name": "highlight",
+          "kind": "fun",
+          "line": 6,
+          "container": "SyntaxHighlighter"
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/usecase/EmailValidator.kt",
+      "language": "kotlin",
+      "lines": 9,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "EmailValidator",
+          "kind": "object",
+          "line": 3
+        },
+        {
+          "name": "isValid",
+          "kind": "fun",
+          "line": 6,
+          "container": "EmailValidator"
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/usecase/LoginWithEmailUseCase.kt",
+      "language": "kotlin",
+      "lines": 11,
+      "imports": [
+        "org.example.project.domain.repository.AuthRepository"
+      ],
+      "symbols": [
+        {
+          "name": "LoginWithEmailUseCase",
+          "kind": "class",
+          "line": 5
+        },
+        {
+          "name": "invoke",
+          "kind": "fun",
+          "line": 8,
+          "modifiers": [
+            "suspend",
+            "operator"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/usecase/RegisterUseCase.kt",
+      "language": "kotlin",
+      "lines": 20,
+      "imports": [
+        "org.example.project.domain.repository.AuthRepository"
+      ],
+      "symbols": [
+        {
+          "name": "RegisterUseCase",
+          "kind": "class",
+          "line": 5
+        },
+        {
+          "name": "invoke",
+          "kind": "fun",
+          "line": 8,
+          "modifiers": [
+            "suspend",
+            "operator"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/usecase/ValidateEmailUseCase.kt",
+      "language": "kotlin",
+      "lines": 29,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "ValidateEmailUseCase",
+          "kind": "class",
+          "line": 3
+        },
+        {
+          "name": "invoke",
+          "kind": "fun",
+          "line": 20,
+          "container": "ValidateEmailUseCase",
+          "modifiers": [
+            "operator"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/domain/usecase/ValidatePasswordUseCase.kt",
+      "language": "kotlin",
+      "lines": 36,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "ValidatePasswordUseCase",
+          "kind": "class",
+          "line": 6
+        },
+        {
+          "name": "invoke",
+          "kind": "fun",
+          "line": 21,
+          "container": "ValidatePasswordUseCase",
+          "modifiers": [
+            "operator"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/AISearchScreen.kt",
+      "language": "kotlin",
+      "lines": 265,
+      "imports": [
+        "androidx.compose.animation.AnimatedVisibility",
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.border",
+        "androidx.compose.foundation.clickable",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.rememberScrollState",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.foundation.text.BasicTextField",
+        "androidx.compose.foundation.verticalScroll",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.automirrored.filled.ArrowBack",
+        "androidx.compose.material.icons.filled.ArrowBack",
+        "androidx.compose.material.icons.filled.Psychology",
+        "androidx.compose.material.icons.filled.Search",
+        "androidx.compose.material.icons.filled.Visibility",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.*",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.draw.clip",
+        "androidx.compose.ui.graphics.SolidColor",
+        "androidx.compose.ui.text.TextStyle",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "cafe.adriel.voyager.core.screen.Screen",
+        "cafe.adriel.voyager.navigator.LocalNavigator",
+        "cafe.adriel.voyager.navigator.currentOrThrow",
+        "kotlinx.coroutines.delay",
+        "kotlinx.coroutines.launch",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "org.example.project.presentation.components.SnippetCard",
+        "org.example.project.domain.model.SnippetCardData",
+        "org.example.project.domain.service.SyntaxHighlighter",
+        "org.koin.compose.koinInject"
+      ],
+      "symbols": [
+        {
+          "name": "AISearchScreen",
+          "kind": "class",
+          "line": 39
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 41,
+          "container": "AISearchScreen",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/App.kt",
+      "language": "kotlin",
+      "lines": 15,
+      "imports": [
+        "androidx.compose.runtime.*",
+        "org.example.project.presentation.theme.DevSpaceTheme",
+        "cafe.adriel.voyager.navigator.Navigator",
+        "org.koin.compose.KoinContext"
+      ],
+      "symbols": [
+        {
+          "name": "App",
+          "kind": "fun",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/AppViewModel.kt",
+      "language": "kotlin",
+      "lines": 44,
+      "imports": [
+        "androidx.lifecycle.ViewModel",
+        "androidx.lifecycle.viewModelScope",
+        "kotlinx.coroutines.flow.MutableStateFlow",
+        "kotlinx.coroutines.flow.StateFlow",
+        "kotlinx.coroutines.flow.asStateFlow",
+        "kotlinx.coroutines.flow.update",
+        "kotlinx.coroutines.launch",
+        "org.example.project.data.network.GithubVersionChecker",
+        "org.example.project.AppConfig"
+      ],
+      "symbols": [
+        {
+          "name": "AppState",
+          "kind": "class",
+          "line": 13,
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "AppViewModel",
+          "kind": "class",
+          "line": 18
+        },
+        {
+          "name": "checkForUpdates",
+          "kind": "fun",
+          "line": 28,
+          "modifiers": [
+            "private"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/CreateAccountScreen.kt",
+      "language": "kotlin",
+      "lines": 507,
+      "imports": [
+        "org.jetbrains.compose.resources.stringResource",
+        "org.jetbrains.compose.resources.painterResource",
+        "kotlinproject.shared.generated.resources.*",
+        "org.example.project.presentation.components.EmailDivider",
+        "org.example.project.presentation.components.DevSpaceTextField",
+        "org.example.project.presentation.components.PasswordTextField",
+        "org.example.project.presentation.components.Inter",
+        "org.example.project.presentation.components.JetBrainsMono",
+        "androidx.compose.foundation.Image",
+        "androidx.compose.foundation.BorderStroke",
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.border",
+        "androidx.compose.foundation.clickable",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.rememberScrollState",
+        "androidx.compose.foundation.shape.CircleShape",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.foundation.verticalScroll",
+        "androidx.compose.ui.text.withStyle",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.*",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.draw.blur",
+        "androidx.compose.ui.draw.clip",
+        "androidx.compose.ui.graphics.Brush",
+        "androidx.compose.ui.graphics.Color",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "androidx.compose.ui.text.SpanStyle",
+        "androidx.compose.ui.text.TextStyle",
+        "androidx.compose.ui.text.buildAnnotatedString",
+        "androidx.compose.ui.text.font.FontFamily",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.text.input.KeyboardType",
+        "androidx.compose.ui.text.style.TextAlign",
+        "androidx.compose.ui.text.style.TextDecoration",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "cafe.adriel.voyager.core.screen.Screen",
+        "cafe.adriel.voyager.navigator.LocalNavigator",
+        "cafe.adriel.voyager.navigator.currentOrThrow",
+        "org.koin.compose.viewmodel.koinViewModel",
+        "org.example.project.presentation.register.RegisterViewModel",
+        "org.example.project.presentation.register.RegisterEvent",
+        "androidx.compose.runtime.collectAsState"
+      ],
+      "symbols": [
+        {
+          "name": "CreateAccountScreen",
+          "kind": "class",
+          "line": 63
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 65,
+          "container": "CreateAccountScreen",
+          "modifiers": [
+            "override"
+          ]
+        },
+        {
+          "name": "CreateAccountScreenContent",
+          "kind": "fun",
+          "line": 99,
+          "modifiers": [
+            "internal"
+          ]
+        },
+        {
+          "name": "DevSpaceHeader",
+          "kind": "fun",
+          "line": 183,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "AuthCard",
+          "kind": "fun",
+          "line": 209,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "GoogleSignInButton",
+          "kind": "fun",
+          "line": 343,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "TermsCheckbox",
+          "kind": "fun",
+          "line": 373
+        },
+        {
+          "name": "buildTermsAnnotatedString",
+          "kind": "fun",
+          "line": 424,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "DevSpaceFooter",
+          "kind": "fun",
+          "line": 467,
+          "modifiers": [
+            "private"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/DevSpaceLoginScreen.kt",
+      "language": "kotlin",
+      "lines": 298,
+      "imports": [
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.border",
+        "androidx.compose.foundation.clickable",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.Image",
+        "androidx.compose.foundation.shape.CircleShape",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.foundation.text.KeyboardOptions",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.*",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.*",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.draw.clip",
+        "androidx.compose.ui.geometry.Offset",
+        "androidx.compose.ui.geometry.Size",
+        "androidx.compose.ui.graphics.Brush",
+        "androidx.compose.ui.graphics.Color",
+        "androidx.compose.ui.platform.LocalUriHandler",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "org.example.project.presentation.components.DevSpaceTextField",
+        "org.example.project.presentation.components.PasswordTextField",
+        "org.example.project.presentation.components.EmailDivider",
+        "androidx.compose.ui.text.SpanStyle",
+        "androidx.compose.ui.text.buildAnnotatedString",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.text.input.KeyboardType",
+        "androidx.compose.ui.text.withStyle",
+        "androidx.compose.ui.text.input.PasswordVisualTransformation",
+        "androidx.compose.ui.text.input.VisualTransformation",
+        "androidx.compose.ui.text.style.TextAlign",
+        "androidx.compose.ui.text.style.TextDecoration",
+        "androidx.compose.ui.unit.Dp",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "androidx.compose.foundation.BorderStroke",
+        "androidx.compose.foundation.rememberScrollState",
+        "androidx.compose.foundation.verticalScroll",
+        "org.jetbrains.compose.resources.stringResource",
+        "kotlinproject.shared.generated.resources.*",
+        "org.jetbrains.compose.resources.painterResource",
+        "org.example.project.AppConfig",
+        "org.example.project.presentation.theme.DevSpaceLoginBrand",
+        "cafe.adriel.voyager.core.screen.Screen",
+        "cafe.adriel.voyager.navigator.LocalNavigator",
+        "cafe.adriel.voyager.navigator.currentOrThrow",
+        "org.koin.compose.viewmodel.koinViewModel",
+        "org.example.project.presentation.login.LoginViewModel",
+        "org.example.project.presentation.login.LoginEvent",
+        "org.example.project.presentation.login.LoginState",
+        "org.example.project.presentation.components.calculateBrandPadding",
+        "org.example.project.presentation.components.DevSpaceLoginForm"
+      ],
+      "symbols": [
+        {
+          "name": "DevSpaceLoginScreen",
+          "kind": "class",
+          "line": 58
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 60,
+          "container": "DevSpaceLoginScreen",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/HomeScreen.kt",
+      "language": "kotlin",
+      "lines": 49,
+      "imports": [
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.runtime.*",
+        "androidx.compose.ui.Modifier",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "org.example.project.presentation.components.DevSpaceSidebar",
+        "org.example.project.presentation.components.WelcomeContent",
+        "org.example.project.presentation.components.PlaceholderContent",
+        "cafe.adriel.voyager.navigator.tab.CurrentTab",
+        "cafe.adriel.voyager.navigator.tab.TabNavigator",
+        "cafe.adriel.voyager.core.screen.Screen",
+        "cafe.adriel.voyager.navigator.LocalNavigator",
+        "cafe.adriel.voyager.navigator.currentOrThrow",
+        "org.example.project.presentation.tabs.*"
+      ],
+      "symbols": [
+        {
+          "name": "HomeScreen",
+          "kind": "class",
+          "line": 18
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 20,
+          "container": "HomeScreen",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/PrivacyPolicyScreen.kt",
+      "language": "kotlin",
+      "lines": 67,
+      "imports": [
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.rememberScrollState",
+        "androidx.compose.foundation.verticalScroll",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.ArrowBack",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.graphics.Color",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "cafe.adriel.voyager.core.screen.Screen",
+        "cafe.adriel.voyager.navigator.LocalNavigator",
+        "cafe.adriel.voyager.navigator.currentOrThrow",
+        "org.jetbrains.compose.resources.stringResource",
+        "kotlinproject.shared.generated.resources.Res",
+        "kotlinproject.shared.generated.resources.privacy_content",
+        "kotlinproject.shared.generated.resources.privacy_title"
+      ],
+      "symbols": [
+        {
+          "name": "PrivacyPolicyScreen",
+          "kind": "class",
+          "line": 25
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 28,
+          "container": "PrivacyPolicyScreen",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/TermsAndConditionsScreen.kt",
+      "language": "kotlin",
+      "lines": 67,
+      "imports": [
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.rememberScrollState",
+        "androidx.compose.foundation.verticalScroll",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.ArrowBack",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.graphics.Color",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "cafe.adriel.voyager.core.screen.Screen",
+        "cafe.adriel.voyager.navigator.LocalNavigator",
+        "cafe.adriel.voyager.navigator.currentOrThrow",
+        "org.jetbrains.compose.resources.stringResource",
+        "kotlinproject.shared.generated.resources.Res",
+        "kotlinproject.shared.generated.resources.terms_content",
+        "kotlinproject.shared.generated.resources.terms_title"
+      ],
+      "symbols": [
+        {
+          "name": "TermsAndConditionsScreen",
+          "kind": "class",
+          "line": 25
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 28,
+          "container": "TermsAndConditionsScreen",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/components/AuthComponents.kt",
+      "language": "kotlin",
+      "lines": 153,
+      "imports": [
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.foundation.text.KeyboardOptions",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.Visibility",
+        "androidx.compose.material.icons.filled.VisibilityOff",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.text.TextStyle",
+        "androidx.compose.ui.text.font.FontFamily",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.text.input.KeyboardType",
+        "androidx.compose.ui.text.input.PasswordVisualTransformation",
+        "androidx.compose.ui.text.input.VisualTransformation",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "org.jetbrains.compose.resources.stringResource",
+        "kotlinproject.shared.generated.resources.Res",
+        "kotlinproject.shared.generated.resources.hide_password",
+        "kotlinproject.shared.generated.resources.show_password",
+        "kotlinproject.shared.generated.resources.email_divider"
+      ],
+      "symbols": [
+        {
+          "name": "DevSpaceTextField",
+          "kind": "fun",
+          "line": 32
+        },
+        {
+          "name": "PasswordTextField",
+          "kind": "fun",
+          "line": 87
+        },
+        {
+          "name": "EmailDivider",
+          "kind": "fun",
+          "line": 140
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/components/DevSpaceLoginComponents.kt",
+      "language": "kotlin",
+      "lines": 111,
+      "imports": [
+        "androidx.compose.foundation.clickable",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.Email",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.*",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.text.input.KeyboardType",
+        "androidx.compose.ui.unit.Dp",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "org.example.project.presentation.login.LoginEvent",
+        "org.example.project.presentation.login.LoginState",
+        "org.example.project.presentation.login.LoginViewModel",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "org.jetbrains.compose.resources.stringResource",
+        "kotlinproject.shared.generated.resources.Res",
+        "kotlinproject.shared.generated.resources.email_label",
+        "kotlinproject.shared.generated.resources.email_placeholder",
+        "kotlinproject.shared.generated.resources.forgot_password",
+        "kotlinproject.shared.generated.resources.login_button",
+        "kotlinproject.shared.generated.resources.password_label"
+      ],
+      "symbols": [
+        {
+          "name": "calculateBrandPadding",
+          "kind": "fun",
+          "line": 29,
+          "modifiers": [
+            "internal"
+          ]
+        },
+        {
+          "name": "DevSpaceLoginForm",
+          "kind": "fun",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/components/HomeComponents.kt",
+      "language": "kotlin",
+      "lines": 71,
+      "imports": [
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.border",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.material3.Text",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.text.style.TextAlign",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "org.example.project.presentation.theme.DevSpaceColors"
+      ],
+      "symbols": [
+        {
+          "name": "WelcomeContent",
+          "kind": "fun",
+          "line": 18
+        },
+        {
+          "name": "PlaceholderContent",
+          "kind": "fun",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/components/SidebarComponents.kt",
+      "language": "kotlin",
+      "lines": 165,
+      "imports": [
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.border",
+        "androidx.compose.foundation.clickable",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.shape.CircleShape",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.automirrored.filled.*",
+        "androidx.compose.material.icons.filled.*",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.draw.clip",
+        "androidx.compose.ui.graphics.Color",
+        "androidx.compose.ui.graphics.painter.Painter",
+        "androidx.compose.ui.graphics.vector.ImageVector",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "cafe.adriel.voyager.navigator.tab.Tab",
+        "cafe.adriel.voyager.navigator.tab.TabNavigator",
+        "kotlinproject.shared.generated.resources.*",
+        "org.jetbrains.compose.resources.stringResource",
+        "org.example.project.presentation.theme.DevSpaceColors"
+      ],
+      "symbols": [
+        {
+          "name": "DevSpaceSidebar",
+          "kind": "fun",
+          "line": 30
+        },
+        {
+          "name": "TabNavigationItem",
+          "kind": "fun",
+          "line": 130,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "SidebarItem",
+          "kind": "fun",
+          "line": 141,
+          "modifiers": [
+            "private"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/components/SnippetComponents.kt",
+      "language": "kotlin",
+      "lines": 195,
+      "imports": [
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.border",
+        "androidx.compose.foundation.clickable",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.Folder",
+        "androidx.compose.material.icons.filled.Share",
+        "androidx.compose.material.icons.filled.Visibility",
+        "androidx.compose.material3.Icon",
+        "androidx.compose.material3.MaterialTheme",
+        "androidx.compose.material3.Text",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.draw.clip",
+        "androidx.compose.ui.graphics.Brush",
+        "androidx.compose.ui.graphics.Color",
+        "androidx.compose.ui.platform.LocalClipboardManager",
+        "androidx.compose.ui.text.AnnotatedString",
+        "androidx.compose.ui.text.font.FontFamily",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "org.example.project.domain.model.SnippetCardData",
+        "org.example.project.domain.service.SyntaxHighlighter",
+        "org.example.project.presentation.theme.DevSpaceColors"
+      ],
+      "symbols": [
+        {
+          "name": "SnippetCard",
+          "kind": "fun",
+          "line": 34
+        },
+        {
+          "name": "Tag",
+          "kind": "fun",
+          "line": 185,
+          "modifiers": [
+            "private"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/login/LoginState.kt",
+      "language": "kotlin",
+      "lines": 18,
+      "imports": [],
+      "symbols": [
+        {
+          "name": "LoginState",
+          "kind": "class",
+          "line": 3,
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "LoginEvent",
+          "kind": "interface",
+          "line": 13,
+          "modifiers": [
+            "sealed"
+          ]
+        },
+        {
+          "name": "EmailChanged",
+          "kind": "class",
+          "line": 14,
+          "container": "LoginEvent",
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "PassChanged",
+          "kind": "class",
+          "line": 15,
+          "container": "LoginEvent",
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "Submit",
+          "kind": "object",
+          "line": 16,
+          "container": "LoginEvent"
+        },
+        {
+          "name": "Reset",
+          "kind": "object",
+          "line": 17,
+          "container": "LoginEvent"
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/login/LoginViewModel.kt",
+      "language": "kotlin",
+      "lines": 82,
+      "imports": [
+        "androidx.lifecycle.ViewModel",
+        "androidx.lifecycle.viewModelScope",
+        "kotlinx.coroutines.flow.MutableStateFlow",
+        "kotlinx.coroutines.flow.StateFlow",
+        "kotlinx.coroutines.flow.asStateFlow",
+        "kotlinx.coroutines.flow.update",
+        "kotlinx.coroutines.launch",
+        "org.example.project.domain.usecase.LoginWithEmailUseCase",
+        "org.example.project.domain.usecase.ValidateEmailUseCase",
+        "org.example.project.domain.usecase.ValidatePasswordUseCase"
+      ],
+      "symbols": [
+        {
+          "name": "LoginViewModel",
+          "kind": "class",
+          "line": 18
+        },
+        {
+          "name": "onEvent",
+          "kind": "fun",
+          "line": 40
+        },
+        {
+          "name": "submitData",
+          "kind": "fun",
+          "line": 59,
+          "modifiers": [
+            "private"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/register/RegisterViewModel.kt",
+      "language": "kotlin",
+      "lines": 68,
+      "imports": [
+        "androidx.lifecycle.ViewModel",
+        "androidx.lifecycle.viewModelScope",
+        "kotlinx.coroutines.flow.MutableStateFlow",
+        "kotlinx.coroutines.flow.StateFlow",
+        "kotlinx.coroutines.flow.asStateFlow",
+        "kotlinx.coroutines.flow.update",
+        "kotlinx.coroutines.launch",
+        "org.example.project.domain.usecase.RegisterUseCase"
+      ],
+      "symbols": [
+        {
+          "name": "RegisterState",
+          "kind": "class",
+          "line": 12,
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "RegisterEvent",
+          "kind": "class",
+          "line": 22,
+          "modifiers": [
+            "sealed"
+          ]
+        },
+        {
+          "name": "NameChanged",
+          "kind": "class",
+          "line": 23,
+          "container": "RegisterEvent",
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "EmailChanged",
+          "kind": "class",
+          "line": 24,
+          "container": "RegisterEvent",
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "PassChanged",
+          "kind": "class",
+          "line": 25,
+          "container": "RegisterEvent",
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "TermsAcceptedChanged",
+          "kind": "class",
+          "line": 26,
+          "container": "RegisterEvent",
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "Submit",
+          "kind": "object",
+          "line": 27,
+          "container": "RegisterEvent"
+        },
+        {
+          "name": "RegisterViewModel",
+          "kind": "class",
+          "line": 30
+        },
+        {
+          "name": "onEvent",
+          "kind": "fun",
+          "line": 37
+        },
+        {
+          "name": "submitData",
+          "kind": "fun",
+          "line": 47,
+          "modifiers": [
+            "private"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/tabs/CommunityExamplesTab.kt",
+      "language": "kotlin",
+      "lines": 33,
+      "imports": [
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.Group",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.runtime.remember",
+        "androidx.compose.ui.graphics.vector.rememberVectorPainter",
+        "cafe.adriel.voyager.navigator.tab.Tab",
+        "cafe.adriel.voyager.navigator.tab.TabOptions",
+        "org.example.project.presentation.components.PlaceholderContent",
+        "kotlinproject.shared.generated.resources.*",
+        "org.jetbrains.compose.resources.stringResource"
+      ],
+      "symbols": [
+        {
+          "name": "CommunityExamplesTab",
+          "kind": "object",
+          "line": 14
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 30,
+          "container": "CommunityExamplesTab",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/tabs/DocumentationTab.kt",
+      "language": "kotlin",
+      "lines": 33,
+      "imports": [
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.MenuBook",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.runtime.remember",
+        "androidx.compose.ui.graphics.vector.rememberVectorPainter",
+        "cafe.adriel.voyager.navigator.tab.Tab",
+        "cafe.adriel.voyager.navigator.tab.TabOptions",
+        "org.example.project.presentation.components.PlaceholderContent",
+        "kotlinproject.shared.generated.resources.*",
+        "org.jetbrains.compose.resources.stringResource"
+      ],
+      "symbols": [
+        {
+          "name": "DocumentationTab",
+          "kind": "object",
+          "line": 14
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 30,
+          "container": "DocumentationTab",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/tabs/MyRecipesTab.kt",
+      "language": "kotlin",
+      "lines": 340,
+      "imports": [
+        "androidx.compose.animation.AnimatedVisibility",
+        "androidx.compose.foundation.background",
+        "androidx.compose.foundation.border",
+        "androidx.compose.foundation.clickable",
+        "androidx.compose.foundation.layout.*",
+        "androidx.compose.foundation.lazy.grid.GridCells",
+        "androidx.compose.foundation.lazy.grid.LazyVerticalGrid",
+        "androidx.compose.foundation.lazy.grid.items",
+        "androidx.compose.foundation.shape.CircleShape",
+        "androidx.compose.foundation.shape.RoundedCornerShape",
+        "androidx.compose.foundation.text.BasicTextField",
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.*",
+        "androidx.compose.material3.*",
+        "androidx.compose.runtime.*",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.draw.clip",
+        "androidx.compose.ui.graphics.Color",
+        "androidx.compose.ui.graphics.SolidColor",
+        "androidx.compose.ui.graphics.vector.rememberVectorPainter",
+        "androidx.compose.ui.text.TextStyle",
+        "androidx.compose.ui.text.font.FontWeight",
+        "androidx.compose.ui.text.style.TextAlign",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "cafe.adriel.voyager.navigator.LocalNavigator",
+        "cafe.adriel.voyager.navigator.currentOrThrow",
+        "cafe.adriel.voyager.navigator.tab.Tab",
+        "cafe.adriel.voyager.navigator.tab.TabOptions",
+        "org.example.project.domain.model.SnippetCardData",
+        "org.example.project.domain.repository.RecipeRepository",
+        "org.example.project.domain.service.SyntaxHighlighter",
+        "org.example.project.presentation.AISearchScreen",
+        "org.example.project.presentation.components.SnippetCard",
+        "org.example.project.presentation.theme.DevSpaceColors",
+        "org.jetbrains.compose.resources.stringResource",
+        "org.koin.compose.koinInject",
+        "kotlinproject.shared.generated.resources.*",
+        "kotlinx.coroutines.delay"
+      ],
+      "symbols": [
+        {
+          "name": "MyRecipesTab",
+          "kind": "class",
+          "line": 44,
+          "modifiers": [
+            "data"
+          ]
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 60,
+          "container": "MyRecipesTab",
+          "modifiers": [
+            "override"
+          ]
+        },
+        {
+          "name": "TopNavBar",
+          "kind": "fun",
+          "line": 137,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "IconButtonSlot",
+          "kind": "fun",
+          "line": 218,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "ContentCanvas",
+          "kind": "fun",
+          "line": 243,
+          "modifiers": [
+            "private"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/tabs/RecentTab.kt",
+      "language": "kotlin",
+      "lines": 33,
+      "imports": [
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.History",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.runtime.remember",
+        "androidx.compose.ui.graphics.vector.rememberVectorPainter",
+        "cafe.adriel.voyager.navigator.tab.Tab",
+        "cafe.adriel.voyager.navigator.tab.TabOptions",
+        "org.example.project.presentation.components.PlaceholderContent",
+        "kotlinproject.shared.generated.resources.*",
+        "org.jetbrains.compose.resources.stringResource"
+      ],
+      "symbols": [
+        {
+          "name": "RecentTab",
+          "kind": "object",
+          "line": 14
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 30,
+          "container": "RecentTab",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/tabs/SettingsTab.kt",
+      "language": "kotlin",
+      "lines": 33,
+      "imports": [
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.Settings",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.runtime.remember",
+        "androidx.compose.ui.graphics.vector.rememberVectorPainter",
+        "cafe.adriel.voyager.navigator.tab.Tab",
+        "cafe.adriel.voyager.navigator.tab.TabOptions",
+        "org.example.project.presentation.components.PlaceholderContent",
+        "kotlinproject.shared.generated.resources.*",
+        "org.jetbrains.compose.resources.stringResource"
+      ],
+      "symbols": [
+        {
+          "name": "SettingsTab",
+          "kind": "object",
+          "line": 14
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 30,
+          "container": "SettingsTab",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/tabs/SupportTab.kt",
+      "language": "kotlin",
+      "lines": 33,
+      "imports": [
+        "androidx.compose.material.icons.Icons",
+        "androidx.compose.material.icons.filled.HelpOutline",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.runtime.remember",
+        "androidx.compose.ui.graphics.vector.rememberVectorPainter",
+        "cafe.adriel.voyager.navigator.tab.Tab",
+        "cafe.adriel.voyager.navigator.tab.TabOptions",
+        "org.example.project.presentation.components.PlaceholderContent",
+        "kotlinproject.shared.generated.resources.*",
+        "org.jetbrains.compose.resources.stringResource"
+      ],
+      "symbols": [
+        {
+          "name": "SupportTab",
+          "kind": "object",
+          "line": 14
+        },
+        {
+          "name": "Content",
+          "kind": "fun",
+          "line": 30,
+          "container": "SupportTab",
+          "modifiers": [
+            "override"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/theme/Color.kt",
+      "language": "kotlin",
+      "lines": 94,
+      "imports": [
+        "androidx.compose.ui.graphics.Color",
+        "androidx.compose.ui.unit.Dp",
+        "androidx.compose.ui.unit.dp"
+      ],
+      "symbols": [
+        {
+          "name": "DevSpaceColors",
+          "kind": "object",
+          "line": 14
+        },
+        {
+          "name": "DevSpaceLoginBrand",
+          "kind": "object",
+          "line": 73
+        }
+      ]
+    },
+    {
+      "path": "shared/src/commonMain/kotlin/org/example/project/presentation/theme/Theme.kt",
+      "language": "kotlin",
+      "lines": 52,
+      "imports": [
+        "androidx.compose.foundation.isSystemInDarkTheme",
+        "androidx.compose.material3.MaterialTheme",
+        "androidx.compose.material3.darkColorScheme",
+        "androidx.compose.material3.lightColorScheme",
+        "androidx.compose.runtime.Composable"
+      ],
+      "symbols": [
+        {
+          "name": "DevSpaceTheme",
+          "kind": "fun",
+          "line": 38
         }
       ]
     },
     {
       "path": "shared/src/commonTest/kotlin/org/example/project/SharedCommonTest.kt",
       "language": "kotlin",
-      "lines": 12,
+      "lines": 39,
       "imports": [
+        "androidx.compose.ui.unit.dp",
+        "kotlin.math.abs",
         "kotlin.test.Test",
-        "kotlin.test.assertEquals"
+        "kotlin.test.assertEquals",
+        "kotlin.test.assertTrue",
+        "org.example.project.presentation.components.calculateBrandPadding"
       ],
       "symbols": [
         {
           "name": "SharedCommonTest",
           "kind": "class",
-          "line": 6
+          "line": 10
         },
         {
           "name": "example",
           "kind": "fun",
-          "line": 9,
+          "line": 13,
           "container": "SharedCommonTest"
         }
       ]
     },
     {
-      "path": "shared/src/jsMain/kotlin/org/example/project/Platform.js.kt",
+      "path": "shared/src/commonTest/kotlin/org/example/project/domain/usecase/RegisterUseCaseTest.kt",
       "language": "kotlin",
-      "lines": 14,
+      "lines": 38,
       "imports": [
-        "web.navigator.navigator"
+        "kotlinx.coroutines.test.runTest",
+        "org.example.project.domain.repository.AuthRepository",
+        "kotlin.test.Test",
+        "kotlin.test.assertTrue"
       ],
       "symbols": [
         {
-          "name": "JsPlatform",
+          "name": "RegisterUseCaseTest",
           "kind": "class",
-          "line": 5
+          "line": 8
+        },
+        {
+          "name": "login",
+          "kind": "fun",
+          "line": 11,
+          "container": "RegisterUseCaseTest",
+          "modifiers": [
+            "override",
+            "suspend"
+          ]
+        },
+        {
+          "name": "register",
+          "kind": "fun",
+          "line": 12,
+          "container": "RegisterUseCaseTest",
+          "modifiers": [
+            "override",
+            "suspend"
+          ]
+        },
+        {
+          "name": "testValidEmailFormat_ShouldSucceed",
+          "kind": "fun",
+          "line": 18,
+          "container": "RegisterUseCaseTest"
+        },
+        {
+          "name": "testInvalidEmailFormat_ShouldFail",
+          "kind": "fun",
+          "line": 24,
+          "container": "RegisterUseCaseTest"
+        },
+        {
+          "name": "testEmptyFields_ShouldFail",
+          "kind": "fun",
+          "line": 34,
+          "container": "RegisterUseCaseTest"
         }
       ]
     },
     {
-      "path": "shared/src/jvmMain/kotlin/org/example/project/Platform.jvm.kt",
+      "path": "shared/src/commonTest/kotlin/org/example/project/presentation/login/LoginViewModelTest.kt",
       "language": "kotlin",
-      "lines": 7,
-      "imports": [],
+      "lines": 195,
+      "imports": [
+        "kotlinx.coroutines.Dispatchers",
+        "kotlinx.coroutines.ExperimentalCoroutinesApi",
+        "kotlinx.coroutines.test.StandardTestDispatcher",
+        "kotlinx.coroutines.test.resetMain",
+        "kotlinx.coroutines.test.runTest",
+        "kotlinx.coroutines.test.setMain",
+        "org.example.project.domain.repository.AuthRepository",
+        "org.example.project.domain.usecase.LoginWithEmailUseCase",
+        "org.example.project.domain.usecase.ValidateEmailUseCase",
+        "org.example.project.domain.usecase.ValidatePasswordUseCase",
+        "kotlin.test.AfterTest",
+        "kotlin.test.BeforeTest",
+        "kotlin.test.Test",
+        "kotlin.test.assertEquals",
+        "kotlin.test.assertNull",
+        "kotlin.test.assertTrue"
+      ],
       "symbols": [
         {
-          "name": "JVMPlatform",
+          "name": "LoginViewModelTest",
           "kind": "class",
-          "line": 3
+          "line": 21
+        },
+        {
+          "name": "setup",
+          "kind": "fun",
+          "line": 26,
+          "container": "LoginViewModelTest"
+        },
+        {
+          "name": "tearDown",
+          "kind": "fun",
+          "line": 31,
+          "container": "LoginViewModelTest"
+        },
+        {
+          "name": "FakeAuthRepository",
+          "kind": "class",
+          "line": 189
+        },
+        {
+          "name": "login",
+          "kind": "fun",
+          "line": 193,
+          "container": "FakeAuthRepository",
+          "modifiers": [
+            "override",
+            "suspend"
+          ]
+        },
+        {
+          "name": "register",
+          "kind": "fun",
+          "line": 194,
+          "container": "FakeAuthRepository",
+          "modifiers": [
+            "override",
+            "suspend"
+          ]
         }
       ]
     },
@@ -255,31 +1912,35 @@
       ]
     },
     {
-      "path": "shared/src/wasmJsMain/kotlin/org/example/project/Platform.wasmJs.kt",
-      "language": "kotlin",
-      "lines": 7,
-      "imports": [],
-      "symbols": [
-        {
-          "name": "WasmPlatform",
-          "kind": "class",
-          "line": 3
-        }
-      ]
-    },
-    {
       "path": "webApp/src/webMain/kotlin/org/example/project/main.kt",
       "language": "kotlin",
-      "lines": 11,
+      "lines": 26,
       "imports": [
         "androidx.compose.ui.ExperimentalComposeUiApi",
+        "org.example.project.presentation.App",
         "androidx.compose.ui.window.ComposeViewport"
       ],
       "symbols": [
         {
           "name": "main",
           "kind": "fun",
-          "line": 7
+          "line": 8
+        },
+        {
+          "name": "setupDependencyInjection",
+          "kind": "fun",
+          "line": 13,
+          "modifiers": [
+            "private"
+          ]
+        },
+        {
+          "name": "launchWebApp",
+          "kind": "fun",
+          "line": 22,
+          "modifiers": [
+            "private"
+          ]
         }
       ]
     }

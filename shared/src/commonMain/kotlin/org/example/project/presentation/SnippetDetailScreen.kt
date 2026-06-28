@@ -29,7 +29,7 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 
 /* ---------------------------------------------------------
  * MODELOS
@@ -88,7 +88,7 @@ class SnippetDetailTab(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DevSpaceColors.background)
+                .background(CodeNestColors.background)
                 .verticalScroll(rememberScrollState())
         ) {
             HeaderBar(
@@ -138,22 +138,22 @@ private fun HeaderBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(DevSpaceColors.background.copy(alpha = 0.9f))
-            .border(width = 1.dp, color = DevSpaceColors.outlineVariant.copy(alpha = 0.5f))
+            .background(CodeNestColors.background.copy(alpha = 0.9f))
+            .border(width = 1.dp, color = CodeNestColors.outlineVariant.copy(alpha = 0.5f))
             .padding(horizontal = 32.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack, modifier = Modifier.padding(end = 16.dp)) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Regresar", tint = DevSpaceColors.onSurface)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Regresar", tint = CodeNestColors.onSurface)
             }
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     snippet.breadcrumb.forEachIndexed { index, crumb ->
                         Text(
                             text = crumb,
-                            color = if (index == snippet.breadcrumb.lastIndex) DevSpaceColors.onSurface else DevSpaceColors.onSurfaceVariant,
+                            color = if (index == snippet.breadcrumb.lastIndex) CodeNestColors.onSurface else CodeNestColors.onSurfaceVariant,
                             fontSize = 12.sp,
                             fontFamily = FontFamily.Monospace
                         )
@@ -161,7 +161,7 @@ private fun HeaderBar(
                             Icon(
                                 Icons.Default.ChevronRight,
                                 contentDescription = null,
-                                tint = DevSpaceColors.onSurfaceVariant,
+                                tint = CodeNestColors.onSurfaceVariant,
                                 modifier = Modifier.size(14.dp).padding(horizontal = 4.dp)
                             )
                         }
@@ -173,14 +173,14 @@ private fun HeaderBar(
                     OutlinedTextField(
                         value = snippet.title,
                         onValueChange = { onSnippetChange(snippet.copy(title = it)) },
-                        textStyle = TextStyle(color = DevSpaceColors.onSurface, fontSize = 24.sp, fontWeight = FontWeight.Bold),
+                        textStyle = TextStyle(color = CodeNestColors.onSurface, fontSize = 24.sp, fontWeight = FontWeight.Bold),
                         modifier = Modifier.fillMaxWidth(0.5f),
                         placeholder = { Text("Título de la receta") }
                     )
                 } else {
                     Text(
                         text = snippet.title,
-                        color = DevSpaceColors.onSurface,
+                        color = CodeNestColors.onSurface,
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -196,7 +196,7 @@ private fun HeaderBar(
             )
             GhostButton(icon = Icons.Default.Share, label = "Compartir", onClick = onShare)
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = DevSpaceColors.onSurfaceVariant)
+                Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = CodeNestColors.onSurfaceVariant)
             }
         }
     }
@@ -207,8 +207,8 @@ private fun GhostButton(icon: androidx.compose.ui.graphics.vector.ImageVector, l
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(4.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, DevSpaceColors.outlineVariant),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = DevSpaceColors.onSurface)
+        border = androidx.compose.foundation.BorderStroke(1.dp, CodeNestColors.outlineVariant),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = CodeNestColors.onSurface)
     ) {
         Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(8.dp))
@@ -238,9 +238,9 @@ private fun TagsAndMeta(snippet: SnippetDetail, isEditing: Boolean, onSnippetCha
             } else {
                 snippet.tags.forEach { tag ->
                     val (bg, fg) = when {
-                        tag.contains("Python") -> DevSpaceColors.tertiary.copy(alpha = 0.15f) to DevSpaceColors.tertiary
-                        tag.contains("Tkinter") -> DevSpaceColors.primary.copy(alpha = 0.10f) to DevSpaceColors.primary
-                        else -> DevSpaceColors.secondary.copy(alpha = 0.10f) to DevSpaceColors.secondary
+                        tag.contains("Python") -> CodeNestColors.tertiary.copy(alpha = 0.15f) to CodeNestColors.tertiary
+                        tag.contains("Tkinter") -> CodeNestColors.primary.copy(alpha = 0.10f) to CodeNestColors.primary
+                        else -> CodeNestColors.secondary.copy(alpha = 0.10f) to CodeNestColors.secondary
                     }
                     Text(
                         text = tag,
@@ -267,9 +267,9 @@ private fun TagsAndMeta(snippet: SnippetDetail, isEditing: Boolean, onSnippetCha
 @Composable
 private fun MetaItem(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(icon, contentDescription = null, tint = DevSpaceColors.onSurfaceVariant, modifier = Modifier.size(16.dp))
+        Icon(icon, contentDescription = null, tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(16.dp))
         Spacer(Modifier.width(4.dp))
-        Text(text, color = DevSpaceColors.onSurfaceVariant, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+        Text(text, color = CodeNestColors.onSurfaceVariant, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
     }
 }
 
@@ -282,37 +282,37 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
             .fillMaxWidth()
             .heightIn(min = 500.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(DevSpaceColors.GlassPanel)
-            .border(1.dp, DevSpaceColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+            .background(CodeNestColors.GlassPanel)
+            .border(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
     ) {
         // Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(DevSpaceColors.surfaceContainerHighest)
+                .background(CodeNestColors.surfaceContainerHighest)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Code, contentDescription = null, tint = DevSpaceColors.primary, modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.Code, contentDescription = null, tint = CodeNestColors.primary, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
                 if (isEditing) {
                     BasicTextField(
                         value = snippet.fileName,
                         onValueChange = { onSnippetChange(snippet.copy(fileName = it)) },
-                        textStyle = TextStyle(color = DevSpaceColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                        textStyle = TextStyle(color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
                     )
                 } else {
-                    Text(snippet.fileName, color = DevSpaceColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                    Text(snippet.fileName, color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
                 }
             }
             if (!isEditing) {
                 Button(
                     onClick = { copied = true },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (copied) DevSpaceColors.secondary else DevSpaceColors.primary,
-                        contentColor = if (copied) DevSpaceColors.onSecondary else DevSpaceColors.onPrimary
+                        containerColor = if (copied) CodeNestColors.secondary else CodeNestColors.primary,
+                        contentColor = if (copied) CodeNestColors.onSecondary else CodeNestColors.onPrimary
                     ),
                     shape = RoundedCornerShape(4.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
@@ -333,7 +333,7 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
                 value = snippet.rawCode,
                 onValueChange = { onSnippetChange(snippet.withRawCode(it)) },
                 modifier = Modifier.fillMaxWidth().weight(1f).padding(8.dp),
-                textStyle = TextStyle(fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = DevSpaceColors.onSurface),
+                textStyle = TextStyle(fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = CodeNestColors.onSurface),
                 placeholder = { Text("Pega o escribe tu código aquí...", fontFamily = FontFamily.Monospace) },
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Transparent,
@@ -345,14 +345,14 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
             SelectionContainer {
                 Column(
                     modifier = Modifier
-                        .background(DevSpaceColors.codeBg)
+                        .background(CodeNestColors.codeBg)
                         .padding(vertical = 16.dp)
                 ) {
                     snippet.code.forEach { line ->
                         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
                             Text(
                                 text = line.number.toString(),
-                                color = DevSpaceColors.tertiary.copy(alpha = 0.7f),
+                                color = CodeNestColors.tertiary.copy(alpha = 0.7f),
                                 fontSize = 14.sp,
                                 fontFamily = FontFamily.Monospace,
                                 modifier = Modifier.width(40.dp)
@@ -393,7 +393,7 @@ private fun DescriptionCard(snippet: SnippetDetail, isEditing: Boolean, onSnippe
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(DevSpaceColors.GlassPanel)
+            .background(CodeNestColors.GlassPanel)
             .padding(16.dp)
     ) {
         Row(
@@ -401,9 +401,9 @@ private fun DescriptionCard(snippet: SnippetDetail, isEditing: Boolean, onSnippe
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            SectionHeader(icon = Icons.Default.Info, title = "Sobre esta Receta", tint = DevSpaceColors.primary)
+            SectionHeader(icon = Icons.Default.Info, title = "Sobre esta Receta", tint = CodeNestColors.primary)
             IconButton(onClick = { /* TODO: IA action */ }, modifier = Modifier.size(24.dp)) {
-                Icon(Icons.Default.AutoAwesome, contentDescription = "Generar con IA", tint = DevSpaceColors.primary)
+                Icon(Icons.Default.AutoAwesome, contentDescription = "Generar con IA", tint = CodeNestColors.primary)
             }
         }
         
@@ -426,7 +426,7 @@ private fun DescriptionCard(snippet: SnippetDetail, isEditing: Boolean, onSnippe
         } else {
             if (snippet.description.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
-                Text(snippet.description, color = DevSpaceColors.onSurfaceVariant, fontSize = 14.sp, lineHeight = 20.sp)
+                Text(snippet.description, color = CodeNestColors.onSurfaceVariant, fontSize = 14.sp, lineHeight = 20.sp)
             }
             
             if (snippet.dependencies.isNotEmpty()) {
@@ -435,12 +435,12 @@ private fun DescriptionCard(snippet: SnippetDetail, isEditing: Boolean, onSnippe
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(4.dp))
-                        .background(DevSpaceColors.surfaceContainer)
-                        .border(1.dp, DevSpaceColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
+                        .background(CodeNestColors.surfaceContainer)
+                        .border(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
                         .padding(8.dp)
                 ) {
-                    Text("Dependencias:", color = DevSpaceColors.tertiary, fontSize = 12.sp)
-                    Text(snippet.dependencies, color = DevSpaceColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                    Text("Dependencias:", color = CodeNestColors.tertiary, fontSize = 12.sp)
+                    Text(snippet.dependencies, color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
                 }
             }
         }
@@ -453,10 +453,10 @@ private fun EvidenceCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetCh
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(DevSpaceColors.GlassPanel)
+            .background(CodeNestColors.GlassPanel)
             .padding(16.dp)
     ) {
-        SectionHeader(icon = Icons.Default.Verified, title = "Evidencia", tint = DevSpaceColors.secondary)
+        SectionHeader(icon = Icons.Default.Verified, title = "Evidencia", tint = CodeNestColors.secondary)
         
         if (isEditing) {
             Spacer(Modifier.height(8.dp))
@@ -471,7 +471,7 @@ private fun EvidenceCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetCh
             Button(
                 onClick = { /* TODO: Seleccionar imagen */ },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = DevSpaceColors.surfaceContainerHigh)
+                colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.surfaceContainerHigh)
             ) {
                 Icon(Icons.Default.Upload, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
@@ -483,7 +483,7 @@ private fun EvidenceCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetCh
                 Spacer(Modifier.height(8.dp))
                 Text(
                     snippet.evidenceText,
-                    color = DevSpaceColors.onSurfaceVariant,
+                    color = CodeNestColors.onSurfaceVariant,
                     fontSize = 13.sp,
                     lineHeight = 18.sp
                 )
@@ -494,11 +494,11 @@ private fun EvidenceCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetCh
                         .fillMaxWidth()
                         .height(180.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(DevSpaceColors.surfaceContainerHigh)
-                        .border(1.dp, DevSpaceColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp)),
+                        .background(CodeNestColors.surfaceContainerHigh)
+                        .border(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Default.Image, contentDescription = null, tint = DevSpaceColors.onSurfaceVariant, modifier = Modifier.size(32.dp))
+                    Icon(Icons.Default.Image, contentDescription = null, tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(32.dp))
                 }
             }
         }
@@ -510,7 +510,7 @@ private fun SectionHeader(icon: androidx.compose.ui.graphics.vector.ImageVector,
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(8.dp))
-        Text(title, color = DevSpaceColors.onSurface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+        Text(title, color = CodeNestColors.onSurface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
     }
 }
 
