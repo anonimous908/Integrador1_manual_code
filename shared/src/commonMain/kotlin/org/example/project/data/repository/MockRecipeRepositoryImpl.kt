@@ -87,6 +87,138 @@ class MockRecipeRepositoryImpl : RecipeRepository {
                 "FROM cohort_items c",
                 "LEFT JOIN subscriptions s ON c.user_id = s.user_id"
             )
+        ),
+        SnippetCardData(
+            title = "Grupo A4",
+            languageTag = "Kotlin",
+            secondaryTag = "Android",
+            iconAccent = DevSpaceColors.primary,
+            activeLineIndex = 2,
+            footerLabel = "Component Preview",
+            footerIcon = Icons.Filled.Visibility,
+            codeLines = listOf(
+                "@Composable",
+                "fun Greeting(name: String) {",
+                "    Text(",
+                "        text = \"Hello \$name!\",",
+                "        modifier = Modifier.padding(24.dp)",
+                "    )",
+                "}"
+            )
+        ),
+        SnippetCardData(
+            title = "Grupo A5",
+            languageTag = "HTML",
+            secondaryTag = "Web",
+            iconAccent = DevSpaceColors.secondary,
+            activeLineIndex = 4,
+            footerLabel = "Browser",
+            footerIcon = Icons.Filled.Visibility,
+            codeLines = listOf(
+                "<!DOCTYPE html>",
+                "<html>",
+                "<head>",
+                "  <title>DevSpace App</title>",
+                "  <link rel=\"stylesheet\" href=\"styles.css\">",
+                "</head>",
+                "<body>",
+                "  <div id=\"root\"></div>",
+                "</body>",
+                "</html>"
+            )
+        ),
+        SnippetCardData(
+            title = "Grupo A6",
+            languageTag = "Bash",
+            secondaryTag = "Scripts",
+            iconAccent = DevSpaceColors.tertiary,
+            activeLineIndex = 1,
+            footerLabel = "Terminal",
+            footerIcon = Icons.Filled.Visibility,
+            showTerminalOutput = true,
+            terminalLines = listOf(
+                "$ ./deploy.sh",
+                "Building project...",
+                "Deploying to server...",
+                "Done!"
+            ),
+            codeLines = listOf(
+                "#!/bin/bash",
+                "echo \"Starting deployment...\"",
+                "npm run build",
+                "scp -r dist/* user@server:/var/www/html",
+                "echo \"Deployment complete!\""
+            )
+        ),
+        SnippetCardData(
+            title = "Grupo A7",
+            languageTag = "Swift",
+            secondaryTag = "iOS",
+            iconAccent = DevSpaceColors.primary,
+            activeLineIndex = 3,
+            footerLabel = "Simulator",
+            footerIcon = Icons.Filled.Visibility,
+            codeLines = listOf(
+                "import SwiftUI",
+                "",
+                "struct ContentView: View {",
+                "    var body: some View {",
+                "        Text(\"Hello, SwiftUI!\")",
+                "            .padding()",
+                "    }",
+                "}"
+            )
+        ),
+        SnippetCardData(
+            title = "Grupo A8",
+            languageTag = "Go",
+            secondaryTag = "Backend",
+            iconAccent = DevSpaceColors.secondary,
+            activeLineIndex = 4,
+            footerLabel = "Log",
+            footerIcon = Icons.Filled.Visibility,
+            codeLines = listOf(
+                "package main",
+                "",
+                "import \"fmt\"",
+                "",
+                "func main() {",
+                "    fmt.Println(\"Server listening on :8080\")",
+                "}"
+            )
+        ),
+        SnippetCardData(
+            title = "Grupo A9",
+            languageTag = "Rust",
+            secondaryTag = "Systems",
+            iconAccent = DevSpaceColors.tertiary,
+            activeLineIndex = 2,
+            footerLabel = "Console",
+            footerIcon = Icons.Filled.Visibility,
+            codeLines = listOf(
+                "fn main() {",
+                "    let msg = \"Safe and fast!\";",
+                "    println!(\"{}\", msg);",
+                "}"
+            )
+        ),
+        SnippetCardData(
+            title = "Grupo A10",
+            languageTag = "Docker",
+            secondaryTag = "DevOps",
+            iconAccent = DevSpaceColors.primary,
+            activeLineIndex = 3,
+            footerLabel = "Build",
+            footerIcon = Icons.Filled.Visibility,
+            codeLines = listOf(
+                "FROM node:18-alpine",
+                "WORKDIR /app",
+                "COPY package*.json ./",
+                "RUN npm install",
+                "COPY . .",
+                "EXPOSE 3000",
+                "CMD [\"npm\", \"start\"]"
+            )
         )
     )
 
