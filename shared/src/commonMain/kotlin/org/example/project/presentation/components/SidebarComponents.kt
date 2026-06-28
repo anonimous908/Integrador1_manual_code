@@ -24,10 +24,10 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 
 @Composable
-fun DevSpaceSidebar(
+fun CodeNestSidebar(
     tabNavigator: TabNavigator,
     email: String,
     onLogout: () -> Unit,
@@ -37,8 +37,8 @@ fun DevSpaceSidebar(
         modifier = Modifier
             .width(260.dp)
             .fillMaxHeight()
-            .background(DevSpaceColors.surfaceContainerLow)
-            .border(1.dp, DevSpaceColors.outlineVariant.copy(alpha = 0.3f))
+            .background(CodeNestColors.surfaceContainerLow)
+            .border(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.3f))
             .padding(vertical = 16.dp, horizontal = 12.dp)
     ) {
         // Logo and Brand
@@ -56,8 +56,8 @@ fun DevSpaceSidebar(
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(text = stringResource(Res.string.app_name), color = DevSpaceColors.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(text = stringResource(Res.string.app_version), color = DevSpaceColors.onSurfaceVariant, fontSize = 12.sp)
+                Text(text = stringResource(Res.string.app_name), color = CodeNestColors.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = stringResource(Res.string.app_version), color = CodeNestColors.onSurfaceVariant, fontSize = 12.sp)
             }
         }
 
@@ -70,8 +70,8 @@ fun DevSpaceSidebar(
                 .height(44.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = DevSpaceColors.primary,
-                contentColor = DevSpaceColors.onPrimaryContainer
+                containerColor = CodeNestColors.primary,
+                contentColor = CodeNestColors.onPrimaryContainer
             )
         ) {
             Icon(Icons.Default.Add, contentDescription = "New", modifier = Modifier.size(18.dp))
@@ -89,7 +89,7 @@ fun DevSpaceSidebar(
 
         // Divider
         HorizontalDivider(
-            color = DevSpaceColors.outlineVariant.copy(alpha = 0.5f),
+            color = CodeNestColors.outlineVariant.copy(alpha = 0.5f),
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
@@ -111,15 +111,15 @@ fun DevSpaceSidebar(
             Box(
                 modifier = Modifier
                     .size(36.dp)
-                    .background(DevSpaceColors.surfaceContainerHigh, CircleShape),
+                    .background(CodeNestColors.surfaceContainerHigh, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Person, contentDescription = "User Avatar", tint = DevSpaceColors.onSurfaceVariant, modifier = Modifier.size(24.dp))
+                Icon(Icons.Default.Person, contentDescription = "User Avatar", tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(24.dp))
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 val name = email.substringBefore("@").replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                Text(text = name, color = DevSpaceColors.onSurface, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+                Text(text = name, color = CodeNestColors.onSurface, fontWeight = FontWeight.Medium, fontSize = 14.sp)
                 Text(text = stringResource(Res.string.logout), color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
             }
             Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Logout", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(20.dp))
@@ -145,8 +145,8 @@ private fun SidebarItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isSelected) DevSpaceColors.primary else Color.Transparent
-    val contentColor = if (isSelected) DevSpaceColors.onPrimaryContainer else DevSpaceColors.onSurfaceVariant
+    val backgroundColor = if (isSelected) CodeNestColors.primary else Color.Transparent
+    val contentColor = if (isSelected) CodeNestColors.onPrimaryContainer else CodeNestColors.onSurfaceVariant
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

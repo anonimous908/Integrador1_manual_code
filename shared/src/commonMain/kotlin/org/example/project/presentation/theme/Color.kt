@@ -5,13 +5,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /*
- * Colores de la pantalla DevSpaceLogin.
+ * Colores de la pantalla CodeNestLogin.
  * Extraídos acá para mantener el código de UI limpio
  * y poder reutilizarlos si después agregamos más pantallas.
  *
  * Basados en los colores del tailwind.config del proyecto original.
  */
-object DevSpaceColors {
+object CodeNestColors {
     val background = Color(0xFF131313)
     val onBackground = Color(0xFFE5E2E1)
     val surface = Color(0xFF131313)
@@ -70,7 +70,7 @@ object DevSpaceColors {
 }
 
 /** Dimensiones del brand (logo + "Ztrene Studios") en la esquina inferior derecha. */
-object DevSpaceLoginBrand {
+object CodeNestLoginBrand {
     /** Tamaño base del logo en dp. Se multiplica por scaleFactor. */
     val logoSize: Dp = 56.dp
 

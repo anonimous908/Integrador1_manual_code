@@ -30,7 +30,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 import org.example.project.presentation.components.SnippetCard
 import org.example.project.domain.model.SnippetCardData
 import org.example.project.domain.service.SyntaxHighlighter
@@ -58,7 +58,7 @@ class AISearchScreen : Screen {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DevSpaceColors.background)
+                .background(CodeNestColors.background)
                 .padding(24.dp)
                 .verticalScroll(scrollState)
         ) {
@@ -71,20 +71,20 @@ class AISearchScreen : Screen {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Regresar",
-                        tint = DevSpaceColors.onSurface
+                        tint = CodeNestColors.onSurface
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.Psychology,
                     contentDescription = null,
-                    tint = DevSpaceColors.primary,
+                    tint = CodeNestColors.primary,
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Búsqueda Semántica con IA (DeepSeek)",
-                    color = DevSpaceColors.onSurface,
+                    color = CodeNestColors.onSurface,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -93,7 +93,7 @@ class AISearchScreen : Screen {
             // Explicación de la herramienta
             Text(
                 text = "Describe lo que necesitas en lenguaje natural. La IA buscará en tus recetas locales, adaptará fragmentos o sugerirá consultas.",
-                color = DevSpaceColors.onSurfaceVariant,
+                color = CodeNestColors.onSurfaceVariant,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -104,18 +104,18 @@ class AISearchScreen : Screen {
                     .fillMaxWidth()
                     .height(48.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(DevSpaceColors.surfaceContainerLowest)
-                    .border(width = 1.dp, color = DevSpaceColors.outlineVariant, shape = RoundedCornerShape(8.dp))
+                    .background(CodeNestColors.surfaceContainerLowest)
+                    .border(width = 1.dp, color = CodeNestColors.outlineVariant, shape = RoundedCornerShape(8.dp))
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Default.Search, contentDescription = null, tint = DevSpaceColors.outline)
+                Icon(Icons.Default.Search, contentDescription = null, tint = CodeNestColors.outline)
                 Spacer(modifier = Modifier.width(12.dp))
                 Box(modifier = Modifier.weight(1f)) {
                     if (query.isEmpty()) {
                         Text(
                             "Escribe tu petición (ej. 'botón en typescript' o 'cohortes')...",
-                            color = DevSpaceColors.outline,
+                            color = CodeNestColors.outline,
                             fontSize = 15.sp
                         )
                     }
@@ -123,8 +123,8 @@ class AISearchScreen : Screen {
                         value = query,
                         onValueChange = { query = it },
                         singleLine = true,
-                        textStyle = TextStyle(color = DevSpaceColors.onSurface, fontSize = 15.sp),
-                        cursorBrush = SolidColor(DevSpaceColors.primary),
+                        textStyle = TextStyle(color = CodeNestColors.onSurface, fontSize = 15.sp),
+                        cursorBrush = SolidColor(CodeNestColors.primary),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -145,7 +145,7 @@ class AISearchScreen : Screen {
                                     title = "Sugerencia para: $query",
                                     languageTag = "AI Output",
                                     secondaryTag = "Simulado",
-                                    iconAccent = DevSpaceColors.primaryContainer,
+                                    iconAccent = CodeNestColors.primaryContainer,
                                     activeLineIndex = 2,
                                     footerLabel = "Generado por DeepSeek",
                                     footerIcon = Icons.Filled.Visibility,
@@ -160,12 +160,12 @@ class AISearchScreen : Screen {
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = DevSpaceColors.primary),
+                    colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.primary),
                     shape = RoundedCornerShape(6.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     enabled = !isSearching && query.isNotBlank()
                 ) {
-                    Text("Consultar IA", color = DevSpaceColors.onPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("Consultar IA", color = CodeNestColors.onPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
             }
 
@@ -178,11 +178,11 @@ class AISearchScreen : Screen {
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator(color = DevSpaceColors.primary)
+                        CircularProgressIndicator(color = CodeNestColors.primary)
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             "Procesando semántica con DeepSeek API...",
-                            color = DevSpaceColors.onSurfaceVariant,
+                            color = CodeNestColors.onSurfaceVariant,
                             fontSize = 14.sp
                         )
                     }
@@ -194,21 +194,21 @@ class AISearchScreen : Screen {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = DevSpaceColors.surfaceContainer.copy(alpha = 0.5f)
+                            containerColor = CodeNestColors.surfaceContainer.copy(alpha = 0.5f)
                         ),
                         modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = if (hasMatch) "✨ Sugerencia Encontrada" else "⚠️ Sin Coincidencias Adaptables",
-                                color = if (hasMatch) DevSpaceColors.secondary else DevSpaceColors.error,
+                                color = if (hasMatch) CodeNestColors.secondary else CodeNestColors.error,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             Text(
                                 text = aiExplanation,
-                                color = DevSpaceColors.onSurface,
+                                color = CodeNestColors.onSurface,
                                 fontSize = 14.sp,
                                 lineHeight = 20.sp
                             )
@@ -218,7 +218,7 @@ class AISearchScreen : Screen {
                     suggestedSnippet?.let { snippet ->
                         Text(
                             text = "Código Sugerido:",
-                            color = DevSpaceColors.onSurface,
+                            color = CodeNestColors.onSurface,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(bottom = 12.dp)
@@ -245,12 +245,12 @@ class AISearchScreen : Screen {
                                         .align(Alignment.TopCenter)
                                         .padding(top = 16.dp)
                                         .clip(RoundedCornerShape(4.dp))
-                                        .background(DevSpaceColors.secondaryContainer)
+                                        .background(CodeNestColors.secondaryContainer)
                                         .padding(horizontal = 16.dp, vertical = 8.dp)
                                 ) {
                                     Text(
                                         "¡Código copiado al portapapeles!",
-                                        color = DevSpaceColors.onSecondaryContainer,
+                                        color = CodeNestColors.onSecondaryContainer,
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.Bold
                                     )
