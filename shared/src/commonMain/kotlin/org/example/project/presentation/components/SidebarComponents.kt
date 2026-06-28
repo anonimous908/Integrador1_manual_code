@@ -30,7 +30,8 @@ import org.example.project.presentation.theme.DevSpaceColors
 fun DevSpaceSidebar(
     tabNavigator: TabNavigator,
     email: String,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNewSnippet: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -62,7 +63,7 @@ fun DevSpaceSidebar(
 
         // New Snippet Button
         Button(
-            onClick = { /* TODO */ },
+            onClick = onNewSnippet,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)

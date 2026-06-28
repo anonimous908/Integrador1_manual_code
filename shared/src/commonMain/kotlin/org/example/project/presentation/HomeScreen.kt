@@ -30,7 +30,8 @@ class HomeScreen(val email: String) : Screen {
                 DevSpaceSidebar(
                     tabNavigator = tabNavigator,
                     email = email,
-                    onLogout = { navigator.replace(DevSpaceLoginScreen()) }
+                    onLogout = { navigator.replace(DevSpaceLoginScreen()) },
+                    onNewSnippet = { tabNavigator.current = SnippetDetailTab(email) }
                 )
 
                 // Main Content Area
