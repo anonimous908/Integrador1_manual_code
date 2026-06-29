@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import org.example.project.presentation.theme.DevSpaceColors
-import org.example.project.presentation.components.DevSpaceSidebar
+import org.example.project.presentation.theme.CodeNestColors
+import org.example.project.presentation.components.CodeNestSidebar
 import org.example.project.presentation.components.WelcomeContent
 import org.example.project.presentation.components.PlaceholderContent
 import cafe.adriel.voyager.navigator.tab.CurrentTab
@@ -24,13 +24,14 @@ class HomeScreen(val email: String) : Screen {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(DevSpaceColors.background)
+                    .background(CodeNestColors.background)
             ) {
                 // Sidebar
-                DevSpaceSidebar(
+                CodeNestSidebar(
                     tabNavigator = tabNavigator,
                     email = email,
-                    onLogout = { navigator.replace(DevSpaceLoginScreen()) }
+                    onLogout = { navigator.replace(CodeNestLoginScreen()) },
+                    onNewSnippet = { tabNavigator.current = SnippetDetailTab(email) }
                 )
 
                 // Main Content Area
@@ -38,7 +39,7 @@ class HomeScreen(val email: String) : Screen {
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .background(DevSpaceColors.background)
+                        .background(CodeNestColors.background)
                 ) {
                     CurrentTab()
                 }

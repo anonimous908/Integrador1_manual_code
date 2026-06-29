@@ -35,7 +35,7 @@ import org.example.project.domain.repository.RecipeRepository
 import org.example.project.domain.service.SyntaxHighlighter
 import org.example.project.presentation.AISearchScreen
 import org.example.project.presentation.components.SnippetCard
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import kotlinproject.shared.generated.resources.*
@@ -86,7 +86,7 @@ data class MyRecipesTab(val email: String) : Tab {
             }
         }
 
-        Box(modifier = Modifier.fillMaxSize().background(DevSpaceColors.background)) {
+        Box(modifier = Modifier.fillMaxSize().background(CodeNestColors.background)) {
             Column(modifier = Modifier.fillMaxSize()) {
                 // TopNavBar
                 TopNavBar(
@@ -118,12 +118,12 @@ data class MyRecipesTab(val email: String) : Tab {
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 32.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(DevSpaceColors.secondaryContainer)
+                        .background(CodeNestColors.secondaryContainer)
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
                         "¡Código copiado al portapapeles!",
-                        color = DevSpaceColors.onSecondaryContainer,
+                        color = CodeNestColors.onSecondaryContainer,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -143,16 +143,16 @@ private fun TopNavBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .background(DevSpaceColors.surfaceContainer)
-            .border(width = 1.dp, color = DevSpaceColors.outlineVariant)
+            .background(CodeNestColors.surfaceContainer)
+            .border(width = 1.dp, color = CodeNestColors.outlineVariant)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Filled.Menu, contentDescription = "Menu", tint = DevSpaceColors.onSurfaceVariant)
+        Icon(Icons.Filled.Menu, contentDescription = "Menu", tint = CodeNestColors.onSurfaceVariant)
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             "SnippetVault",
-            color = DevSpaceColors.primary,
+            color = CodeNestColors.primary,
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp
         )
@@ -164,18 +164,18 @@ private fun TopNavBar(
                 .weight(1f)
                 .heightIn(min = 36.dp)
                 .clip(RoundedCornerShape(6.dp))
-                .background(DevSpaceColors.surfaceContainerLowest)
-                .border(width = 1.dp, color = DevSpaceColors.outlineVariant, shape = RoundedCornerShape(6.dp))
+                .background(CodeNestColors.surfaceContainerLowest)
+                .border(width = 1.dp, color = CodeNestColors.outlineVariant, shape = RoundedCornerShape(6.dp))
                 .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Filled.Search, contentDescription = null, tint = DevSpaceColors.outline)
+            Icon(Icons.Filled.Search, contentDescription = null, tint = CodeNestColors.outline)
             Spacer(modifier = Modifier.width(8.dp))
             Box(modifier = Modifier.weight(1f)) {
                 if (query.isEmpty()) {
                     Text(
                         "Search recipes, tags, or code...",
-                        color = DevSpaceColors.outline,
+                        color = CodeNestColors.outline,
                         fontSize = 14.sp
                     )
                 }
@@ -183,8 +183,8 @@ private fun TopNavBar(
                     value = query,
                     onValueChange = onQueryChange,
                     singleLine = true,
-                    textStyle = TextStyle(color = DevSpaceColors.onSurface, fontSize = 14.sp),
-                    cursorBrush = SolidColor(DevSpaceColors.primary),
+                    textStyle = TextStyle(color = CodeNestColors.onSurface, fontSize = 14.sp),
+                    cursorBrush = SolidColor(CodeNestColors.primary),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -196,15 +196,15 @@ private fun TopNavBar(
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(6.dp))
-                .background(DevSpaceColors.surfaceContainerHighest)
-                .border(width = 1.dp, color = DevSpaceColors.outlineVariant, shape = RoundedCornerShape(6.dp))
+                .background(CodeNestColors.surfaceContainerHighest)
+                .border(width = 1.dp, color = CodeNestColors.outlineVariant, shape = RoundedCornerShape(6.dp))
                 .clickable { onAISearchClick() }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Filled.Psychology, contentDescription = null, tint = DevSpaceColors.primary)
+            Icon(Icons.Filled.Psychology, contentDescription = null, tint = CodeNestColors.primary)
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Buscar con IA", color = DevSpaceColors.primary, fontSize = 12.sp)
+            Text("Buscar con IA", color = CodeNestColors.primary, fontSize = 12.sp)
         }
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -226,14 +226,14 @@ private fun IconButtonSlot(
             .clickable { }
             .padding(8.dp)
     ) {
-        Icon(icon, contentDescription = null, tint = DevSpaceColors.onSurfaceVariant)
+        Icon(icon, contentDescription = null, tint = CodeNestColors.onSurfaceVariant)
         if (hasDot) {
             Box(
                 modifier = Modifier
                     .size(6.dp)
                     .align(Alignment.TopEnd)
                     .clip(CircleShape)
-                    .background(DevSpaceColors.primary)
+                    .background(CodeNestColors.primary)
             )
         }
     }
@@ -259,14 +259,14 @@ private fun ContentCanvas(
             Column {
                 Text(
                     "My Recipes",
-                    color = DevSpaceColors.onSurface,
+                    color = CodeNestColors.onSurface,
                     fontWeight = FontWeight.Bold,
                     fontSize = 32.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     "Manage and organize your personal code snippets.",
-                    color = DevSpaceColors.onSurfaceVariant,
+                    color = CodeNestColors.onSurfaceVariant,
                     fontSize = 14.sp
                 )
             }
@@ -275,32 +275,32 @@ private fun ContentCanvas(
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(DevSpaceColors.surfaceContainerLowest)
-                        .border(1.dp, DevSpaceColors.outlineVariant, RoundedCornerShape(6.dp))
+                        .background(CodeNestColors.surfaceContainerLowest)
+                        .border(1.dp, CodeNestColors.outlineVariant, RoundedCornerShape(6.dp))
                         .padding(4.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(4.dp))
-                            .background(DevSpaceColors.surfaceContainerHighest)
+                            .background(CodeNestColors.surfaceContainerHighest)
                             .padding(horizontal = 10.dp, vertical = 4.dp)
-                    ) { Text("Grid", color = DevSpaceColors.onSurface, fontSize = 12.sp) }
+                    ) { Text("Grid", color = CodeNestColors.onSurface, fontSize = 12.sp) }
                     Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)) {
-                        Text("List", color = DevSpaceColors.onSurfaceVariant, fontSize = 12.sp)
+                        Text("List", color = CodeNestColors.onSurfaceVariant, fontSize = 12.sp)
                     }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .border(1.dp, DevSpaceColors.outlineVariant, RoundedCornerShape(6.dp))
+                        .border(1.dp, CodeNestColors.outlineVariant, RoundedCornerShape(6.dp))
                         .clickable { }
                         .padding(horizontal = 10.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Filled.FilterList, contentDescription = null, tint = DevSpaceColors.onSurface)
+                    Icon(Icons.Filled.FilterList, contentDescription = null, tint = CodeNestColors.onSurface)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Filter", color = DevSpaceColors.onSurface, fontSize = 12.sp)
+                    Text("Filter", color = CodeNestColors.onSurface, fontSize = 12.sp)
                 }
             }
         }
@@ -314,7 +314,7 @@ private fun ContentCanvas(
             ) {
                 Text(
                     "No se encontraron snippets para tu búsqueda.",
-                    color = DevSpaceColors.onSurfaceVariant,
+                    color = CodeNestColors.onSurfaceVariant,
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center
                 )
