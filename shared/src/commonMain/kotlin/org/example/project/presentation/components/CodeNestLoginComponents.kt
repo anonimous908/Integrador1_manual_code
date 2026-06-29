@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import org.example.project.presentation.login.LoginEvent
 import org.example.project.presentation.login.LoginState
 import org.example.project.presentation.login.LoginViewModel
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 import org.jetbrains.compose.resources.stringResource
 import kotlinproject.shared.generated.resources.Res
 import kotlinproject.shared.generated.resources.email_label
@@ -29,7 +29,7 @@ import kotlinproject.shared.generated.resources.password_label
 internal fun calculateBrandPadding(totalSize: Dp): Dp = maxOf(16.dp, totalSize * 0.03f)
 
 @Composable
-fun DevSpaceLoginForm(
+fun CodeNestLoginForm(
     viewModel: LoginViewModel,
     scaleFactor: Float,
     state: LoginState
@@ -45,13 +45,13 @@ fun DevSpaceLoginForm(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
         }
-        DevSpaceTextField(
+        CodeNestTextField(
             label = stringResource(Res.string.email_label),
             value = state.email,
             onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
             placeholder = stringResource(Res.string.email_placeholder),
             keyboardType = KeyboardType.Email,
-            trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Email", tint = DevSpaceColors.outline, modifier = Modifier.size(18.dp * scaleFactor)) },
+            trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Email", tint = CodeNestColors.outline, modifier = Modifier.size(18.dp * scaleFactor)) },
             error = state.emailError
         )
     }

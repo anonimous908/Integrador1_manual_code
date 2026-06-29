@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.domain.model.SnippetCardData
 import org.example.project.domain.service.SyntaxHighlighter
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 
 private val monoFont = FontFamily.Monospace
 
@@ -42,15 +42,15 @@ fun SnippetCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(DevSpaceColors.surfaceContainer.copy(alpha = 0.6f))
+            .background(CodeNestColors.surfaceContainer.copy(alpha = 0.6f))
             .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(8.dp))
     ) {
         // Header de la card
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(DevSpaceColors.surfaceContainerLow.copy(alpha = 0.5f))
-                .border(width = 0.5.dp, color = DevSpaceColors.outlineVariant.copy(alpha = 0.5f))
+                .background(CodeNestColors.surfaceContainerLow.copy(alpha = 0.5f))
+                .border(width = 0.5.dp, color = CodeNestColors.outlineVariant.copy(alpha = 0.5f))
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -58,12 +58,12 @@ fun SnippetCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Filled.Folder, contentDescription = null, tint = card.iconAccent, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(card.title, color = DevSpaceColors.onSurface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Text(card.title, color = CodeNestColors.onSurface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Tag(text = card.languageTag, accent = card.iconAccent)
                 Spacer(modifier = Modifier.width(4.dp))
-                Tag(text = card.secondaryTag, accent = DevSpaceColors.onSurfaceVariant)
+                Tag(text = card.secondaryTag, accent = CodeNestColors.onSurfaceVariant)
                 Spacer(modifier = Modifier.width(8.dp))
                 Box(
                     modifier = Modifier
@@ -75,7 +75,7 @@ fun SnippetCard(
                         }
                         .padding(2.dp)
                 ) {
-                    Icon(Icons.Filled.Share, contentDescription = "Compartir", tint = DevSpaceColors.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Filled.Share, contentDescription = "Compartir", tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(18.dp))
                 }
             }
         }
@@ -84,7 +84,7 @@ fun SnippetCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(DevSpaceColors.codeBg)
+                .background(CodeNestColors.codeBg)
                 .padding(8.dp)
         ) {
             card.codeLines.forEachIndexed { index, line ->
@@ -92,16 +92,16 @@ fun SnippetCard(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(if (isActive) DevSpaceColors.primary.copy(alpha = 0.05f) else Color.Transparent)
+                        .background(if (isActive) CodeNestColors.primary.copy(alpha = 0.05f) else Color.Transparent)
                 ) {
                     if (isActive) {
-                        Box(modifier = Modifier.width(2.dp).fillMaxHeight().background(DevSpaceColors.primary))
+                        Box(modifier = Modifier.width(2.dp).fillMaxHeight().background(CodeNestColors.primary))
                     } else {
                         Spacer(modifier = Modifier.width(2.dp))
                     }
                     Text(
                         text = "${index + 1}",
-                        color = DevSpaceColors.tertiaryContainer.copy(alpha = 0.5f),
+                        color = CodeNestColors.tertiaryContainer.copy(alpha = 0.5f),
                         fontFamily = monoFont,
                         fontSize = 13.sp,
                         modifier = Modifier.width(28.dp).padding(end = 8.dp),
@@ -121,20 +121,20 @@ fun SnippetCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(96.dp)
-                .background(DevSpaceColors.surfaceContainerLowest)
-                .border(width = 0.5.dp, color = DevSpaceColors.outlineVariant.copy(alpha = 0.5f))
+                .background(CodeNestColors.surfaceContainerLowest)
+                .border(width = 0.5.dp, color = CodeNestColors.outlineVariant.copy(alpha = 0.5f))
         ) {
             if (card.showTerminalOutput) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(DevSpaceColors.surfaceContainerLowest)
+                        .background(CodeNestColors.surfaceContainerLowest)
                         .padding(8.dp)
                 ) {
                     card.terminalLines.forEach { line ->
                         Text(
                             line,
-                            color = DevSpaceColors.secondary.copy(alpha = 0.7f),
+                            color = CodeNestColors.secondary.copy(alpha = 0.7f),
                             fontFamily = monoFont,
                             fontSize = 10.sp
                         )
@@ -147,7 +147,7 @@ fun SnippetCard(
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, DevSpaceColors.background.copy(alpha = 0.85f))
+                            colors = listOf(Color.Transparent, CodeNestColors.background.copy(alpha = 0.85f))
                         )
                     )
             )
@@ -160,9 +160,9 @@ fun SnippetCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(card.footerIcon, contentDescription = null, tint = DevSpaceColors.onSurface, modifier = Modifier.size(14.dp))
+                    Icon(card.footerIcon, contentDescription = null, tint = CodeNestColors.onSurface, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(card.footerLabel, color = DevSpaceColors.onSurface, fontSize = 11.sp)
+                    Text(card.footerLabel, color = CodeNestColors.onSurface, fontSize = 11.sp)
                 }
                 Box(
                     modifier = Modifier
@@ -174,7 +174,7 @@ fun SnippetCard(
                         }
                         .padding(2.dp)
                 ) {
-                    Icon(Icons.Filled.Share, contentDescription = "Compartir", tint = DevSpaceColors.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Filled.Share, contentDescription = "Compartir", tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(18.dp))
                 }
             }
         }

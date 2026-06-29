@@ -20,8 +20,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
-import org.example.project.presentation.theme.DevSpaceColors
-import org.example.project.presentation.components.DevSpaceTextField
+import org.example.project.presentation.theme.CodeNestColors
+import org.example.project.presentation.components.CodeNestTextField
 import org.example.project.presentation.components.PasswordTextField
 import org.example.project.presentation.components.EmailDivider
 import androidx.compose.ui.text.SpanStyle
@@ -43,7 +43,7 @@ import org.jetbrains.compose.resources.stringResource
 import kotlinproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.example.project.AppConfig
-import org.example.project.presentation.theme.DevSpaceLoginBrand
+import org.example.project.presentation.theme.CodeNestLoginBrand
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -53,9 +53,9 @@ import org.example.project.presentation.login.LoginEvent
 import org.example.project.presentation.login.LoginState
 
 import org.example.project.presentation.components.calculateBrandPadding
-import org.example.project.presentation.components.DevSpaceLoginForm
+import org.example.project.presentation.components.CodeNestLoginForm
 
-class DevSpaceLoginScreen : Screen {
+class CodeNestLoginScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -136,7 +136,7 @@ class DevSpaceLoginScreen : Screen {
                 Spacer(modifier = Modifier.height(8.dp * scaleFactor))
 
                 Text(
-                    text = "DevSpace",
+                    text = "CodeNest",
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
@@ -170,10 +170,10 @@ class DevSpaceLoginScreen : Screen {
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(4.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = DevSpaceColors.surfaceContainerHigh,
-                        contentColor = DevSpaceColors.onSurface
+                        containerColor = CodeNestColors.surfaceContainerHigh,
+                        contentColor = CodeNestColors.onSurface
                     ),
-                    border = BorderStroke(1.dp, DevSpaceColors.outlineVariant.copy(alpha = 0.5f))
+                    border = BorderStroke(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.5f))
                 ) {
                     Image(
                         painter = painterResource(Res.drawable.google_logo),
@@ -188,7 +188,7 @@ class DevSpaceLoginScreen : Screen {
                 
                 EmailDivider(text = stringResource(Res.string.login_divider))
 
-                DevSpaceLoginForm(viewModel, scaleFactor, state)
+                CodeNestLoginForm(viewModel, scaleFactor, state)
 
                 Column(
                     modifier = Modifier
@@ -256,16 +256,16 @@ class DevSpaceLoginScreen : Screen {
                         painter = painterResource(Res.drawable.Bison_Logo_Studios),
                         contentDescription = "Bison Studios Logo",
                         modifier = Modifier.size(
-                            (DevSpaceLoginBrand.logoSize * scaleFactor)
-                                .coerceIn(DevSpaceLoginBrand.logoMin, DevSpaceLoginBrand.logoMax)
+                            (CodeNestLoginBrand.logoSize * scaleFactor)
+                                .coerceIn(CodeNestLoginBrand.logoMin, CodeNestLoginBrand.logoMax)
                         )
                     )
-                    Spacer(modifier = Modifier.height(DevSpaceLoginBrand.logoTextSpacer * scaleFactor))
+                    Spacer(modifier = Modifier.height(CodeNestLoginBrand.logoTextSpacer * scaleFactor))
                     Text(
                         text = "Ztrene Studios",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = (DevSpaceLoginBrand.textSize * scaleFactor)
-                            .coerceIn(DevSpaceLoginBrand.textMin, DevSpaceLoginBrand.textMax).sp,
+                        fontSize = (CodeNestLoginBrand.textSize * scaleFactor)
+                            .coerceIn(CodeNestLoginBrand.textMin, CodeNestLoginBrand.textMax).sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))

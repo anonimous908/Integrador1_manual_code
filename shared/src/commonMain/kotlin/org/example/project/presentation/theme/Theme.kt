@@ -7,35 +7,35 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 private val DarkColorScheme = darkColorScheme(
-    background = DevSpaceColors.background,
-    primary = DevSpaceColors.primary,
-    primaryContainer = DevSpaceColors.primaryContainer,
-    onPrimaryContainer = DevSpaceColors.onPrimaryContainer,
-    surfaceContainer = DevSpaceColors.surfaceContainer,
-    surfaceContainerHigh = DevSpaceColors.surfaceContainerHigh,
-    surfaceContainerLow = DevSpaceColors.surfaceContainerLow,
-    onSurface = DevSpaceColors.onSurface,
-    onSurfaceVariant = DevSpaceColors.onSurfaceVariant,
-    outline = DevSpaceColors.outline,
-    outlineVariant = DevSpaceColors.outlineVariant,
+    background = CodeNestColors.background,
+    primary = CodeNestColors.primary,
+    primaryContainer = CodeNestColors.primaryContainer,
+    onPrimaryContainer = CodeNestColors.onPrimaryContainer,
+    surfaceContainer = CodeNestColors.surfaceContainer,
+    surfaceContainerHigh = CodeNestColors.surfaceContainerHigh,
+    surfaceContainerLow = CodeNestColors.surfaceContainerLow,
+    onSurface = CodeNestColors.onSurface,
+    onSurfaceVariant = CodeNestColors.onSurfaceVariant,
+    outline = CodeNestColors.outline,
+    outlineVariant = CodeNestColors.outlineVariant,
 )
 
 private val LightColorScheme = lightColorScheme(
-    background = DevSpaceColors.background,
-    primary = DevSpaceColors.primary,
-    primaryContainer = DevSpaceColors.primaryContainer,
-    onPrimaryContainer = DevSpaceColors.onPrimaryContainer,
-    surfaceContainer = DevSpaceColors.surfaceContainer,
-    surfaceContainerHigh = DevSpaceColors.surfaceContainerHigh,
-    surfaceContainerLow = DevSpaceColors.surfaceContainerLow,
-    onSurface = DevSpaceColors.onSurface,
-    onSurfaceVariant = DevSpaceColors.onSurfaceVariant,
-    outline = DevSpaceColors.outline,
-    outlineVariant = DevSpaceColors.outlineVariant,
+    background = CodeNestColors.background,
+    primary = CodeNestColors.primary,
+    primaryContainer = CodeNestColors.primaryContainer,
+    onPrimaryContainer = CodeNestColors.onPrimaryContainer,
+    surfaceContainer = CodeNestColors.surfaceContainer,
+    surfaceContainerHigh = CodeNestColors.surfaceContainerHigh,
+    surfaceContainerLow = CodeNestColors.surfaceContainerLow,
+    onSurface = CodeNestColors.onSurface,
+    onSurfaceVariant = CodeNestColors.onSurfaceVariant,
+    outline = CodeNestColors.outline,
+    outlineVariant = CodeNestColors.outlineVariant,
 )
 
 @Composable
-fun DevSpaceTheme(
+fun CodeNestTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
