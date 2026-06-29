@@ -52,14 +52,17 @@ import org.example.project.presentation.login.LoginViewModel
 import org.example.project.presentation.login.LoginEvent
 import org.example.project.presentation.login.LoginState
 
-internal fun calculateBrandPadding(totalSize: Dp): Dp = maxOf(16.dp, totalSize * 0.03f)
+import org.example.project.presentation.components.calculateBrandPadding
+import org.example.project.presentation.components.DevSpaceLoginForm
 
 class DevSpaceLoginScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: LoginViewModel = koinViewModel()
+        val appViewModel: AppViewModel = koinViewModel()
         val state by viewModel.state.collectAsState()
+        val appState by appViewModel.state.collectAsState()
 
         LaunchedEffect(viewModel) {
             viewModel.state.collect { state ->
@@ -266,8 +269,8 @@ class DevSpaceLoginScreen : Screen {
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    val latestUrl = state.latestVersionUrl
-                    if (state.updateAvailable && latestUrl != null) {
+                    val latestUrl = appState.latestVersionUrl
+                    if (appState.updateAvailable && latestUrl != null) {
                         val uriHandler = LocalUriHandler.current
                         Text(
                             text = "✨ ¡Nueva versión disponible!",
@@ -290,88 +293,6 @@ class DevSpaceLoginScreen : Screen {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun DevSpaceLoginForm(
-    viewModel: LoginViewModel,
-    scaleFactor: Float,
-    state: LoginState
-) {
-    var passwordVisible by remember { mutableStateOf(false) }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        if (state.errorMessage != null) {
-            Text(
-                text = state.errorMessage ?: "",
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-        }
-        DevSpaceTextField(
-            label = stringResource(Res.string.email_label),
-            value = state.email,
-            onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
-            placeholder = stringResource(Res.string.email_placeholder),
-            keyboardType = KeyboardType.Email,
-            trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Email", tint = DevSpaceColors.outline, modifier = Modifier.size(18.dp * scaleFactor)) },
-            error = state.emailError
-        )
-    }
-
-    Spacer(modifier = Modifier.height(16.dp * scaleFactor))
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-
-        PasswordTextField(
-            label = stringResource(Res.string.password_label),
-            value = state.pass,
-            onValueChange = { viewModel.onEvent(LoginEvent.PassChanged(it)) },
-            visible = passwordVisible,
-            onToggleVisible = { passwordVisible = !passwordVisible },
-            error = state.passError
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = stringResource(Res.string.forgot_password),
-            color = MaterialTheme.colorScheme.primary,
-            fontSize = 12.sp,
-            modifier = Modifier
-                .align(Alignment.End)
-                .clickable { /* TODO */ }
-        )
-    }
-
-    Button(
-        onClick = { viewModel.onEvent(LoginEvent.Submit) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp * scaleFactor),
-        shape = RoundedCornerShape(4.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-        ),
-        enabled = !state.isLoading
-    ) {
-        if (state.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(24.dp * scaleFactor),
-                color = MaterialTheme.colorScheme.onPrimary,
-                strokeWidth = 2.dp
-            )
-        } else {
-            Text(
-                text = stringResource(Res.string.login_button),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
         }
     }
 }
