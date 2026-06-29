@@ -96,6 +96,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlincrypto.hash.sha2)
+            implementation(libs.napier)
             }
         }
         commonTest.dependencies {

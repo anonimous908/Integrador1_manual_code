@@ -7,28 +7,29 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.example.project.domain.repository.AuthRepository
-import org.kotlincrypto.hash.sha2.SHA256
+import org.example.project.domain.service.HashService
+import org.jetbrains.compose.resources.getString
+import kotlinproject.shared.generated.resources.Res
+import kotlinproject.shared.generated.resources.error_email_registered
+import kotlinproject.shared.generated.resources.error_invalid_credentials
+import kotlinproject.shared.generated.resources.error_session_expired
 
 @Serializable
 data class UserData(val name: String, val hashedPass: String)
 
 class AuthRepositoryImpl(
-    private val settings: Settings
+    private val settings: Settings,
+    private val hashService: HashService
 ) : AuthRepository {
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun hashPassword(pass: String): String {
-        return SHA256().digest(pass.encodeToByteArray()).toHexString()
-    }
 
     override suspend fun register(name: String, email: String, pass: String): Result<Unit> {
         return withContext(Dispatchers.Default) {
             val storedData = settings.getStringOrNull("user_$email")
             if (storedData != null) {
-                return@withContext Result.failure(Exception("El correo ya está registrado"))
+                return@withContext Result.failure(Exception(getString(Res.string.error_email_registered)))
             }
 
-            val hashedPass = hashPassword(pass)
+            val hashedPass = hashService.hash(pass)
             val userData = UserData(name, hashedPass)
             
             settings.putString("user_$email", Json.encodeToString(userData))
@@ -41,21 +42,21 @@ class AuthRepositoryImpl(
     override suspend fun login(email: String, pass: String): Result<Unit> {
         return withContext(Dispatchers.Default) {
             val storedData = settings.getStringOrNull("user_$email")
-                ?: return@withContext Result.failure(Exception("Correo o contraseña incorrectos"))
+                ?: return@withContext Result.failure(Exception(getString(Res.string.error_invalid_credentials)))
 
             val userData = try {
                 Json.decodeFromString<UserData>(storedData)
             } catch (e: Exception) {
-                return@withContext Result.failure(Exception("La sesión expiró o los datos son incompatibles. Por favor, regístrate de nuevo."))
+                return@withContext Result.failure(Exception(getString(Res.string.error_session_expired)))
             }
 
-            val inputHashedPass = hashPassword(pass)
+            val inputHashedPass = hashService.hash(pass)
 
             if (userData.hashedPass == inputHashedPass) {
                 settings.putString("current_user", email)
                 Result.success(Unit)
             } else {
-                Result.failure(Exception("Correo o contraseña incorrectos"))
+                Result.failure(Exception(getString(Res.string.error_invalid_credentials)))
             }
         }
     }
