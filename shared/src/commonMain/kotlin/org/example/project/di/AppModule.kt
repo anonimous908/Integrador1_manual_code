@@ -16,6 +16,8 @@ import org.example.project.domain.usecase.ValidatePasswordUseCase
 import org.example.project.domain.service.HashService
 import org.example.project.data.security.HashServiceImpl
 import org.example.project.data.network.GithubVersionChecker
+import org.example.project.data.network.AiConfigRepository
+import org.example.project.data.network.AiApiService
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -29,7 +31,7 @@ val appModule = module {
     single { Settings() }
     
     single<SyntaxHighlighter> { DraculaSyntaxHighlighter() }
-    single<RecipeRepository> { MockRecipeRepositoryImpl() }
+    single<RecipeRepository> { MockRecipeRepositoryImpl(settings = get()) }
     
     single<HashService> { HashServiceImpl() }
     
@@ -45,6 +47,8 @@ val appModule = module {
     }
     
     single { GithubVersionChecker(client = get()) }
+    single { AiConfigRepository(settings = get()) }
+    single { AiApiService(client = get(), configRepo = get()) }
 
     single<AuthRepository> { AuthRepositoryImpl(settings = get(), hashService = get()) }
     

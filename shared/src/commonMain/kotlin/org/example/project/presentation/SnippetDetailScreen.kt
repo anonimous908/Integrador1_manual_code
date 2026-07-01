@@ -30,15 +30,25 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import org.example.project.presentation.theme.CodeNestColors
+import org.example.project.domain.service.LanguageDetector
+import org.example.project.domain.repository.RecipeRepository
+import org.example.project.data.network.AiApiService
+import org.example.project.platform.rememberImagePickerLauncher
+import org.koin.compose.koinInject
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 /* ---------------------------------------------------------
  * MODELOS
  * --------------------------------------------------------- */
+@Serializable
 data class CodeLine(val number: Int, val content: String)
 
+@Serializable
 data class SnippetDetail(
     val breadcrumb: List<String> = listOf("Mis Recetas", "Python", "Interfaz Gráfica"),
     val title: String = "Botón con Tkinter",
+    val language: String = "Python",
     val tags: List<String> = listOf("#Python", "#Tkinter", "#GUI"),
     val createdDate: String = "24 oct. 2023",
     val usageCount: Int = 142,
@@ -82,6 +92,8 @@ class SnippetDetailTab(
     @Composable
     override fun Content() {
         val tabNavigator = LocalTabNavigator.current
+        val recipeRepository = koinInject<RecipeRepository>()
+        val coroutineScope = rememberCoroutineScope()
         var isEditing by remember { mutableStateOf(snippet == emptySnippetDetail) }
         var currentSnippet by remember { mutableStateOf(snippet) }
 
@@ -96,9 +108,20 @@ class SnippetDetailTab(
                 isEditing = isEditing,
                 onSnippetChange = { currentSnippet = it },
                 onEditToggle = { isEditing = !isEditing },
+                onSave = {
+                    coroutineScope.launch {
+                        recipeRepository.saveRecipe(currentSnippet)
+                        isEditing = false
+                    }
+                },
                 onBack = { tabNavigator.current = org.example.project.presentation.tabs.MyRecipesTab(email) },
                 onShare = { /* TODO */ },
-                onDelete = { /* TODO */ }
+                onDelete = {
+                    coroutineScope.launch {
+                        recipeRepository.deleteRecipe(currentSnippet.title)
+                        tabNavigator.current = org.example.project.presentation.tabs.MyRecipesTab(email)
+                    }
+                }
             )
 
             Row(
@@ -118,7 +141,14 @@ class SnippetDetailTab(
                 Column(modifier = Modifier.weight(1f)) {
                     DescriptionCard(currentSnippet, isEditing) { currentSnippet = it }
                     Spacer(Modifier.height(24.dp))
-                    EvidenceCard(currentSnippet, isEditing) { currentSnippet = it }
+                    EvidenceCard(currentSnippet, isEditing, { currentSnippet = it }, { code, lang -> 
+                        var updated = currentSnippet.withRawCode(code)
+                        if (lang.isNotBlank()) {
+                            val ext = LanguageDetector.getDefaultExtension(lang)
+                            updated = updated.copy(language = lang, fileName = "archivo.$ext")
+                        }
+                        currentSnippet = updated
+                    })
                 }
             }
         }
@@ -131,6 +161,7 @@ private fun HeaderBar(
     isEditing: Boolean,
     onSnippetChange: (SnippetDetail) -> Unit,
     onEditToggle: () -> Unit,
+    onSave: () -> Unit,
     onBack: () -> Unit,
     onShare: () -> Unit,
     onDelete: () -> Unit
@@ -192,7 +223,7 @@ private fun HeaderBar(
             GhostButton(
                 icon = if (isEditing) Icons.Default.Check else Icons.Default.Edit,
                 label = if (isEditing) "Guardar" else "Editar",
-                onClick = onEditToggle
+                onClick = if (isEditing) { { onSave(); onEditToggle() } } else onEditToggle
             )
             GhostButton(icon = Icons.Default.Share, label = "Compartir", onClick = onShare)
             IconButton(onClick = onDelete) {
@@ -277,6 +308,39 @@ private fun MetaItem(icon: androidx.compose.ui.graphics.vector.ImageVector, text
 private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetChange: (SnippetDetail) -> Unit) {
     var copied by remember { mutableStateOf(false) }
 
+    fun updateCode(newCode: String) {
+        var updated = snippet.withRawCode(newCode)
+        // Si el código se borró, resetear lenguaje y archivo
+        if (newCode.isBlank()) {
+            updated = updated.copy(language = "", fileName = "archivo.ext")
+        } else if (updated.language.isBlank()) {
+            val detected = LanguageDetector.detectFromFileName(updated.fileName)
+                ?: LanguageDetector.detectFromCode(newCode)
+            if (detected != null) {
+                val ext = LanguageDetector.getDefaultExtension(detected)
+                val baseName = if (updated.fileName == "archivo.ext") "archivo" else updated.fileName.substringBeforeLast('.')
+                updated = updated.copy(language = detected, fileName = "$baseName.$ext")
+            }
+        }
+        onSnippetChange(updated)
+    }
+
+    fun updateFileName(newName: String) {
+        val newExt = snippet.language.let { lang ->
+            if (lang.isNotBlank()) LanguageDetector.getDefaultExtension(lang) else ""
+        }
+        val newFileName = if (newExt.isNotEmpty() && !newName.endsWith(".$newExt")) {
+            val base = newName.substringBeforeLast('.')
+            if (base.isNotEmpty()) "$base.$newExt" else newName
+        } else newName
+        var updated = snippet.copy(fileName = newFileName)
+        val detected = LanguageDetector.detectFromFileName(newFileName)
+        if (detected != null && updated.language.isBlank()) {
+            updated = updated.copy(language = detected)
+        }
+        onSnippetChange(updated)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -285,7 +349,6 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
             .background(CodeNestColors.GlassPanel)
             .border(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
     ) {
-        // Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -300,11 +363,21 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
                 if (isEditing) {
                     BasicTextField(
                         value = snippet.fileName,
-                        onValueChange = { onSnippetChange(snippet.copy(fileName = it)) },
+                        onValueChange = { updateFileName(it) },
                         textStyle = TextStyle(color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
                     )
                 } else {
-                    Text(snippet.fileName, color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(snippet.fileName, color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                        if (snippet.language.isNotBlank()) {
+                            Box(
+                                modifier = Modifier.background(CodeNestColors.primary.copy(alpha = 0.12f), RoundedCornerShape(4.dp))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Text(snippet.language, color = CodeNestColors.primary, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
                 }
             }
             if (!isEditing) {
@@ -331,7 +404,7 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
         if (isEditing) {
             OutlinedTextField(
                 value = snippet.rawCode,
-                onValueChange = { onSnippetChange(snippet.withRawCode(it)) },
+                onValueChange = { updateCode(it) },
                 modifier = Modifier.fillMaxWidth().weight(1f).padding(8.dp),
                 textStyle = TextStyle(fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = CodeNestColors.onSurface),
                 placeholder = { Text("Pega o escribe tu código aquí...", fontFamily = FontFamily.Monospace) },
@@ -340,8 +413,17 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
                     focusedBorderColor = Color.Transparent
                 )
             )
+            if (snippet.language.isNotBlank()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = CodeNestColors.primary, modifier = Modifier.size(14.dp))
+                    Text("Detectado: ${snippet.language}", color = CodeNestColors.primary, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                }
+            }
         } else {
-            // Código con números de línea (selección habilitada para copiar manualmente)
             SelectionContainer {
                 Column(
                     modifier = Modifier
@@ -358,7 +440,7 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
                                 modifier = Modifier.width(40.dp)
                             )
                             Text(
-                                text = highlightPython(line.content),
+                                text = highlightCode(line.content, snippet.language),
                                 fontSize = 14.sp,
                                 fontFamily = FontFamily.Monospace,
                                 lineHeight = 22.sp
@@ -371,20 +453,99 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
     }
 }
 
-/** Resaltado de sintaxis muy simplificado, fiel a los tokens del mockup original. */
-private fun highlightPython(line: String) = buildAnnotatedString {
-    val keywords = setOf("import", "as", "def")
-    val tokens = line.split(" ")
-    tokens.forEachIndexed { i, token ->
+private fun highlightCode(line: String, language: String) = buildAnnotatedString {
+    val pink = Color(0xFFFF79C6)   // keywords
+    val yellow = Color(0xFFF1FA8C) // strings
+    val comment = Color(0xFF6272A4) // comments
+    val teal = Color(0xFF8BE9FD)    // types/classes
+    val orange = Color(0xFFFFB86C)  // numbers
+    val green = Color(0xFF50FA7B)   // functions
+    val default = Color(0xFFF8F8F2)
+
+    val keywords = when {
+        language.equals("Kotlin", ignoreCase = true) -> setOf("fun", "val", "var", "class", "object", "interface", "sealed", "data", "enum", "when", "if", "else", "for", "while", "do", "return", "break", "continue", "in", "is", "as", "null", "true", "false", "import", "package", "throw", "try", "catch", "finally", "suspend", "this", "super", "typealias", "companion", "internal", "private", "protected", "public", "override", "abstract", "open", "final", "const", "lateinit", "by", "dynamic", "typeof")
+        language.equals("Python", ignoreCase = true) -> setOf("def", "class", "if", "elif", "else", "for", "while", "import", "from", "as", "return", "yield", "raise", "try", "except", "finally", "with", "lambda", "pass", "break", "continue", "and", "or", "not", "is", "in", "True", "False", "None", "self", "global", "nonlocal", "assert", "del", "async", "await")
+        language.equals("Java", ignoreCase = true) -> setOf("public", "private", "protected", "static", "final", "abstract", "class", "interface", "enum", "extends", "implements", "new", "return", "if", "else", "for", "while", "do", "switch", "case", "break", "continue", "throw", "throws", "try", "catch", "finally", "import", "package", "this", "super", "null", "true", "false", "void", "int", "String", "boolean", "long", "double", "float", "byte", "char", "short", "synchronized", "volatile", "transient", "native", "strictfp", "default")
+        language.equals("JavaScript", ignoreCase = true) || language.equals("TypeScript", ignoreCase = true) -> setOf("function", "const", "let", "var", "class", "extends", "new", "return", "if", "else", "for", "while", "do", "switch", "case", "break", "continue", "try", "catch", "finally", "throw", "import", "export", "default", "from", "as", "async", "await", "yield", "this", "super", "null", "undefined", "true", "false", "typeof", "instanceof", "in", "of", "delete", "void", "static", "get", "set", "interface", "type", "enum", "implements", "abstract")
+        language.equals("C", ignoreCase = true) || language.equals("C++", ignoreCase = true) -> setOf("auto", "break", "case", "const", "continue", "default", "do", "else", "enum", "extern", "for", "goto", "if", "register", "return", "signed", "sizeof", "static", "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while", "class", "namespace", "using", "template", "typename", "public", "private", "protected", "virtual", "override", "new", "delete", "this", "nullptr", "true", "false", "try", "catch", "throw", "include", "define")
+        language.equals("Go", ignoreCase = true) -> setOf("func", "var", "const", "type", "struct", "interface", "map", "chan", "package", "import", "return", "if", "else", "for", "range", "switch", "case", "break", "continue", "go", "defer", "select", "goto", "fallthrough", "nil", "true", "false")
+        language.equals("Rust", ignoreCase = true) -> setOf("fn", "let", "mut", "const", "static", "struct", "enum", "trait", "impl", "mod", "use", "pub", "crate", "self", "super", "match", "if", "else", "for", "while", "loop", "in", "break", "continue", "return", "where", "as", "ref", "move", "unsafe", "extern", "type", "dyn", "true", "false", "Some", "None", "Ok", "Err")
+        language.equals("C#", ignoreCase = true) -> setOf("using", "namespace", "class", "struct", "interface", "enum", "record", "public", "private", "protected", "internal", "static", "readonly", "const", "virtual", "override", "abstract", "sealed", "async", "await", "var", "new", "return", "if", "else", "for", "foreach", "while", "do", "switch", "case", "break", "continue", "try", "catch", "finally", "throw", "null", "true", "false", "this", "base", "in", "out", "ref", "params", "yield", "lock", "fixed")
+        else -> setOf("import", "as", "def", "function", "class", "return", "if", "else", "for", "while", "var", "let", "const")
+    }
+
+    val types = when {
+        language.equals("Kotlin", ignoreCase = true) -> setOf("Int", "Long", "Float", "Double", "Boolean", "Byte", "Short", "Char", "String", "Any", "Unit", "Nothing", "List", "MutableList", "Set", "MutableSet", "Map", "MutableMap", "Array", "IntArray", "Sequence")
+        language.equals("Java", ignoreCase = true) -> setOf("String", "Integer", "Double", "Float", "Boolean", "Long", "Byte", "Short", "Character", "Object", "List", "ArrayList", "Map", "HashMap", "Set", "HashSet")
+        language.equals("TypeScript", ignoreCase = true) -> setOf("string", "number", "boolean", "void", "any", "never", "unknown", "null", "undefined", "object", "Array", "Map", "Set", "Promise", "Record", "Partial", "Required", "Readonly", "Pick", "Omit")
+        else -> emptySet()
+    }
+
+    val tokens = tokenize(line, language)
+    tokens.forEach { token ->
+        val trimmed = token.trim()
         val style = when {
-            token in keywords -> SpanStyle(color = Color(0xFFFF79C6))
-            token.startsWith("\"") -> SpanStyle(color = Color(0xFFF1FA8C))
-            token.startsWith("#") -> SpanStyle(color = Color(0xFF6272A4))
-            else -> SpanStyle(color = Color(0xFFF8F8F2))
+            token.startsWith("\"") || token.startsWith("'") || token.startsWith("`") -> SpanStyle(color = yellow)
+            token.startsWith("//") || token.startsWith("#") -> SpanStyle(color = comment)
+            trimmed in keywords -> SpanStyle(color = pink)
+            trimmed in types -> SpanStyle(color = teal)
+            trimmed.toDoubleOrNull() != null || trimmed.toIntOrNull() != null -> SpanStyle(color = orange)
+            else -> SpanStyle(color = default)
         }
         withStyle(style) { append(token) }
-        if (i != tokens.lastIndex) append(" ")
     }
+}
+
+private fun tokenize(line: String, language: String): List<String> {
+    val result = mutableListOf<String>()
+    val chars = line.toCharArray()
+    var i = 0
+    val sb = StringBuilder()
+
+    while (i < chars.size) {
+        val c = chars[i]
+        when {
+            c == '"' || c == '\'' || c == '`' -> {
+                if (sb.isNotEmpty()) { result.add(sb.toString()); sb.clear() }
+                val quote = c
+                sb.append(quote)
+                i++
+                while (i < chars.size && chars[i] != quote) {
+                    if (chars[i] == '\\' && i + 1 < chars.size) { sb.append(chars[i]); i++; sb.append(chars[i]) }
+                    else { sb.append(chars[i]) }
+                    i++
+                }
+                if (i < chars.size) { sb.append(chars[i]); i++ }
+                result.add(sb.toString()); sb.clear()
+            }
+            c == '/' && i + 1 < chars.size && chars[i + 1] == '/' -> {
+                if (sb.isNotEmpty()) { result.add(sb.toString()); sb.clear() }
+                result.add(line.substring(i)); return result
+            }
+            c == '#' && language.equals("Python", ignoreCase = true) -> {
+                if (sb.isNotEmpty()) { result.add(sb.toString()); sb.clear() }
+                result.add(line.substring(i)); return result
+            }
+            c == '(' || c == ')' || c == '{' || c == '}' || c == '[' || c == ']' ||
+            c == ';' || c == ',' || c == ':' || c == '.' -> {
+                if (sb.isNotEmpty()) { result.add(sb.toString()); sb.clear() }
+                result.add(c.toString()); i++
+            }
+            c == ' ' || c == '\t' -> {
+                if (sb.isNotEmpty()) { result.add(sb.toString()); sb.clear() }
+                sb.append(c)
+                while (i + 1 < chars.size && (chars[i + 1] == ' ' || chars[i + 1] == '\t')) {
+                    sb.append(chars[i + 1]); i++
+                }
+                result.add(sb.toString()); sb.clear(); i++
+            }
+            else -> {
+                sb.append(c); i++
+            }
+        }
+    }
+    if (sb.isNotEmpty()) result.add(sb.toString())
+    return result
 }
 
 @Composable
@@ -448,7 +609,23 @@ private fun DescriptionCard(snippet: SnippetDetail, isEditing: Boolean, onSnippe
 }
 
 @Composable
-private fun EvidenceCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetChange: (SnippetDetail) -> Unit) {
+private fun EvidenceCard(
+    snippet: SnippetDetail,
+    isEditing: Boolean,
+    onSnippetChange: (SnippetDetail) -> Unit,
+    onCodeChange: (String, String) -> Unit
+) {
+    val aiService = koinInject<AiApiService>()
+    val coroutineScope = rememberCoroutineScope()
+    var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
+    var analyzing by remember { mutableStateOf(false) }
+    var statusMessage by remember { mutableStateOf<String?>(null) }
+
+    val pickImage = rememberImagePickerLauncher { bytes ->
+        imageBytes = bytes
+        statusMessage = "Imagen cargada (${bytes.size / 1024} KB). Escribe qué quieres hacer y presiona 'Analizar con IA'."
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -464,18 +641,55 @@ private fun EvidenceCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetCh
                 value = snippet.evidenceText,
                 onValueChange = { onSnippetChange(snippet.copy(evidenceText = it)) },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Describe la evidencia...") },
+                placeholder = { Text("Describe qué quieres hacer con esta imagen...") },
                 minLines = 2
             )
-            Spacer(Modifier.height(16.dp))
-            Button(
-                onClick = { /* TODO: Seleccionar imagen */ },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.surfaceContainerHigh)
-            ) {
-                Icon(Icons.Default.Upload, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text("Subir Imagen")
+            Spacer(Modifier.height(12.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(
+                    onClick = { pickImage() },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.surfaceContainerHigh)
+                ) {
+                    Icon(Icons.Default.Upload, contentDescription = null)
+                    Spacer(Modifier.width(6.dp))
+                    Text(if (imageBytes != null) "Cambiar Imagen" else "Subir Imagen", fontSize = 12.sp)
+                }
+                if (imageBytes != null) {
+                    Button(
+                        onClick = {
+                            analyzing = true
+                            statusMessage = "Analizando imagen con IA..."
+                            coroutineScope.launch {
+                                val result = aiService.transcribeCodeFromImage(
+                                    imageBytes!!,
+                                    snippet.evidenceText.ifBlank { "Transcribe el código de esta imagen" }
+                                )
+                                result.onSuccess { transcription ->
+                                    onCodeChange(transcription.code, transcription.language)
+                                    statusMessage = if (transcription.language.isNotBlank())
+                                        "Detectado: ${transcription.language}. Código transcrito."
+                                    else "Código transcrito exitosamente."
+                                    imageBytes = null
+                                }.onFailure { e ->
+                                    statusMessage = "Error: ${e.message}"
+                                }
+                                analyzing = false
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        enabled = !analyzing,
+                        colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.primary, contentColor = CodeNestColors.onPrimary)
+                    ) {
+                        Icon(if (analyzing) Icons.Default.Refresh else Icons.Default.AutoAwesome, contentDescription = null, modifier = if (analyzing) Modifier.size(16.dp) else Modifier)
+                        Spacer(Modifier.width(6.dp))
+                        Text(if (analyzing) "Analizando..." else "Analizar con IA", fontSize = 12.sp)
+                    }
+                }
+            }
+            if (statusMessage != null) {
+                Spacer(Modifier.height(8.dp))
+                Text(statusMessage!!,                 color = if (statusMessage!!.startsWith("Error")) CodeNestColors.error else CodeNestColors.primary, fontSize = 11.sp)
             }
         } else {
             // Mostrar solo si no es un snippet nuevo
@@ -554,6 +768,7 @@ val sampleSnippetDetail = SnippetDetail(code = sampleCode)
 val emptySnippetDetail = SnippetDetail(
     breadcrumb = listOf("Mis Recetas", "Nuevo Snippet"),
     title = "",
+    language = "",
     tags = emptyList(),
     createdDate = "Hoy",
     usageCount = 0,
