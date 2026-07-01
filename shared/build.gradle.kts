@@ -39,27 +39,25 @@ kotlin {
     wasmJs {
         browser()
     }
-    
-    androidLibrary {
-       namespace = "org.example.project.shared"
-       compileSdk = 37
-       minSdk = 24
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
+
+    android {
+        namespace = "org.example.project.shared"
+        compileSdk = 37
+        minSdk = 24
+
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
     }
     
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.ktor.client.cio)
+            implementation("androidx.activity:activity-compose:1.9.3")
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)

@@ -5,48 +5,69 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    background = CodeNestColors.background,
-    primary = CodeNestColors.primary,
-    primaryContainer = CodeNestColors.primaryContainer,
-    onPrimaryContainer = CodeNestColors.onPrimaryContainer,
-    surfaceContainer = CodeNestColors.surfaceContainer,
-    surfaceContainerHigh = CodeNestColors.surfaceContainerHigh,
-    surfaceContainerLow = CodeNestColors.surfaceContainerLow,
-    onSurface = CodeNestColors.onSurface,
-    onSurfaceVariant = CodeNestColors.onSurfaceVariant,
-    outline = CodeNestColors.outline,
-    outlineVariant = CodeNestColors.outlineVariant,
-)
+enum class ThemeMode { LIGHT, DARK, SYSTEM }
 
-private val LightColorScheme = lightColorScheme(
-    background = CodeNestColors.background,
-    primary = CodeNestColors.primary,
-    primaryContainer = CodeNestColors.primaryContainer,
-    onPrimaryContainer = CodeNestColors.onPrimaryContainer,
-    surfaceContainer = CodeNestColors.surfaceContainer,
-    surfaceContainerHigh = CodeNestColors.surfaceContainerHigh,
-    surfaceContainerLow = CodeNestColors.surfaceContainerLow,
-    onSurface = CodeNestColors.onSurface,
-    onSurfaceVariant = CodeNestColors.onSurfaceVariant,
-    outline = CodeNestColors.outline,
-    outlineVariant = CodeNestColors.outlineVariant,
-)
+val LocalAccentColor = compositionLocalOf { CodeNestColors.primary }
+val LocalOnAccentColor = compositionLocalOf { CodeNestColors.onPrimary }
+val LocalSetAccentColor = compositionLocalOf<(Color) -> Unit> { {} }
+val LocalThemeMode = compositionLocalOf { ThemeMode.DARK }
+val LocalSetThemeMode = compositionLocalOf<(ThemeMode) -> Unit> { {} }
+
+fun onPrimaryForBackground(background: Color): Color {
+    val luminance = 0.299 * background.red + 0.587 * background.green + 0.114 * background.blue
+    return if (luminance > 0.5) Color.Black else Color.White
+}
 
 @Composable
 fun CodeNestTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    accentColor: Color = CodeNestColors.primary,
+    onAccentColor: Color = CodeNestColors.onPrimary,
+    themeMode: ThemeMode = ThemeMode.DARK,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) {
-        DarkColorScheme
+    val isDark = when (themeMode) {
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    }
+    val scheme = if (isDark) {
+        darkColorScheme(
+            background = CodeNestColors.background,
+            primary = accentColor,
+            onPrimary = onAccentColor,
+            primaryContainer = CodeNestColors.primaryContainer,
+            onPrimaryContainer = CodeNestColors.onPrimaryContainer,
+            surfaceContainerLow = CodeNestColors.surfaceContainerLow,
+            surfaceContainer = CodeNestColors.surfaceContainer,
+            surfaceContainerHigh = CodeNestColors.surfaceContainerHigh,
+            onSurface = CodeNestColors.onSurface,
+            onSurfaceVariant = CodeNestColors.onSurfaceVariant,
+            outline = CodeNestColors.outline,
+            outlineVariant = CodeNestColors.outlineVariant,
+        )
     } else {
-        LightColorScheme
+        lightColorScheme(
+            background = CodeNestColors.background,
+            primary = accentColor,
+            onPrimary = onAccentColor,
+            primaryContainer = CodeNestColors.primaryContainer,
+            onPrimaryContainer = CodeNestColors.onPrimaryContainer,
+            surfaceContainerLow = CodeNestColors.surfaceContainerLow,
+            surfaceContainer = CodeNestColors.surfaceContainer,
+            surfaceContainerHigh = CodeNestColors.surfaceContainerHigh,
+            onSurface = CodeNestColors.onSurface,
+            onSurfaceVariant = CodeNestColors.onSurfaceVariant,
+            outline = CodeNestColors.outline,
+            outlineVariant = CodeNestColors.outlineVariant,
+        )
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = scheme,
         content = content
     )
 }

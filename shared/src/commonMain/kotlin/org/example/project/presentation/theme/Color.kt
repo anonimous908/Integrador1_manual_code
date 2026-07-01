@@ -1,5 +1,8 @@
 package org.example.project.presentation.theme
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -12,24 +15,101 @@ import androidx.compose.ui.unit.dp
  * Basados en los colores del tailwind.config del proyecto original.
  */
 object CodeNestColors {
-    val background = Color(0xFF131313)
-    val onBackground = Color(0xFFE5E2E1)
-    val surface = Color(0xFF131313)
-    val surfaceDim = Color(0xFF131313)
-    val surfaceBright = Color(0xFF393939)
-    val surfaceContainer = Color(0xFF201F1F)
-    val surfaceContainerLow = Color(0xFF1C1B1B)
-    val surfaceContainerLowest = Color(0xFF0E0E0E)
-    val surfaceContainerHigh = Color(0xFF2A2A2A)
-    val surfaceContainerHighest = Color(0xFF353534)
-    val surfaceVariant = Color(0xFF353534)
-    val onSurface = Color(0xFFE5E2E1)
-    val onSurfaceVariant = Color(0xFFBEC7D4)
-    val outline = Color(0xFF88919D)
-    val outlineVariant = Color(0xFF3F4852)
+    // ─── Paleta oscura (default) ──────────────────────────────────────────
+    private val DarkBackground = Color(0xFF131313)
+    private val DarkOnBackground = Color(0xFFE5E2E1)
+    private val DarkSurface = Color(0xFF131313)
+    private val DarkSurfaceDim = Color(0xFF131313)
+    private val DarkSurfaceBright = Color(0xFF393939)
+    private val DarkSurfaceContainer = Color(0xFF201F1F)
+    private val DarkSurfaceContainerLow = Color(0xFF1C1B1B)
+    private val DarkSurfaceContainerLowest = Color(0xFF0E0E0E)
+    private val DarkSurfaceContainerHigh = Color(0xFF2A2A2A)
+    private val DarkSurfaceContainerHighest = Color(0xFF353534)
+    private val DarkSurfaceVariant = Color(0xFF353534)
+    private val DarkOnSurface = Color(0xFFE5E2E1)
+    private val DarkOnSurfaceVariant = Color(0xFFBEC7D4)
+    private val DarkOutline = Color(0xFF88919D)
+    private val DarkOutlineVariant = Color(0xFF3F4852)
 
-    val primary = Color(0xFF98CBFF)
-    val onPrimary = Color(0xFF003354)
+    // ─── Paleta clara ─────────────────────────────────────────────────────
+    private val LightBackground = Color(0xFFF8F9FA)
+    private val LightOnBackground = Color(0xFF1A1A2E)
+    private val LightSurface = Color(0xFFFFFFFF)
+    private val LightSurfaceDim = Color(0xFFE8E8ED)
+    private val LightSurfaceBright = Color(0xFFFFFFFF)
+    private val LightSurfaceContainer = Color(0xFFF0F0F5)
+    private val LightSurfaceContainerLow = Color(0xFFF5F5FA)
+    private val LightSurfaceContainerLowest = Color(0xFFFFFFFF)
+    private val LightSurfaceContainerHigh = Color(0xFFE5E5EA)
+    private val LightSurfaceContainerHighest = Color(0xFFD9D9E0)
+    private val LightSurfaceVariant = Color(0xFFE0E0E5)
+    private val LightOnSurface = Color(0xFF1A1A2E)
+    private val LightOnSurfaceVariant = Color(0xFF5F6368)
+    private val LightOutline = Color(0xFFDADCE0)
+    private val LightOutlineVariant = Color(0xFFE8EAED)
+
+    // ─── Valores reactivos (seleccionan oscuro o claro según el tema) ────
+    var background by mutableStateOf(DarkBackground); private set
+    var onBackground by mutableStateOf(DarkOnBackground); private set
+    var surface by mutableStateOf(DarkSurface); private set
+    var surfaceDim by mutableStateOf(DarkSurfaceDim); private set
+    var surfaceBright by mutableStateOf(DarkSurfaceBright); private set
+    var surfaceContainer by mutableStateOf(DarkSurfaceContainer); private set
+    var surfaceContainerLow by mutableStateOf(DarkSurfaceContainerLow); private set
+    var surfaceContainerLowest by mutableStateOf(DarkSurfaceContainerLowest); private set
+    var surfaceContainerHigh by mutableStateOf(DarkSurfaceContainerHigh); private set
+    var surfaceContainerHighest by mutableStateOf(DarkSurfaceContainerHighest); private set
+    var surfaceVariant by mutableStateOf(DarkSurfaceVariant); private set
+    var onSurface by mutableStateOf(DarkOnSurface); private set
+    var onSurfaceVariant by mutableStateOf(DarkOnSurfaceVariant); private set
+    var outline by mutableStateOf(DarkOutline); private set
+    var outlineVariant by mutableStateOf(DarkOutlineVariant); private set
+
+    var primary by mutableStateOf(Color(0xFF98CBFF)); private set
+    var onPrimary by mutableStateOf(Color(0xFF003354)); private set
+
+    fun updateAccent(color: Color) {
+        primary = color
+        val luminance = 0.299 * color.red + 0.587 * color.green + 0.114 * color.blue
+        onPrimary = if (luminance > 0.5) Color.Black else Color.White
+    }
+
+    fun updateTheme(isDark: Boolean) {
+        if (isDark) {
+            background = DarkBackground
+            onBackground = DarkOnBackground
+            surface = DarkSurface
+            surfaceDim = DarkSurfaceDim
+            surfaceBright = DarkSurfaceBright
+            surfaceContainer = DarkSurfaceContainer
+            surfaceContainerLow = DarkSurfaceContainerLow
+            surfaceContainerLowest = DarkSurfaceContainerLowest
+            surfaceContainerHigh = DarkSurfaceContainerHigh
+            surfaceContainerHighest = DarkSurfaceContainerHighest
+            surfaceVariant = DarkSurfaceVariant
+            onSurface = DarkOnSurface
+            onSurfaceVariant = DarkOnSurfaceVariant
+            outline = DarkOutline
+            outlineVariant = DarkOutlineVariant
+        } else {
+            background = LightBackground
+            onBackground = LightOnBackground
+            surface = LightSurface
+            surfaceDim = LightSurfaceDim
+            surfaceBright = LightSurfaceBright
+            surfaceContainer = LightSurfaceContainer
+            surfaceContainerLow = LightSurfaceContainerLow
+            surfaceContainerLowest = LightSurfaceContainerLowest
+            surfaceContainerHigh = LightSurfaceContainerHigh
+            surfaceContainerHighest = LightSurfaceContainerHighest
+            surfaceVariant = LightSurfaceVariant
+            onSurface = LightOnSurface
+            onSurfaceVariant = LightOnSurfaceVariant
+            outline = LightOutline
+            outlineVariant = LightOutlineVariant
+        }
+    }
     val primaryContainer = Color(0xFF00A3FF)
     val onPrimaryContainer = Color(0xFF00375A)
     val primaryFixed = Color(0xFFCFE5FF)

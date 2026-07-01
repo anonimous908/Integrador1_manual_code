@@ -1,117 +1,227 @@
-# 🪹 CodeNest
+# CodeNest
 
-¡Bienvenido a **CodeNest**! 
-
-CodeNest es un sistema multiplataforma enfocado en el inicio de sesión (autenticación). La gran ventaja de este proyecto es que **el código se escribe una sola vez** y funciona perfectamente en **Android, Escritorio (Windows/Mac/Linux) y Web**, gracias a la tecnología de **Kotlin Multiplatform (KMP)** y **Compose Multiplatform**.
+CodeNest es un sistema multiplataforma enfocado en la centralización y gestión segura de flujos de autenticación. Resuelve la complejidad de mantener arquitecturas y validaciones de interfaz divergentes entre Android, Desktop y Web (Wasm/JS) unificando la lógica de negocio y la presentación bajo una única base de código mediante **Kotlin Multiplatform (KMP)** y **Compose Multiplatform**.
 
 ---
 
-## ✨ ¿Por qué CodeNest?
+## 🏗️ Arquitectura y Tech Stack
 
-- **Escribe una vez, úsalo en todas partes:** Toda la lógica (validaciones, contraseñas) y el diseño visual se comparten entre todas las plataformas.
-- **Fácil de mantener:** Al tener un solo código centralizado, si corriges un error o agregas un botón, se actualiza automáticamente en las tres aplicaciones.
-- **Arquitectura Limpia:** El código está súper organizado, separando la interfaz visual de las reglas del programa.
-- **Listo para probar:** No necesitas configurar bases de datos ni servidores complicados. Todo funciona con datos locales simulados (mocks) para que lo pruebes apenas lo descargues.
+CodeNest utiliza una arquitectura limpia (Clean Architecture) adaptada para un entorno multiplataforma, logrando reutilizar la máxima cantidad de código posible entre plataformas.
+
+### Diagrama de Stack Tecnológico
+
+```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'fontSize': '14px' }}}%%
+graph TB
+    subgraph Gradle["⚙️ Gradle Build System"]
+        Root["build.gradle.kts\nrootProject"]
+        Settings["settings.gradle.kts\nKotlinProject"]
+        Catalog["gradle/libs.versions.toml\nVersion Catalog"]
+    end
+
+    subgraph Shared["📦 :shared — Core Multiplataforma"]
+        BS["build.gradle.kts\nKMP Library"]
+        
+        subgraph Sources["Source Sets"]
+            CM["commonMain\nCompose Runtime + Foundation\nMaterial3 + Lifecycle VM"]
+            CT["commonTest\nkotlin.test"]
+            AM["androidMain"]
+            JM["jvmMain"]
+            JSM["jsMain\nwrappers.browser"]
+            W["wasmJsMain"]
+            AHT["androidHostTest"]
+        end
+
+        CM --> AM
+        CM --> JM
+        CM --> JSM
+        CM --> W
+        CM --> CT
+        AM --> AHT
+    end
+
+    subgraph AndroidApp["📱 :androidApp"]
+        AA["Android Application\ncompileSdk 36, minSdk 24\napplicationId: org.example.project"]
+    end
+
+    subgraph DesktopApp["🖥️ :desktopApp"]
+        DA["Compose Desktop"]
+    end
+
+    subgraph WebApp["🌐 :webApp"]
+        WA["Kotlin/JS Browser"]
+    end
+
+    subgraph Outputs["📁 Outputs"]
+        APK["APK / AAB"]
+        JAR["JAR"]
+        WB["JS Bundle"]
+        WASM["WASM + JS Glue"]
+    end
+
+    Settings --> Shared
+    Settings --> AndroidApp
+    Settings --> DesktopApp
+    Settings --> WebApp
+
+    Shared --> AndroidApp
+    Shared --> DesktopApp
+    Shared --> WebApp
+
+    AndroidApp --> APK
+    DesktopApp --> JAR
+    WebApp --> WB
+    Shared --> WASM
+```
 
 ---
 
-## 🚀 ¿Cómo pruebo la aplicación?
+## 🔄 Flujos de Datos y Autenticación
 
-Para empezar, necesitas tener instalado **Android Studio (versión Koala o superior)** o **IntelliJ IDEA** (con los plugins de Kotlin Multiplatform). Tu versión de Java (JDK) debe ser al menos **17**.
+El sistema centraliza la lógica de negocio, asegurando que todas las plataformas ejecuten exactamente las mismas reglas de validación y flujos de autenticación sin duplicación de código.
 
-### 1. Descarga el proyecto
-Abre tu terminal y ejecuta estos comandos:
+### Flujo de Autenticación (Login)
+
+Este diagrama de secuencia ilustra cómo interactúan las capas durante un intento de inicio de sesión:
+
+```mermaid
+sequenceDiagram
+    participant UI as UI (Compose)
+    participant VM as AuthViewModel
+    participant UC as ValidateAuthUseCase
+    participant Repo as AuthRepository
+    participant Remote as Remote Server (Mock)
+
+    UI->>VM: submitCredentials(user, pass)
+    VM->>VM: Update State (Loading)
+    VM->>UC: execute(user, pass)
+    
+    alt Validation Failed (Local)
+        UC-->>VM: Error (e.g. Invalid Format)
+        VM-->>UI: Update State (Show Error)
+    else Validation Passed
+        UC->>Repo: login(user, pass)
+        Repo->>Remote: Authenticate API Request
+        
+        alt Success
+            Remote-->>Repo: Token / Session Data
+            Repo-->>UC: Success Result
+            UC-->>VM: Success
+            VM-->>UI: Update State (Authenticated) & Navigate
+        else Failure
+            Remote-->>Repo: Unauthorized / Server Error
+            Repo-->>UC: Auth Error Exception
+            UC-->>VM: Error Message
+            VM-->>UI: Update State (Show Error Snackbar)
+        end
+    end
+```
+
+### Arquitectura de Capas en el Módulo Shared
+
+Las responsabilidades se dividen en 3 capas fundamentales siguiendo Clean Architecture:
+
+```mermaid
+graph TD
+    UI[Presentation Layer\n(UI Compose Multiplatform, ViewModels, States)] --> Domain[Domain Layer\n(UseCases, Models, Repository Interfaces)]
+    Data[Data Layer\n(Repository Impls, DTOs, Local/Remote DataSources)] -.->|Implementa| Domain
+    
+    subgraph Shared Module [Código Agnóstico de Plataforma]
+    UI
+    Domain
+    Data
+    end
+
+    style UI fill:#3f51b5,stroke:#fff,stroke-width:2px,color:#fff
+    style Domain fill:#009688,stroke:#fff,stroke-width:2px,color:#fff
+    style Data fill:#ff9800,stroke:#fff,stroke-width:2px,color:#fff
+```
+
+---
+
+## 🛠️ Requisitos Previos
+
+- **JDK:** 17 o superior.
+- **Android Studio:** Koala Feature Drop (o IntelliJ IDEA equivalente con plugins de KMP habilitados).
+- **Kotlin:** 2.0.20
+- **Gradle:** 8.7+
+
+---
+
+## 🚀 Instalación y Ejecución
+
+Para configurar el entorno de desarrollo local, ejecuta los siguientes comandos en tu terminal:
+
 ```bash
 git clone https://github.com/tu-usuario/CodeNest.git
 cd CodeNest
+./gradlew build
 ```
 
-### 2. Ejecútalo en tu plataforma favorita
+CodeNest está diseñado para ejecutarse localmente sin configuración de backend en su fase actual, utilizando repositorios mockeados inyectados vía **Koin** (Inyección de Dependencias multiplataforma).
 
-Dependiendo de dónde quieras ver funcionar la aplicación, usa uno de estos comandos en la terminal de tu editor:
+### 📱 Android
+Para compilar e instalar el APK de debug en un emulador o dispositivo Android conectado:
+```bash
+./gradlew :androidApp:installDebug
+```
 
-- **📱 Android (Celular o Emulador):**
-  Puedes darle al botón de "Play" ▶️ en Android Studio seleccionando el módulo `androidApp`, o usar la terminal:
-  ```bash
-  ./gradlew :androidApp:installDebug
-  ```
+### 🖥️ Desktop
+Para iniciar la aplicación en tu entorno de escritorio (JVM):
+```bash
+./gradlew :desktopApp:run
+```
 
-- **🖥️ Escritorio (Aplicación para PC):**
-  Para abrir la aplicación como si fuera un programa nativo en tu computadora:
-  ```bash
-  ./gradlew :desktopApp:run
-  ```
-
-- **🌐 Web (En tu navegador):**
-  Para lanzar la aplicación web y verla directamente en tu navegador (Chrome, Firefox, etc.):
-  ```bash
-  ./gradlew :webApp:wasmJsBrowserRun
-  ```
+### 🌐 Web (Wasm)
+Para compilar y probar la aplicación web usando Kotlin/Wasm en tu navegador local:
+```bash
+./gradlew :webApp:wasmJsBrowserRun
+```
 
 ---
 
-## 📁 ¿Cómo está organizado el código?
+## 📁 Estructura del Proyecto
 
-Si exploras las carpetas del proyecto, verás una estructura muy sencilla:
+El proyecto está organizado de la siguiente manera:
 
-- 📱 `androidApp/` 👉 Todo lo específico para que funcione en Android.
-- 🖥️ `desktopApp/` 👉 Todo lo específico para que funcione como programa de PC.
-- 🌐 `webApp/` 👉 Todo lo específico para que funcione como página web.
-- 📦 `shared/` 👉 **¡El corazón de la app!** Aquí vive casi todo el código del proyecto. Las pantallas visuales, las reglas de autenticación y la lógica se comparten desde aquí hacia el resto de carpetas.
+```text
+CodeNest/
+├── androidApp/        # Punto de entrada específico para Android (MainActivity).
+├── desktopApp/        # Punto de entrada para aplicaciones JVM de escritorio.
+├── webApp/            # Punto de entrada para JS/Wasm (ComposeViewport).
+└── shared/            # Código agnóstico de plataforma. Contiene el core del sistema:
+    ├── di/            # Configuración de Inyección de Dependencias (AppModule, Koin).
+    ├── data/          # Implementación de repositorios (AuthRepositoryImpl con mocks).
+    ├── domain/        # Casos de uso puros y contratos (ValidateEmailUseCase, AuthRepository).
+    └── presentation/  # Componentes UI de Compose Multiplatform, State y ViewModels.
+```
 
 ---
 
-## 🧪 Ejecutar Pruebas (Tests)
+## ⚙️ Variables de Entorno
 
-Si quieres asegurarte de que todas las validaciones (como el formato del email o la contraseña) funcionan correctamente, corre este comando:
+Actualmente, el proyecto opera localmente y no depende de variables de entorno externas ni tokens de API para su compilación y ejecución inicial.
+
+| Nombre | Descripción | Ejemplo | Obligatoria |
+|---|---|---|---|
+| N/A | Ninguna configurada en la fase actual de desarrollo. | N/A | Falso |
+
+---
+
+## 🧪 Ejecución de Tests
+
+Para validar la lógica de negocio (Casos de Uso) y los flujos de estado del ViewModel en la capa compartida (asegurando que las reglas funcionen idénticamente en todas las plataformas), ejecuta:
+
 ```bash
 ./gradlew :shared:test
 ```
 
 ---
 
-## 🤝 Cómo Contribuir a CodeNest
+## 🤝 Cómo Contribuir
 
-¡Nos encanta recibir aportes de la comunidad! Si quieres ayudar a mejorar CodeNest, ya sea resolviendo bugs, añadiendo nuevas funciones, o mejorando la documentación, sigue esta guía:
-
-### 🐛 Reportar Bugs y Sugerencias
-Antes de escribir código, verifica en los *Issues* si el problema o idea ya ha sido reportado. Si no es así, abre un nuevo *Issue* detallando:
-- ¿Qué problema encontraste? (Incluye capturas de pantalla si es visual).
-- Pasos exactos para reproducirlo.
-- ¿Qué solución propones?
-
-### 💻 Pasos para enviar código (Pull Requests)
-
-1. **Haz un Fork:** Copia el repositorio a tu cuenta personal de GitHub.
-2. **Clona tu Fork:** Descárgalo en tu computadora de forma local.
-3. **Crea una nueva rama:** No trabajes directamente en la rama principal (`main`). Crea una rama con un nombre descriptivo:
-   ```bash
-   git checkout -b feature/nueva-pantalla-login
-   # o para un bugfix:
-   git checkout -b fix/error-validacion-email
-   ```
-4. **Programa tu magia:** 
-   - Asegúrate de seguir la **Arquitectura Limpia**. Si cambias lógica de negocio, hazlo en la carpeta `shared/`.
-   - Respeta el formato de código de Kotlin (Kodetyle/Ktlint).
-   - Documenta cualquier función pública o compleja usando KDoc.
-5. **Escribe y pasa las pruebas:** Todo código nuevo de lógica debe venir acompañado de su respectivo Test Unitario. Ejecuta las pruebas (`./gradlew :shared:test`) para asegurar que nada se ha roto.
-6. **Haz Commits claros:** Usa *Conventional Commits*:
-   ```bash
-   git commit -m "feat: agregar inicio de sesión con Google"
-   # o
-   git commit -m "fix: corregir crash al dejar el email vacío"
-   ```
-7. **Sube tus cambios y abre un Pull Request:** Envía tu código a nuestro repositorio y explica detalladamente qué cambiaste y por qué. ¡Nuestro equipo lo revisará lo antes posible!
-
----
-
-<div align="center">
-
-![Bison Logo](shared/src/commonMain/composeResources/drawable/Bison_Logo_Studios.png) 
-![Wild Byte Studio Logo](shared/src/commonMain/composeResources/drawable/wild_byte_studio.png)
-![Owl Connect Logo](shared/src/commonMain/composeResources/drawable/owl_connect.png)
-
-<br>
-<strong>Ztrene Studios, Wild Byte Studio & Owl Connect</strong>
-
-</div>
+1. Haz un fork del repositorio.
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-autenticacion`).
+3. Asegúrate de respetar el Principio de Responsabilidad Única (SRP) en cada cambio arquitectónico. Documenta tus funciones públicas utilizando KDoc.
+4. Haz commit de tus cambios (`git commit -m "feat: implementar validación estricta"`).
+5. Abre un Pull Request describiendo detalladamente la necesidad técnica que resuelve.
