@@ -289,14 +289,74 @@ private fun ApiSettingsSection() {
     var customModel by remember { mutableStateOf(savedConfig.customModel) }
     var isPasswordVisible by remember { mutableStateOf(false) }
     var savedMessage by remember { mutableStateOf<String?>(null) }
+    var isSuccess by remember { mutableStateOf(false) }
+    var showModelDialog by remember { mutableStateOf(false) }
+    var dialogModel by remember { mutableStateOf(customModel.ifBlank { getModelsForProvider(selectedProvider).firstOrNull() ?: "" }) }
+    var modelDropdownExpanded by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     fun resetToSaved() {
-        selectedProvider = savedConfig.provider
-        apiKey = savedConfig.apiKey
-        customEndpoint = savedConfig.customEndpoint
-        customModel = savedConfig.customModel
+        val current = aiConfigRepo.loadConfig()
+        selectedProvider = current.provider
+        apiKey = current.apiKey
+        customEndpoint = current.customEndpoint
+        customModel = current.customModel
         savedMessage = null
+    }
+
+    fun doSave() {
+        coroutineScope.launch {
+            withContext(Dispatchers.Default) {
+                aiConfigRepo.saveConfig(
+                    org.example.project.data.network.AiConfig(selectedProvider, apiKey, customEndpoint, dialogModel)
+                )
+            }
+            customModel = dialogModel
+            isSuccess = true
+            savedMessage = "Configuracion guardada correctamente"
+            showModelDialog = false
+        }
+    }
+
+    if (showModelDialog) {
+        AlertDialog(
+            onDismissRequest = { showModelDialog = false },
+            title = { Text("Confirmar Modelo", fontWeight = FontWeight.Bold, color = CodeNestColors.onSurface) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("Proveedor: $selectedProvider", color = CodeNestColors.primary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("Selecciona el modelo de IA a utilizar:", color = CodeNestColors.onSurfaceVariant, fontSize = 13.sp)
+
+                    Box(modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(CodeNestColors.surfaceContainerLowest).border(1.dp, CodeNestColors.outlineVariant, RoundedCornerShape(8.dp)).clickable { modelDropdownExpanded = true }.padding(12.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text(dialogModel.ifBlank { "Seleccionar modelo..." }, color = if (dialogModel.isBlank()) CodeNestColors.outlineVariant else CodeNestColors.onSurface, fontSize = 14.sp)
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = CodeNestColors.onSurfaceVariant)
+                        }
+                        DropdownMenu(expanded = modelDropdownExpanded, onDismissRequest = { modelDropdownExpanded = false }, modifier = Modifier.background(CodeNestColors.surfaceContainer)) {
+                            getModelsForProvider(selectedProvider).forEach { model ->
+                                DropdownMenuItem(
+                                    text = { Text(model, color = CodeNestColors.onSurface, fontSize = 13.sp) },
+                                    onClick = { dialogModel = model; modelDropdownExpanded = false },
+                                    modifier = Modifier.background(if (model == dialogModel) CodeNestColors.primary.copy(alpha = 0.1f) else Color.Transparent)
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { doSave() },
+                    colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.primary, contentColor = CodeNestColors.onPrimary),
+                    shape = RoundedCornerShape(8.dp)
+                ) { Text("Guardar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showModelDialog = false }) { Text("Cancelar", color = CodeNestColors.onSurfaceVariant) }
+            },
+            containerColor = CodeNestColors.surfaceContainer,
+            tonalElevation = 0.dp
+        )
     }
 
     Column {
@@ -328,36 +388,27 @@ private fun ApiSettingsSection() {
                 if (selectedProvider == "Personalizado") {
                     Text("Endpoint URL", color = CodeNestColors.onSurface, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
                     OutlinedTextField(
-                        value = customEndpoint,
-                        onValueChange = { customEndpoint = it },
-                        placeholder = { Text("https://tu-api.com/v1", color = CodeNestColors.outlineVariant) },
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = CodeNestColors.surfaceContainerLowest,
-                            unfocusedContainerColor = CodeNestColors.surfaceContainerLowest,
-                            focusedBorderColor = CodeNestColors.primary,
-                            unfocusedBorderColor = CodeNestColors.outlineVariant,
-                            focusedTextColor = CodeNestColors.onSurface,
-                            unfocusedTextColor = CodeNestColors.onSurface
-                        ),
+                        value = customEndpoint, onValueChange = { customEndpoint = it },
+                        placeholder = { Text("https://tu-api.com/v1", color = CodeNestColors.outlineVariant) }, singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = CodeNestColors.surfaceContainerLowest, unfocusedContainerColor = CodeNestColors.surfaceContainerLowest, focusedBorderColor = CodeNestColors.primary, unfocusedBorderColor = CodeNestColors.outlineVariant, focusedTextColor = CodeNestColors.onSurface, unfocusedTextColor = CodeNestColors.onSurface),
                         modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
                     )
-                    Text("Modelo", color = CodeNestColors.onSurface, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
-                    OutlinedTextField(
-                        value = customModel,
-                        onValueChange = { customModel = it },
-                        placeholder = { Text("gpt-4o-mini / deepseek-chat / llama-3.1-70b", color = CodeNestColors.outlineVariant) },
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = CodeNestColors.surfaceContainerLowest,
-                            unfocusedContainerColor = CodeNestColors.surfaceContainerLowest,
-                            focusedBorderColor = CodeNestColors.primary,
-                            unfocusedBorderColor = CodeNestColors.outlineVariant,
-                            focusedTextColor = CodeNestColors.onSurface,
-                            unfocusedTextColor = CodeNestColors.onSurface
-                        ),
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
-                    )
+                }
+                Text("Modelo", color = CodeNestColors.onSurface, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
+                Box(modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp).clip(RoundedCornerShape(8.dp)).background(CodeNestColors.surfaceContainerLowest).border(1.dp, CodeNestColors.outlineVariant, RoundedCornerShape(8.dp)).clickable { modelDropdownExpanded = selectedProvider != "Personalizado"; if (selectedProvider == "Personalizado") {} else modelDropdownExpanded = !modelDropdownExpanded }.padding(12.dp)) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Text(customModel.ifBlank { getModelsForProvider(selectedProvider).firstOrNull() ?: "Seleccionar..." }, color = CodeNestColors.onSurface, fontSize = 14.sp)
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = CodeNestColors.onSurfaceVariant)
+                    }
+                    DropdownMenu(expanded = modelDropdownExpanded, onDismissRequest = { modelDropdownExpanded = false }, modifier = Modifier.background(CodeNestColors.surfaceContainer)) {
+                        getModelsForProvider(selectedProvider).forEach { model ->
+                            DropdownMenuItem(
+                                text = { Text(model, color = CodeNestColors.onSurface, fontSize = 13.sp) },
+                                onClick = { customModel = model; modelDropdownExpanded = false },
+                                modifier = Modifier.background(if (model == customModel) CodeNestColors.primary.copy(alpha = 0.1f) else Color.Transparent)
+                            )
+                        }
+                    }
                 }
 
                 Text("Clave API de Proveedor", color = CodeNestColors.onSurface, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
@@ -378,33 +429,74 @@ private fun ApiSettingsSection() {
                     ) { Text("Cancelar", fontSize = 12.sp) }
                     Button(
                         onClick = {
-                            coroutineScope.launch {
-                                withContext(Dispatchers.Default) {
-                                    aiConfigRepo.saveConfig(
-                                        org.example.project.data.network.AiConfig(
-                                            selectedProvider, apiKey, customEndpoint, customModel
-                                        )
-                                    )
-                                }
-                                savedMessage = "Configuración guardada"
-                            }
+                            dialogModel = customModel.ifBlank { getModelsForProvider(selectedProvider).firstOrNull() ?: "" }
+                            showModelDialog = true
                         },
                         shape = RoundedCornerShape(6.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.primary, contentColor = CodeNestColors.onPrimary)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             Icon(Icons.Default.Done, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Text("Guardar Configuración", fontSize = 12.sp)
+                            Text("Guardar Configuracion", fontSize = 12.sp)
                         }
                     }
                 }
                 if (savedMessage != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(savedMessage!!, color = CodeNestColors.secondary, fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+                            .background(if (isSuccess) CodeNestColors.primary.copy(alpha = 0.1f) else CodeNestColors.error.copy(alpha = 0.1f))
+                            .border(1.dp, if (isSuccess) CodeNestColors.primary.copy(alpha = 0.3f) else CodeNestColors.error.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            if (isSuccess) Icons.Default.CheckCircle else Icons.Default.Error,
+                            contentDescription = null,
+                            tint = if (isSuccess) CodeNestColors.primary else CodeNestColors.error,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(savedMessage!!, color = CodeNestColors.onSurface, fontSize = 13.sp)
+                    }
                 }
             }
         }
     }
+}
+
+private fun getModelsForProvider(provider: String): List<String> = when (provider) {
+    "NVIDIA" -> listOf(
+        "nvidia/llama-3.1-nemotron-70b-instruct",
+        "nvidia/llama-3.3-nemotron-super-49b-v1",
+        "meta/llama-3.1-405b-instruct",
+        "microsoft/phi-3-mini-128k-instruct",
+        "google/gemma-2-27b-it",
+        "mistralai/mixtral-8x7b-instruct-v0.1"
+    )
+    "DeepSeek" -> listOf(
+        "deepseek-chat",
+        "deepseek-v4-pro",
+        "deepseek-r1",
+        "deepseek-coder"
+    )
+    "Claude" -> listOf(
+        "claude-3-haiku-20240307",
+        "claude-3-5-sonnet-20241022",
+        "claude-3-opus-20240229",
+        "claude-3-sonnet-20240229",
+        "claude-3-haiku-20240307"
+    )
+    "ChatGPT" -> listOf(
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-4-turbo",
+        "gpt-4",
+        "gpt-3.5-turbo",
+        "o1-mini",
+        "o1-preview"
+    )
+    else -> listOf()
 }
 
 // ─── PALETA DE COLORES PERSONALIZACIÓN CODENEST ───────────────────────────
