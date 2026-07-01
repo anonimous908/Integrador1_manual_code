@@ -42,6 +42,30 @@ data class ChatCompletionResponse(
 
 data class TranscriptionResult(val language: String, val code: String)
 
+@Serializable
+data class ImageUrl(val url: String)
+
+@Serializable
+data class ContentPart(
+    val type: String,
+    val text: String = "",
+    val image_url: ImageUrl? = null
+)
+
+@Serializable
+data class VisionMessage(
+    val role: String,
+    val content: List<ContentPart>
+)
+
+@Serializable
+data class VisionRequest(
+    val model: String,
+    val messages: List<VisionMessage>,
+    val max_tokens: Int = 4096,
+    val temperature: Double = 0.2
+)
+
 enum class AiProvider(val displayName: String, val baseUrl: String, val defaultModel: String) {
     NVIDIA("NVIDIA", "https://integrate.api.nvidia.com/v1", "nvidia/llama-3.1-nemotron-70b-instruct"),
     DEEPSEEK("DeepSeek", "https://api.deepseek.com/v1", "deepseek-chat"),
@@ -270,12 +294,25 @@ class AiApiService(
         provider: AiProvider
     ): Result<String> {
         return try {
-            val requestBody = buildString {
-                append("""{"model":"$model","messages":[{"role":"user","content":[""")
-                append("""{"type":"text","text":${buildJsonString(prompt)}},""")
-                append("""{"type":"image_url","image_url":{"url":"data:$mimeType;base64,$base64Image"}}""")
-                append(""")}],"max_tokens":4096,"temperature":0.2}""")
-            }
+            val request = VisionRequest(
+                model = model,
+                messages = listOf(
+                    VisionMessage(
+                        role = "user",
+                        content = listOf(
+                            ContentPart(type = "text", text = prompt),
+                            ContentPart(
+                                type = "image_url",
+                                image_url = ImageUrl(url = "data:$mimeType;base64,$base64Image")
+                            )
+                        )
+                    )
+                ),
+                max_tokens = 4096,
+                temperature = 0.2
+            )
+
+            val requestJson = json.encodeToString(VisionRequest.serializer(), request)
 
             val responseText: String = client.post("${baseUrl}/chat/completions") {
                 contentType(ContentType.Application.Json)
@@ -284,13 +321,13 @@ class AiApiService(
                     header("anthropic-version", "2023-06-01")
                     header("x-api-key", apiKey)
                 }
-                setBody(requestBody)
+                setBody(requestJson)
             }.body()
 
             val response = json.decodeFromString(ChatCompletionResponse.serializer(), responseText)
             val content = response.choices.firstOrNull()?.message?.content
             if (content.isNullOrBlank()) {
-                Result.failure(Exception("El modelo devolvió una respuesta vacía."))
+                Result.failure(Exception("El modelo devolvio una respuesta vacia."))
             } else {
                 Result.success(content)
             }
@@ -298,10 +335,6 @@ class AiApiService(
             Napier.e(e) { "Vision API Error: ${e.message}" }
             Result.failure(Exception("Error al analizar la imagen: ${e.message}"))
         }
-    }
-
-    private fun buildJsonString(text: String): String {
-        return "\"" + text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\""
     }
 
     private fun detectMimeType(bytes: ByteArray): String {
