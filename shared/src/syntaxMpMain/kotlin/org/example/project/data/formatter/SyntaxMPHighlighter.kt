@@ -9,20 +9,20 @@ import com.gallatinapps.syntaxmp.compose.buildSyntaxAnnotatedString
 import com.gallatinapps.syntaxmp.role.SyntaxRole
 import com.gallatinapps.syntaxmp.tokenizer.SyntaxTokenizer
 import org.example.project.domain.service.SyntaxHighlighter
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 
 class SyntaxMPHighlighter : SyntaxHighlighter {
     private val engine = SyntaxTokenizer()
 
     private val draculaTheme = SyntaxTheme(
         roleStyles = mapOf(
-            SyntaxRole.Keyword to SyntaxStyle(color = DevSpaceColors.codeKeyword, fontWeight = FontWeight.Bold),
-            SyntaxRole.String to SyntaxStyle(color = DevSpaceColors.codeString),
-            SyntaxRole.Type to SyntaxStyle(color = DevSpaceColors.codeType),
-            SyntaxRole.Function to SyntaxStyle(color = DevSpaceColors.codeFunction),
-            SyntaxRole.Comment to SyntaxStyle(color = DevSpaceColors.codeComment, fontStyle = FontStyle.Italic),
-            SyntaxRole.Number to SyntaxStyle(color = DevSpaceColors.codeNumber),
-            SyntaxRole.Variable to SyntaxStyle(color = DevSpaceColors.codeParam)
+            SyntaxRole.Keyword to SyntaxStyle(color = CodeNestColors.codeKeyword, fontWeight = FontWeight.Bold),
+            SyntaxRole.String to SyntaxStyle(color = CodeNestColors.codeString),
+            SyntaxRole.Type to SyntaxStyle(color = CodeNestColors.codeType),
+            SyntaxRole.Function to SyntaxStyle(color = CodeNestColors.codeFunction),
+            SyntaxRole.Comment to SyntaxStyle(color = CodeNestColors.codeComment, fontStyle = FontStyle.Italic),
+            SyntaxRole.Number to SyntaxStyle(color = CodeNestColors.codeNumber),
+            SyntaxRole.Variable to SyntaxStyle(color = CodeNestColors.codeParam)
         )
     )
 

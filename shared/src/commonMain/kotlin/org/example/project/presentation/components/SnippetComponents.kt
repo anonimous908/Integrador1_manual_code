@@ -114,7 +114,7 @@ fun SnippetCard(
                     )
                     Text(
                         text = highlightedLines.getOrElse(index) { AnnotatedString(line) },
-                        color = DevSpaceColors.onSurfaceVariant,
+                        color = CodeNestColors.onSurfaceVariant,
                         fontFamily = monoFont,
                         fontSize = 13.sp,
                         lineHeight = 19.sp
