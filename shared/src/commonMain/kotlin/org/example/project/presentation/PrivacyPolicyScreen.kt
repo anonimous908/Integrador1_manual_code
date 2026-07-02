@@ -9,7 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import org.example.project.presentation.theme.DevSpaceColors
+import org.example.project.presentation.theme.CodeNestColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,13 +39,13 @@ class PrivacyPolicyScreen : Screen {
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = DevSpaceColors.background,
-                        titleContentColor = DevSpaceColors.onSurface,
-                        navigationIconContentColor = DevSpaceColors.onSurface
+                        containerColor = CodeNestColors.background,
+                        titleContentColor = CodeNestColors.onSurface,
+                        navigationIconContentColor = CodeNestColors.onSurface
                     )
                 )
             },
-            containerColor = DevSpaceColors.background
+            containerColor = CodeNestColors.background
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -56,7 +56,7 @@ class PrivacyPolicyScreen : Screen {
             ) {
                 Text(
                     text = stringResource(Res.string.privacy_content),
-                    color = DevSpaceColors.onSurfaceVariant,
+                    color = CodeNestColors.onSurfaceVariant,
                     fontSize = 14.sp,
                     lineHeight = 22.sp
                 )
