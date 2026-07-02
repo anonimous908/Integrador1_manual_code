@@ -21,14 +21,14 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.example.project.domain.service.SyntaxHighlighter
-import org.example.project.data.formatter.DraculaSyntaxHighlighter
+import org.example.project.domain.service.getSyntaxHighlighter
 import org.example.project.domain.repository.RecipeRepository
 import org.example.project.data.repository.MockRecipeRepositoryImpl
 
 val appModule = module {
     single { Settings() }
     
-    single<SyntaxHighlighter> { DraculaSyntaxHighlighter() }
+    single<SyntaxHighlighter> { getSyntaxHighlighter() }
     single<RecipeRepository> { MockRecipeRepositoryImpl() }
     
     single<HashService> { HashServiceImpl() }

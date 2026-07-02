@@ -9,7 +9,7 @@ import org.example.project.presentation.theme.DevSpaceColors
 class MockRecipeRepositoryImpl : RecipeRepository {
     private val sampleCards = listOf(
         SnippetCardData(
-            title = "Grupo A1",
+            title = "Grupo A",
             languageTag = "React",
             secondaryTag = "UI",
             iconAccent = DevSpaceColors.primary,
@@ -33,7 +33,7 @@ class MockRecipeRepositoryImpl : RecipeRepository {
             )
         ),
         SnippetCardData(
-            title = "Grupo A2",
+            title = "Grupo B",
             languageTag = "Python",
             secondaryTag = "Data",
             iconAccent = DevSpaceColors.secondary,
@@ -66,7 +66,7 @@ class MockRecipeRepositoryImpl : RecipeRepository {
             )
         ),
         SnippetCardData(
-            title = "Grupo A3",
+            title = "Grupo C",
             languageTag = "SQL",
             secondaryTag = "Analytics",
             iconAccent = DevSpaceColors.tertiary,
