@@ -99,6 +99,21 @@ kotlin {
             implementation(libs.napier)
             }
         }
+        val syntaxMpMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.syntaxmp)
+            }
+        }
+        val androidMain by getting {
+            dependsOn(syntaxMpMain)
+        }
+        val jvmMain by getting {
+            dependsOn(syntaxMpMain)
+        }
+        val wasmJsMain by getting {
+            dependsOn(syntaxMpMain)
+        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation("io.insert-koin:koin-test")

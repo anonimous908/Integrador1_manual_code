@@ -13,6 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +39,10 @@ fun SnippetCard(
     onCopied: () -> Unit
 ) {
     val clipboardManager = LocalClipboardManager.current
+    val fullCode = remember(card) { card.codeLines.joinToString("\n") }
+    val highlightedLines = remember(card, fullCode) {
+        syntaxHighlighter.highlight(fullCode, card.languageTag).splitLines()
+    }
 
     Column(
         modifier = Modifier
@@ -107,7 +113,8 @@ fun SnippetCard(
                         modifier = Modifier.width(28.dp).padding(end = 8.dp),
                     )
                     Text(
-                        text = syntaxHighlighter.highlight(line),
+                        text = highlightedLines.getOrElse(index) { AnnotatedString(line) },
+                        color = CodeNestColors.onSurfaceVariant,
                         fontFamily = monoFont,
                         fontSize = 13.sp,
                         lineHeight = 19.sp
@@ -191,5 +198,32 @@ private fun Tag(text: String, accent: Color) {
             .padding(horizontal = 6.dp, vertical = 2.dp)
     ) {
         Text(text, color = accent, fontSize = 10.sp)
+    }
+}
+
+private fun AnnotatedString.splitLines(): List<AnnotatedString> {
+    val lines = text.split('\n')
+    var currentOffset = 0
+    return lines.map { lineText ->
+        val lineStart = currentOffset
+        val lineEnd = currentOffset + lineText.length
+        currentOffset = lineEnd + 1 // +1 for the newline character
+
+        buildAnnotatedString {
+            append(lineText)
+            spanStyles.forEach { range ->
+                val spanStart = range.start
+                val spanEnd = range.end
+                val overlapStart = maxOf(spanStart, lineStart)
+                val overlapEnd = minOf(spanEnd, lineEnd)
+                if (overlapStart < overlapEnd) {
+                    addStyle(
+                        style = range.item,
+                        start = overlapStart - lineStart,
+                        end = overlapEnd - lineStart
+                    )
+                }
+            }
+        }
     }
 }
