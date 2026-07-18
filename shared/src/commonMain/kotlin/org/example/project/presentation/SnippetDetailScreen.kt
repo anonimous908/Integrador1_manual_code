@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import org.example.project.presentation.grabado_online.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +31,8 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import org.example.project.presentation.theme.CodeNestColors
+import org.example.project.presentation.grabado_online.PlatformGrabadoOnlineButton
+import org.example.project.presentation.grabado_online.PlatformGrabadoOnlineBanner
 
 /* ---------------------------------------------------------
  * MODELOS
@@ -84,6 +87,8 @@ class SnippetDetailTab(
         val tabNavigator = LocalTabNavigator.current
         var isEditing by remember { mutableStateOf(snippet == emptySnippetDetail) }
         var currentSnippet by remember { mutableStateOf(snippet) }
+        val grabadoViewModel = remember { GrabadoOnlineViewModel() }
+        val grabadoState by grabadoViewModel.state.collectAsState()
 
         Column(
             modifier = Modifier
@@ -94,6 +99,8 @@ class SnippetDetailTab(
             HeaderBar(
                 snippet = currentSnippet,
                 isEditing = isEditing,
+                grabadoState = grabadoState,
+                onToggleGrabado = { grabadoViewModel.onEvent(GrabadoOnlineEvent.ToggleRecording) },
                 onSnippetChange = { currentSnippet = it },
                 onEditToggle = { isEditing = !isEditing },
                 onBack = { tabNavigator.current = org.example.project.presentation.tabs.MyRecipesTab(email) },
@@ -109,8 +116,22 @@ class SnippetDetailTab(
             ) {
                 // Columna izquierda: código (2/3)
                 Column(modifier = Modifier.weight(2f)) {
-                    TagsAndMeta(currentSnippet, isEditing) { currentSnippet = it }
-                    Spacer(Modifier.height(16.dp))
+                    LaunchedEffect(grabadoState.latestOcrCode) {
+                        val ocr = grabadoState.latestOcrCode
+                        if (!ocr.isNullOrBlank() && grabadoState.isRecording) {
+                            currentSnippet = currentSnippet.withRawCode(ocr).copy(fileName = "pizarra_captura.py")
+                        }
+                    }
+                    PlatformGrabadoOnlineBanner(
+                        state = grabadoState,
+                        onOcrDetected = { ocrText ->
+                            currentSnippet = currentSnippet.withRawCode(ocrText).copy(fileName = "pizarra_captura.py")
+                        }
+                    )
+                    if (!isEditing) {
+                        TagsAndMeta(currentSnippet, isEditing) { currentSnippet = it }
+                        Spacer(Modifier.height(16.dp))
+                    }
                     CodeBlockCard(currentSnippet, isEditing) { currentSnippet = it }
                 }
 
@@ -129,6 +150,8 @@ class SnippetDetailTab(
 private fun HeaderBar(
     snippet: SnippetDetail,
     isEditing: Boolean,
+    grabadoState: GrabadoOnlineState,
+    onToggleGrabado: () -> Unit,
     onSnippetChange: (SnippetDetail) -> Unit,
     onEditToggle: () -> Unit,
     onBack: () -> Unit,
@@ -140,20 +163,20 @@ private fun HeaderBar(
             .fillMaxWidth()
             .background(CodeNestColors.background.copy(alpha = 0.9f))
             .border(width = 1.dp, color = CodeNestColors.outlineVariant.copy(alpha = 0.5f))
-            .padding(horizontal = 32.dp, vertical = 16.dp),
+            .padding(horizontal = 32.dp, vertical = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onBack, modifier = Modifier.padding(end = 16.dp)) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Regresar", tint = CodeNestColors.onSurface)
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = CodeNestColors.onSurface)
             }
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    snippet.breadcrumb.forEachIndexed { index, crumb ->
+                    snippet.breadcrumb.forEachIndexed { index, item ->
                         Text(
-                            text = crumb,
-                            color = if (index == snippet.breadcrumb.lastIndex) CodeNestColors.onSurface else CodeNestColors.onSurfaceVariant,
+                            text = item,
+                            color = if (index == snippet.breadcrumb.lastIndex) CodeNestColors.primary else CodeNestColors.onSurfaceVariant,
                             fontSize = 12.sp,
                             fontFamily = FontFamily.Monospace
                         )
@@ -188,7 +211,11 @@ private fun HeaderBar(
             }
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            PlatformGrabadoOnlineButton(
+                state = grabadoState,
+                onToggle = onToggleGrabado
+            )
             GhostButton(
                 icon = if (isEditing) Icons.Default.Check else Icons.Default.Edit,
                 label = if (isEditing) "Guardar" else "Editar",
@@ -218,48 +245,35 @@ private fun GhostButton(icon: androidx.compose.ui.graphics.vector.ImageVector, l
 
 @Composable
 private fun TagsAndMeta(snippet: SnippetDetail, isEditing: Boolean, onSnippetChange: (SnippetDetail) -> Unit) {
+    if (isEditing) return
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (isEditing) {
-                OutlinedTextField(
-                    value = snippet.tags.joinToString(" "),
-                    onValueChange = { 
-                        val newTags = it.split(" ").filter { tag -> tag.isNotBlank() }
-                        onSnippetChange(snippet.copy(tags = newTags)) 
-                    },
-                    placeholder = { Text("#etiquetas separadas por espacio") },
-                    textStyle = TextStyle(fontSize = 12.sp, fontFamily = FontFamily.Monospace),
-                    modifier = Modifier.width(300.dp)
-                )
-            } else {
-                snippet.tags.forEach { tag ->
-                    val (bg, fg) = when {
-                        tag.contains("Python") -> CodeNestColors.tertiary.copy(alpha = 0.15f) to CodeNestColors.tertiary
-                        tag.contains("Tkinter") -> CodeNestColors.primary.copy(alpha = 0.10f) to CodeNestColors.primary
-                        else -> CodeNestColors.secondary.copy(alpha = 0.10f) to CodeNestColors.secondary
-                    }
-                    Text(
-                        text = tag,
-                        color = fg,
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(bg)
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
-                    )
+            snippet.tags.forEach { tag ->
+                val (bg, fg) = when {
+                    tag.contains("Python") -> CodeNestColors.tertiary.copy(alpha = 0.15f) to CodeNestColors.tertiary
+                    tag.contains("Tkinter") -> CodeNestColors.primary.copy(alpha = 0.10f) to CodeNestColors.primary
+                    else -> CodeNestColors.secondary.copy(alpha = 0.10f) to CodeNestColors.secondary
                 }
+                Text(
+                    text = tag,
+                    color = fg,
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(bg)
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                )
             }
         }
-        if (!isEditing) {
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                MetaItem(Icons.Default.CalendarToday, snippet.createdDate)
-                MetaItem(Icons.Default.ContentCopy, "${snippet.usageCount} usos")
-            }
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            MetaItem(Icons.Default.CalendarToday, snippet.createdDate)
+            MetaItem(Icons.Default.ContentCopy, "${snippet.usageCount} usos")
         }
     }
 }

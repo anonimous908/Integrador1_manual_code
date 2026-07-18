@@ -54,6 +54,7 @@ import org.example.project.presentation.login.LoginState
 
 import org.example.project.presentation.components.calculateBrandPadding
 import org.example.project.presentation.components.CodeNestLoginForm
+import org.example.project.presentation.grabado_online.AndroidGrabadoOnlineVoyagerScreen
 
 class CodeNestLoginScreen : Screen {
     @Composable
@@ -212,6 +213,8 @@ class CodeNestLoginScreen : Screen {
                             modifier = Modifier.clickable { navigator.push(CreateAccountScreen()) }
                         )
                     }
+
+                    PlatformLoginActions(navigator = navigator)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -281,7 +284,6 @@ class CodeNestLoginScreen : Screen {
                                 .clickable {
                                     uriHandler.openUri(latestUrl)
                                 }
-                                .padding(4.dp)
                         )
                     } else {
                         Text(
