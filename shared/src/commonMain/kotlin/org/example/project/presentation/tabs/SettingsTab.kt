@@ -44,10 +44,10 @@ object SettingsTab : Tab {
 @Composable
 private fun PersonalizacionContent() {
     var currentThemeMode by remember { mutableStateOf(ThemeMode.DARK) }
+    var refreshTrigger by remember { mutableStateOf(0) }
 
-    // Sync reactive colors
     fun refreshColors() {
-        currentThemeMode = currentThemeMode // trigger recomposition
+        refreshTrigger++
     }
 
     Column(
@@ -95,9 +95,11 @@ private fun PersonalizacionContent() {
 
         // Hide color pickers when DEFAULT
         if (currentThemeMode != ThemeMode.DEFAULT) {
-            SectionAccentColor()
-            SectionAdditionalColors()
-            SectionSurfaceColor()
+            key(refreshTrigger) {
+                SectionAccentColor()
+                SectionAdditionalColors()
+                SectionSurfaceColor()
+            }
 
             Spacer(Modifier.height(8.dp))
             Button(

@@ -139,7 +139,7 @@ fun onPrimaryForBackground(background: Color): Color {
 
 @Composable
 fun CodeNestTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: ThemeMode = ThemeMode.DARK,
     content: @Composable () -> Unit
 ) {
     val isDark = when (themeMode) {
@@ -151,8 +151,8 @@ fun CodeNestTheme(
     val scheme = if (isDark) {
         darkColorScheme(
             background = CodeNestColors.background,
-            primary = accentColor,
-            onPrimary = onAccentColor,
+            primary = CodeNestColors.primary,
+            onPrimary = CodeNestColors.onPrimary,
             primaryContainer = CodeNestColors.primaryContainer,
             onPrimaryContainer = CodeNestColors.onPrimaryContainer,
             surfaceContainerLow = CodeNestColors.surfaceContainerLow,
@@ -164,7 +164,20 @@ fun CodeNestTheme(
             outlineVariant = CodeNestColors.outlineVariant,
         )
     } else {
-        LightColorScheme
+        lightColorScheme(
+            background = CodeNestColors.background,
+            primary = CodeNestColors.primary,
+            onPrimary = CodeNestColors.onPrimary,
+            primaryContainer = CodeNestColors.primaryContainer,
+            onPrimaryContainer = CodeNestColors.onPrimaryContainer,
+            surfaceContainerLow = CodeNestColors.surfaceContainerLow,
+            surfaceContainer = CodeNestColors.surfaceContainer,
+            surfaceContainerHigh = CodeNestColors.surfaceContainerHigh,
+            onSurface = CodeNestColors.onSurface,
+            onSurfaceVariant = CodeNestColors.onSurfaceVariant,
+            outline = CodeNestColors.outline,
+            outlineVariant = CodeNestColors.outlineVariant,
+        )
     }
 
     CompositionLocalProvider(
