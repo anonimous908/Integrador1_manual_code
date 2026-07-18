@@ -1,22 +1,25 @@
 package org.example.project.data.repository
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import org.example.project.domain.model.SnippetCardData
+import org.example.project.domain.model.Recipe
 import org.example.project.domain.repository.RecipeRepository
-import org.example.project.presentation.theme.CodeNestColors
+import kotlin.uuid.Uuid
 
+/**
+ * Legacy mock repository returning sample recipes.
+ * @deprecated Use [SettingsRecipeRepositoryImpl] in production or
+ * [FakeRecipeRepositoryImpl] in tests instead.
+ */
+@Deprecated("Use SettingsRecipeRepositoryImpl for production or FakeRecipeRepositoryImpl for tests")
 class MockRecipeRepositoryImpl : RecipeRepository {
-    private val sampleCards = listOf(
-        SnippetCardData(
+
+    private val sampleRecipes = listOf(
+        Recipe(
+            id = Uuid.random().toString(),
+            userId = "demo@codenest.app",
             title = "Grupo A",
             languageTag = "React",
             secondaryTag = "UI",
-            iconAccent = CodeNestColors.primary,
-            activeLineIndex = 3,
-            footerLabel = "Evidence",
-            footerIcon = Icons.Filled.Visibility,
-            codeLines = listOf(
+            code = listOf(
                 "import { motion } from 'framer-motion';",
                 "",
                 "export const Tabs = ({ items }) => {",
@@ -30,26 +33,17 @@ class MockRecipeRepositoryImpl : RecipeRepository {
                 "    </div>",
                 "  );",
                 "};"
-            )
+            ),
+            description = "Animated tabs with Framer Motion",
+            evidence = "Interactive component"
         ),
-        SnippetCardData(
+        Recipe(
+            id = Uuid.random().toString(),
+            userId = "demo@codenest.app",
             title = "Grupo B",
             languageTag = "Python",
             secondaryTag = "Data",
-            iconAccent = CodeNestColors.secondary,
-            activeLineIndex = 5,
-            footerLabel = "Output Log",
-            footerIcon = Icons.Filled.Visibility,
-            showTerminalOutput = true,
-            terminalLines = listOf(
-                "> python clean.py",
-                "[INFO] Loading dataset...",
-                "[INFO] Initial shape: (10500, 42)",
-                "[INFO] Dropping sparse rows...",
-                "[INFO] Final shape: (9820, 42)",
-                "[SUCCESS] Data cleaned in 0.4s"
-            ),
-            codeLines = listOf(
+            code = listOf(
                 "import pandas as pd",
                 "import numpy as np",
                 "",
@@ -63,17 +57,17 @@ class MockRecipeRepositoryImpl : RecipeRepository {
                 "    return df",
                 "",
                 "cleaned_data = clean_dataset(raw_data)"
-            )
+            ),
+            description = "Data cleaning utility for pandas",
+            evidence = "Output log available"
         ),
-        SnippetCardData(
+        Recipe(
+            id = Uuid.random().toString(),
+            userId = "demo@codenest.app",
             title = "Grupo C",
             languageTag = "SQL",
             secondaryTag = "Analytics",
-            iconAccent = CodeNestColors.tertiary,
-            activeLineIndex = 3,
-            footerLabel = "Visualization",
-            footerIcon = Icons.Filled.Visibility,
-            codeLines = listOf(
+            code = listOf(
                 "WITH cohort_items AS (",
                 "  SELECT",
                 "    user_id,",
@@ -86,11 +80,23 @@ class MockRecipeRepositoryImpl : RecipeRepository {
                 "  COUNT(DISTINCT s.user_id) AS active_users",
                 "FROM cohort_items c",
                 "LEFT JOIN subscriptions s ON c.user_id = s.user_id"
-            )
+            ),
+            description = "Cohort retention analysis query",
+            evidence = "Visualization attached"
         )
     )
 
-    override suspend fun getPersonalRecipes(): List<SnippetCardData> {
-        return sampleCards
-    }
+    override suspend fun getPersonalRecipes(): List<Recipe> = sampleRecipes
+
+    override suspend fun getById(id: String): Recipe? =
+        sampleRecipes.find { it.id == id }
+
+    override suspend fun create(recipe: Recipe): Recipe =
+        throw UnsupportedOperationException("Mock repository does not support create. Use SettingsRecipeRepositoryImpl.")
+
+    override suspend fun update(recipe: Recipe): Recipe =
+        throw UnsupportedOperationException("Mock repository does not support update. Use SettingsRecipeRepositoryImpl.")
+
+    override suspend fun delete(id: String): Boolean =
+        throw UnsupportedOperationException("Mock repository does not support delete. Use SettingsRecipeRepositoryImpl.")
 }

@@ -30,7 +30,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import org.example.project.domain.model.Recipe
 import org.example.project.domain.model.SnippetCardData
+import org.example.project.domain.model.toSnippetCardData
 import org.example.project.domain.repository.RecipeRepository
 import org.example.project.domain.service.SyntaxHighlighter
 import org.example.project.presentation.AISearchScreen
@@ -64,26 +66,31 @@ data class MyRecipesTab(val email: String) : Tab {
 
         var searchQuery by remember { mutableStateOf("") }
         var showCopiedToast by remember { mutableStateOf(false) }
-        var rawCards by remember { mutableStateOf<List<SnippetCardData>>(emptyList()) }
+        var rawRecipes by remember { mutableStateOf<List<Recipe>>(emptyList()) }
 
         // Cargar recetas desde el repositorio
         LaunchedEffect(recipeRepository) {
-            rawCards = recipeRepository.getPersonalRecipes()
+            rawRecipes = recipeRepository.getPersonalRecipes()
         }
 
-        // Filtrar tarjetas por título, lenguaje o etiquetas
-        val filteredCards = remember(searchQuery, rawCards) {
+        // Filtrar recetas por título, lenguaje o etiqueta
+        val filteredRecipes = remember(searchQuery, rawRecipes) {
             if (searchQuery.isBlank()) {
-                rawCards
+                rawRecipes
             } else {
                 val query = searchQuery.lowercase().trim()
-                rawCards.filter { card ->
-                    card.title.lowercase().contains(query) ||
-                            card.languageTag.lowercase().contains(query) ||
-                            card.secondaryTag.lowercase().contains(query) ||
-                            card.codeLines.any { it.lowercase().contains(query) }
+                rawRecipes.filter { recipe ->
+                    recipe.title.lowercase().contains(query) ||
+                            recipe.languageTag.lowercase().contains(query) ||
+                            (recipe.secondaryTag?.lowercase()?.contains(query) == true) ||
+                            recipe.code.any { it.lowercase().contains(query) }
                 }
             }
+        }
+
+        // Adaptar a SnippetCardData para el componente existente
+        val cards = remember(filteredRecipes) {
+            filteredRecipes.map { it.toSnippetCardData() }
         }
 
         Box(modifier = Modifier.fillMaxSize().background(CodeNestColors.background)) {
@@ -99,7 +106,7 @@ data class MyRecipesTab(val email: String) : Tab {
 
                 // ContentCanvas
                 ContentCanvas(
-                    cards = filteredCards,
+                    cards = cards,
                     syntaxHighlighter = syntaxHighlighter,
                     onCopied = {
                         showCopiedToast = true
