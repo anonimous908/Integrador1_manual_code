@@ -23,7 +23,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Ejecutar Tests (Shared Module)
-      run: ./gradlew check
+      run: ./gradlew check --no-daemon --no-configuration-cache
 
     - name: Construir y Verificar proyecto completo
-      run: ./gradlew build --stacktrace
+      run: ./gradlew assemble --no-daemon --no-configuration-cache --stacktrace

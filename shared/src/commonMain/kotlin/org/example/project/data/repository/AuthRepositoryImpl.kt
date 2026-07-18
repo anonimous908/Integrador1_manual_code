@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.example.project.domain.model.User
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.service.HashService
 import org.jetbrains.compose.resources.getString
@@ -17,12 +18,16 @@ import kotlinproject.shared.generated.resources.error_session_expired
 @Serializable
 data class UserData(val name: String, val hashedPass: String)
 
+/**
+ * Local-only [AuthRepository] using multiplatform-settings.
+ * Kept for backward compatibility and testing — no longer bound as default.
+ */
 class AuthRepositoryImpl(
     private val settings: Settings,
     private val hashService: HashService
 ) : AuthRepository {
 
-    override suspend fun register(name: String, email: String, pass: String): Result<Unit> {
+    override suspend fun register(name: String, email: String, pass: String): Result<User> {
         return withContext(Dispatchers.Default) {
             val storedData = settings.getStringOrNull("user_$email")
             if (storedData != null) {
@@ -31,15 +36,15 @@ class AuthRepositoryImpl(
 
             val hashedPass = hashService.hash(pass)
             val userData = UserData(name, hashedPass)
-            
+
             settings.putString("user_$email", Json.encodeToString(userData))
             settings.putString("current_user", email)
 
-            Result.success(Unit)
+            Result.success(User(id = email, name = name, email = email))
         }
     }
 
-    override suspend fun login(email: String, pass: String): Result<Unit> {
+    override suspend fun login(email: String, pass: String): Result<User> {
         return withContext(Dispatchers.Default) {
             val storedData = settings.getStringOrNull("user_$email")
                 ?: return@withContext Result.failure(Exception(getString(Res.string.error_invalid_credentials)))
@@ -54,7 +59,7 @@ class AuthRepositoryImpl(
 
             if (userData.hashedPass == inputHashedPass) {
                 settings.putString("current_user", email)
-                Result.success(Unit)
+                Result.success(User(id = email, name = userData.name, email = email))
             } else {
                 Result.failure(Exception(getString(Res.string.error_invalid_credentials)))
             }

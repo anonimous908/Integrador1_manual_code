@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -27,7 +28,7 @@ object DocumentationTab : Tab {
         @Composable
         get() {
             val title = stringResource(Res.string.sidebar_documentation)
-            val icon = rememberVectorPainter(Icons.Default.MenuBook)
+            val icon = rememberVectorPainter(Icons.AutoMirrored.Filled.MenuBook)
             return remember {
                 TabOptions(
                     index = 4u,

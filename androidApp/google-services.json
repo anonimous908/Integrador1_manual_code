@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95095284684",
+    "project_id": "codenest-cf49e",
+    "storage_bucket": "codenest-cf49e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95095284684:android:f0f0260214afb917cf7369",
+        "android_client_info": {
+          "package_name": "org.example.project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAPHvCHqg8LPJDOV17wAs-nwFPtlZyJ88"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -75,7 +75,7 @@ class LoginViewModel(
         _state.update { it.copy(isLoading = true, errorMessage = null) }
         viewModelScope.launch {
             loginWithEmailUseCase(currentState.email, currentState.pass)
-                .onSuccess { _state.update { it.copy(isLoading = false, isLoggedIn = true) } }
+                .onSuccess { user -> _state.update { it.copy(isLoading = false, isLoggedIn = true, user = user) } }
                 .onFailure { error -> _state.update { it.copy(isLoading = false, errorMessage = error.message ?: "Error desconocido") } }
         }
     }

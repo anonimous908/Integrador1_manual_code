@@ -68,7 +68,7 @@ class CodeNestLoginScreen : Screen {
             viewModel.state.collect { state ->
                 if (state.isLoggedIn) {
                     viewModel.onEvent(LoginEvent.Reset)
-                    navigator.replace(HomeScreen(state.email))
+                    navigator.replace(HomeScreen(state.user?.email ?: state.email))
                 }
             }
         }
@@ -212,6 +212,8 @@ class CodeNestLoginScreen : Screen {
                             modifier = Modifier.clickable { navigator.push(CreateAccountScreen()) }
                         )
                     }
+
+                    PlatformLoginActions(navigator = navigator)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -281,7 +283,6 @@ class CodeNestLoginScreen : Screen {
                                 .clickable {
                                     uriHandler.openUri(latestUrl)
                                 }
-                                .padding(4.dp)
                         )
                     } else {
                         Text(

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.domain.model.User
 import org.example.project.domain.usecase.RegisterUseCase
 
 data class RegisterState(
@@ -15,6 +16,7 @@ data class RegisterState(
     val pass: String = "",
     val termsAccepted: Boolean = false,
     val isLoading: Boolean = false,
+    val user: User? = null,
     val errorMessage: String? = null,
     val success: Boolean = false
 )
@@ -56,7 +58,8 @@ class RegisterViewModel(
             try {
                 val result = registerUseCase(currentState.name, currentState.email, currentState.pass)
                 if (result.isSuccess) {
-                    _state.update { it.copy(isLoading = false, success = true) }
+                    val user = result.getOrNull()
+                    _state.update { it.copy(isLoading = false, success = true, user = user) }
                 } else {
                     _state.update { it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.message ?: "Error desconocido") }
                 }

@@ -24,5 +24,11 @@ kotlin {
 
             implementation(libs.compose.ui)
         }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(npm("firebase", "11.6.0"))
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
 package org.example.project.domain.repository
 
+import org.example.project.domain.model.User
+
 /**
  * Interfaz que define el contrato de operaciones de autenticación para CodeNest.
  */
@@ -9,7 +11,7 @@ interface AuthRepository {
      *
      * @param email [String] Correo electrónico del usuario.
      * @param pass [String] Contraseña del usuario.
-     * @return [Result]<[Unit]> Retorna `Result.success` si las credenciales son válidas, 
+     * @return [Result]<[User]> Retorna `Result.success([User])` si las credenciales son válidas,
      * o `Result.failure` con una excepción si son incorrectas o no existe el usuario.
      * @throws Exception Si ocurre un error de red o timeout durante el proceso.
      *
@@ -19,7 +21,7 @@ interface AuthRepository {
      * if (result.isSuccess) { navigateToHome() }
      * ```
      */
-    suspend fun login(email: String, pass: String): Result<Unit>
+    suspend fun login(email: String, pass: String): Result<User>
 
     /**
      * Registra un nuevo usuario en el sistema.
@@ -27,7 +29,7 @@ interface AuthRepository {
      * @param name [String] Nombre completo del usuario.
      * @param email [String] Correo electrónico válido.
      * @param pass [String] Contraseña segura (mínimo 6 caracteres, mayúscula y número).
-     * @return [Result]<[Unit]> Retorna `Result.success` si el registro fue exitoso, 
+     * @return [Result]<[User]> Retorna `Result.success([User])` si el registro fue exitoso,
      * o `Result.failure` si el correo ya está registrado u ocurre un error.
      * @throws Exception Si ocurre un error de conectividad o de almacenamiento.
      *
@@ -36,5 +38,5 @@ interface AuthRepository {
      * val result = authRepository.register("Juan", "juan@test.com", "SecurePass1")
      * ```
      */
-    suspend fun register(name: String, email: String, pass: String): Result<Unit>
+    suspend fun register(name: String, email: String, pass: String): Result<User>
 }

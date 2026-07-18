@@ -1,13 +1,14 @@
 package org.example.project.presentation.tabs
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -30,11 +31,12 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import org.example.project.domain.model.SnippetCardData
-import org.example.project.domain.repository.RecipeRepository
+import org.example.project.domain.model.Recipe
+import org.example.project.domain.model.toSnippetCardData
 import org.example.project.domain.service.SyntaxHighlighter
 import org.example.project.presentation.AISearchScreen
 import org.example.project.presentation.components.SnippetCard
+import org.example.project.presentation.components.SnippetListItem
 import org.example.project.presentation.theme.CodeNestColors
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -59,31 +61,32 @@ data class MyRecipesTab(val email: String) : Tab {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val recipeRepository = koinInject<RecipeRepository>()
+        val viewModel = koinInject<MyRecipesViewModel>()
         val syntaxHighlighter = koinInject<SyntaxHighlighter>()
+        val state by viewModel.state.collectAsState()
 
         var searchQuery by remember { mutableStateOf("") }
         var showCopiedToast by remember { mutableStateOf(false) }
-        var rawCards by remember { mutableStateOf<List<SnippetCardData>>(emptyList()) }
 
-        // Cargar recetas desde el repositorio
-        LaunchedEffect(recipeRepository) {
-            rawCards = recipeRepository.getPersonalRecipes()
-        }
-
-        // Filtrar tarjetas por título, lenguaje o etiquetas
-        val filteredCards = remember(searchQuery, rawCards) {
+        // Filtrar recetas por título, lenguaje o etiqueta
+        val filteredRecipes = remember(searchQuery, state.recipes) {
             if (searchQuery.isBlank()) {
-                rawCards
+                state.recipes
             } else {
                 val query = searchQuery.lowercase().trim()
-                rawCards.filter { card ->
-                    card.title.lowercase().contains(query) ||
-                            card.languageTag.lowercase().contains(query) ||
-                            card.secondaryTag.lowercase().contains(query) ||
-                            card.codeLines.any { it.lowercase().contains(query) }
+                state.recipes.filter { recipe ->
+                    recipe.title.lowercase().contains(query) ||
+                            recipe.languageTag.lowercase().contains(query) ||
+                            (recipe.secondaryTag?.lowercase()?.contains(query) == true) ||
+                            recipe.code.any { it.lowercase().contains(query) }
                 }
             }
+        }
+
+        // Adaptar a SnippetCardData para el componente grid existente
+        @Suppress("DEPRECATION")
+        val cards = remember(filteredRecipes) {
+            filteredRecipes.map { it.toSnippetCardData() }
         }
 
         Box(modifier = Modifier.fillMaxSize().background(CodeNestColors.background)) {
@@ -97,13 +100,21 @@ data class MyRecipesTab(val email: String) : Tab {
                     }
                 )
 
-                // ContentCanvas
+                // ContentCanvas with ViewModel-driven state
                 ContentCanvas(
-                    cards = filteredCards,
+                    cards = cards,
+                    recipes = filteredRecipes,
+                    isListView = state.isListView,
+                    isLoading = state.isLoading,
+                    error = state.error,
                     syntaxHighlighter = syntaxHighlighter,
                     onCopied = {
                         showCopiedToast = true
-                    }
+                    },
+                    onToggleView = { viewModel.onEvent(MyRecipesEvent.ToggleView) },
+                    onDeleteRecipe = { id -> viewModel.onEvent(MyRecipesEvent.DeleteRecipe(id)) },
+                    onRefresh = { viewModel.onEvent(MyRecipesEvent.Refresh) },
+                    onRecipeClick = { /* TODO: navigate to detail screen */ }
                 )
             }
 
@@ -240,10 +251,19 @@ private fun IconButtonSlot(
 }
 
 @Composable
+@Suppress("DEPRECATION")
 private fun ContentCanvas(
-    cards: List<SnippetCardData>,
+    cards: List<org.example.project.domain.model.SnippetCardData>,
+    recipes: List<Recipe>,
+    isListView: Boolean,
+    isLoading: Boolean,
+    error: String?,
     syntaxHighlighter: SyntaxHighlighter,
-    onCopied: () -> Unit
+    onCopied: () -> Unit,
+    onToggleView: () -> Unit,
+    onDeleteRecipe: (String) -> Unit,
+    onRefresh: () -> Unit,
+    onRecipeClick: (Recipe) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -272,6 +292,7 @@ private fun ContentCanvas(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // Grid/List toggle (clickable segmented control)
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
@@ -282,11 +303,34 @@ private fun ContentCanvas(
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(4.dp))
-                            .background(CodeNestColors.surfaceContainerHighest)
+                            .then(
+                                if (!isListView) Modifier.background(CodeNestColors.surfaceContainerHighest)
+                                else Modifier
+                            )
+                            .clickable { if (isListView) onToggleView() }
                             .padding(horizontal = 10.dp, vertical = 4.dp)
-                    ) { Text("Grid", color = CodeNestColors.onSurface, fontSize = 12.sp) }
-                    Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)) {
-                        Text("List", color = CodeNestColors.onSurfaceVariant, fontSize = 12.sp)
+                    ) {
+                        Text(
+                            "Grid",
+                            color = if (!isListView) CodeNestColors.onSurface else CodeNestColors.onSurfaceVariant,
+                            fontSize = 12.sp
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .then(
+                                if (isListView) Modifier.background(CodeNestColors.surfaceContainerHighest)
+                                else Modifier
+                            )
+                            .clickable { if (!isListView) onToggleView() }
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            "List",
+                            color = if (isListView) CodeNestColors.onSurface else CodeNestColors.onSurfaceVariant,
+                            fontSize = 12.sp
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -307,32 +351,99 @@ private fun ContentCanvas(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (cards.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "No se encontraron snippets para tu búsqueda.",
-                    color = CodeNestColors.onSurfaceVariant,
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center
-                )
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(
+                            color = CodeNestColors.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Loading recipes...",
+                            color = CodeNestColors.onSurfaceVariant,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
             }
-        } else {
-            // Bento grid de snippets
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 320.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(cards) { card ->
-                    SnippetCard(
-                        card = card,
-                        syntaxHighlighter = syntaxHighlighter,
-                        onCopied = onCopied
+            error != null -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            Icons.Filled.ErrorOutline,
+                            contentDescription = null,
+                            tint = CodeNestColors.error,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Error loading recipes",
+                            color = CodeNestColors.onSurface,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            error,
+                            color = CodeNestColors.onSurfaceVariant,
+                            fontSize = 14.sp
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        OutlinedButton(onClick = onRefresh) {
+                            Text("Retry")
+                        }
+                    }
+                }
+            }
+            recipes.isEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "No se encontraron snippets para tu búsqueda.",
+                        color = CodeNestColors.onSurfaceVariant,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center
                     )
+                }
+            }
+            isListView -> {
+                // List mode: compact rows with title + tags, no code preview
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(recipes, key = { it.id }) { recipe ->
+                        SnippetListItem(
+                            recipe = recipe,
+                            onClick = { onRecipeClick(recipe) }
+                        )
+                    }
+                }
+            }
+            else -> {
+                // Grid mode: existing card layout
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 320.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(cards, key = { it.title + it.codeLines.hashCode() }) { card ->
+                        SnippetCard(
+                            card = card,
+                            syntaxHighlighter = syntaxHighlighter,
+                            onCopied = onCopied
+                        )
+                    }
                 }
             }
         }

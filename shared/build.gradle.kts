@@ -60,6 +60,11 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.ktor.client.cio)
+            implementation(libs.androidx.activity.compose)
+            implementation("androidx.camera:camera-camera2:1.4.0")
+            implementation("androidx.camera:camera-lifecycle:1.4.0")
+            implementation("androidx.camera:camera-view:1.4.0")
+            implementation("com.google.mlkit:text-recognition:16.0.1")
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
@@ -79,7 +84,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.0.0"))
+            implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.1.0"))
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-compose")
             implementation("io.insert-koin:koin-compose-viewmodel")
