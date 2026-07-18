@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -44,15 +45,16 @@ fun SnippetCard(
         syntaxHighlighter.highlight(fullCode, card.languageTag).splitLines()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(CodeNestColors.surfaceContainer.copy(alpha = 0.6f))
-            .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(8.dp))
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        shadowElevation = 2.dp,
+        color = CodeNestColors.surfaceContainer.copy(alpha = 0.6f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
     ) {
-        // Header de la card
-        Row(
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Header de la card
+            Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(CodeNestColors.surfaceContainerLow.copy(alpha = 0.5f))
@@ -186,15 +188,16 @@ fun SnippetCard(
             }
         }
     }
+    }
 }
 
 @Composable
 private fun Tag(text: String, accent: Color) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
+            .clip(RoundedCornerShape(6.dp))
             .background(accent.copy(alpha = 0.15f))
-            .border(1.dp, accent.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
+            .border(1.dp, accent.copy(alpha = 0.3f), RoundedCornerShape(6.dp))
             .padding(horizontal = 6.dp, vertical = 2.dp)
     ) {
         Text(text, color = accent, fontSize = 10.sp)

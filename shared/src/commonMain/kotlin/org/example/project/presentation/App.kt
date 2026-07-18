@@ -7,9 +7,24 @@ import org.koin.compose.KoinContext
 
 @Composable
 fun App() {
+    val themeMode = remember { mutableStateOf(ThemeMode.DEFAULT) }
+
     KoinContext {
-        CodeNestTheme {
-            Navigator(CodeNestLoginScreen())
+        CompositionLocalProvider(
+            LocalSetAccentColor provides { color: Color ->
+                CodeNestColors.updateAccent(color)
+            },
+            LocalThemeMode provides themeMode.value,
+            LocalSetThemeMode provides { mode: ThemeMode ->
+                themeMode.value = mode
+                CodeNestColors.updateTheme(mode == ThemeMode.DARK)
+            }
+        ) {
+            CodeNestTheme(
+                themeMode = themeMode.value
+            ) {
+                Navigator(CodeNestLoginScreen())
+            }
         }
     }
 }

@@ -74,7 +74,7 @@ fun CodeNestTextField(
             },
             singleLine    = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            shape         = RoundedCornerShape(4.dp),
+            shape         = RoundedCornerShape(8.dp),
             colors        = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor  = CodeNestColors.InputBackground,
                 focusedContainerColor    = CodeNestColors.InputBackground,
@@ -91,7 +91,7 @@ fun CodeNestTextField(
             trailingIcon = trailingIcon,
             isError = error != null,
             supportingText = error?.let {
-                { Text(text = it, color = MaterialTheme.colorScheme.error, fontSize = 10.sp) }
+                { Text(text = it, color = CodeNestColors.error, fontSize = 10.sp) }
             }
         )
     }
@@ -131,7 +131,7 @@ fun PasswordTextField(
                     )
                 }
             },
-            shape  = RoundedCornerShape(4.dp),
+            shape  = RoundedCornerShape(8.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor  = CodeNestColors.InputBackground,
                 focusedContainerColor    = CodeNestColors.InputBackground,
@@ -144,7 +144,7 @@ fun PasswordTextField(
             textStyle = TextStyle(fontFamily = Inter, fontSize = 14.sp),
             isError = error != null,
             supportingText = error?.let {
-                { Text(text = it, color = MaterialTheme.colorScheme.error, fontSize = 10.sp) }
+                { Text(text = it, color = CodeNestColors.error, fontSize = 10.sp) }
             }
         )
     }
@@ -176,7 +176,7 @@ fun GoogleSignInButton(onClick: () -> Unit) {
         modifier  = Modifier
             .fillMaxWidth()
             .height(48.dp),
-        shape     = RoundedCornerShape(4.dp),
+        shape     = RoundedCornerShape(8.dp),
         border    = BorderStroke(
             1.dp, CodeNestColors.outlineVariant
         ),

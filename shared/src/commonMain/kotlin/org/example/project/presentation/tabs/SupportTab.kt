@@ -28,6 +28,10 @@ object SupportTab : Tab {
 
     @Composable
     override fun Content() {
-        PlaceholderContent(stringResource(Res.string.placeholder_content, "Soporte"))
+        PlaceholderContent(
+            icon = Icons.Default.HelpOutline,
+            title = "Soporte",
+            subtitle = "Encuentra ayuda, reporta problemas o contacta con nuestro equipo."
+        )
     }
 }

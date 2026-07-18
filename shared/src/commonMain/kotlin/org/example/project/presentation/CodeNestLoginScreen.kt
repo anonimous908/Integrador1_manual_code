@@ -1,5 +1,6 @@
 package org.example.project.presentation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,7 +37,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import org.jetbrains.compose.resources.stringResource
@@ -76,11 +76,11 @@ class CodeNestLoginScreen : Screen {
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(CodeNestColors.background)
         ) {
             val scaleFactor = remember(maxWidth) { (maxWidth / 480.dp).coerceIn(0.5f, 1.5f) }
             val glowSize = remember(maxWidth, maxHeight) { (minOf(maxWidth, maxHeight) * 0.7f).coerceIn(200.dp, 800.dp) }
-            val primaryContainer = MaterialTheme.colorScheme.primaryContainer
+            val primaryContainer = CodeNestColors.primaryContainer
             val glowBrush = remember(primaryContainer) {
                 Brush.radialGradient(
                     colors = listOf(
@@ -100,36 +100,34 @@ class CodeNestLoginScreen : Screen {
                     )
             )
 
-            Column(
+            Surface(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .widthIn(max = (maxWidth * 0.85f).coerceIn(320.dp, 500.dp))
-                    .padding(horizontal = 16.dp * scaleFactor)
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.6f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .verticalScroll(rememberScrollState())
-                    .padding(12.dp * scaleFactor),
+                    .padding(horizontal = 16.dp * scaleFactor),
+                shape = RoundedCornerShape(8.dp),
+                shadowElevation = 4.dp,
+                color = CodeNestColors.surfaceContainer.copy(alpha = 0.6f),
+                border = BorderStroke(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.3f))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(12.dp * scaleFactor),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Box(
                     modifier = Modifier
                         .size(48.dp * scaleFactor)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(8.dp))
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(8.dp)),
+                        .background(CodeNestColors.surfaceContainerHigh, RoundedCornerShape(8.dp))
+                        .border(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Terminal,
                         contentDescription = "Terminal Icon",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = CodeNestColors.primary
                     )
                 }
 
@@ -137,7 +135,7 @@ class CodeNestLoginScreen : Screen {
 
                 Text(
                     text = "CodeNest",
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = CodeNestColors.onSurface,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-0.5).sp
@@ -147,16 +145,16 @@ class CodeNestLoginScreen : Screen {
 
                 Text(
                     text = buildAnnotatedString {
-                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = MaterialTheme.colorScheme.onSurfaceVariant)) {
+                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = CodeNestColors.onSurfaceVariant)) {
                             append(stringResource(Res.string.login_slogan_part1))
                         }
-                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)) {
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = CodeNestColors.onSurfaceVariant)) {
                             append(stringResource(Res.string.login_slogan_part2))
                         }
-                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = MaterialTheme.colorScheme.onSurfaceVariant)) {
+                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = CodeNestColors.onSurfaceVariant)) {
                             append(stringResource(Res.string.login_slogan_part3))
                         }
-                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)) {
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = CodeNestColors.onSurfaceVariant)) {
                             append(stringResource(Res.string.login_slogan_part4))
                         }
                     },
@@ -168,7 +166,7 @@ class CodeNestLoginScreen : Screen {
                 OutlinedButton(
                     onClick = { /* TODO: Google Login */ },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(4.dp),
+                    shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = CodeNestColors.surfaceContainerHigh,
                         contentColor = CodeNestColors.onSurface
@@ -201,11 +199,11 @@ class CodeNestLoginScreen : Screen {
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(Res.string.no_account_prompt), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                        Text(stringResource(Res.string.no_account_prompt), color = CodeNestColors.onSurfaceVariant, fontSize = 13.sp)
                         Spacer(modifier = Modifier.width(4.dp * scaleFactor))
                         Text(
                             text = stringResource(Res.string.create_account_link),
-                            color = MaterialTheme.colorScheme.primary,
+                            color = CodeNestColors.primary,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
                             textDecoration = TextDecoration.Underline,
@@ -221,26 +219,26 @@ class CodeNestLoginScreen : Screen {
                     ) {
                         Text(
                             text = "Términos y Condiciones",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = CodeNestColors.onSurfaceVariant,
                             fontSize = 12.sp,
                             textDecoration = TextDecoration.Underline,
                             modifier = Modifier.clickable { navigator.push(TermsAndConditionsScreen()) }
                         )
                         Text(
                             text = " | ",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            color = CodeNestColors.onSurfaceVariant.copy(alpha = 0.5f),
                             fontSize = 12.sp
                         )
                         Text(
                             text = "Política de Privacidad",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = CodeNestColors.onSurfaceVariant,
                             fontSize = 12.sp,
                             textDecoration = TextDecoration.Underline,
                             modifier = Modifier.clickable { navigator.push(PrivacyPolicyScreen()) }
                         )
                     }
                 }
-
+                }
             }
 
             Box(
@@ -265,7 +263,7 @@ class CodeNestLoginScreen : Screen {
                     Spacer(modifier = Modifier.height(CodeNestLoginBrand.logoTextSpacer * scaleFactor))
                     Text(
                         text = "Ztrene Studios",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = CodeNestColors.onSurfaceVariant,
                         fontSize = (CodeNestLoginBrand.textSize * scaleFactor)
                             .coerceIn(CodeNestLoginBrand.textMin, CodeNestLoginBrand.textMax).sp,
                         fontWeight = FontWeight.Bold
@@ -276,7 +274,7 @@ class CodeNestLoginScreen : Screen {
                         val uriHandler = LocalUriHandler.current
                         Text(
                             text = "✨ ¡Nueva versión disponible!",
-                            color = MaterialTheme.colorScheme.primary,
+                            color = CodeNestColors.primary,
                             fontSize = (12 * scaleFactor).sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
@@ -287,7 +285,7 @@ class CodeNestLoginScreen : Screen {
                     } else {
                         Text(
                             text = "version ${AppConfig.VERSION}",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            color = CodeNestColors.onSurfaceVariant.copy(alpha = 0.6f),
                             fontSize = (10 * scaleFactor).sp,
                             fontWeight = FontWeight.Normal
                         )

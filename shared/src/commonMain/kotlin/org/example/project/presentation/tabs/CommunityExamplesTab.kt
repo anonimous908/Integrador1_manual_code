@@ -28,6 +28,10 @@ object CommunityExamplesTab : Tab {
 
     @Composable
     override fun Content() {
-        PlaceholderContent(stringResource(Res.string.placeholder_content, "Manuales Compartidos"))
+        PlaceholderContent(
+            icon = Icons.Default.Group,
+            title = "Comunidad",
+            subtitle = "Ejemplos y snippets compartidos por la comunidad de CodeNest."
+        )
     }
 }

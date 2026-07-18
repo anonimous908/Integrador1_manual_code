@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import org.example.project.presentation.theme.CodeNestColors
 import org.example.project.presentation.components.CodeNestSidebar
 import org.example.project.presentation.components.WelcomeContent
-import org.example.project.presentation.components.PlaceholderContent
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import cafe.adriel.voyager.core.screen.Screen

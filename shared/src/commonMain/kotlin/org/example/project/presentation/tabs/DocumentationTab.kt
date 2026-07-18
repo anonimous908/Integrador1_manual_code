@@ -40,80 +40,11 @@ object DocumentationTab : Tab {
 
     @Composable
     override fun Content() {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(CodeNestColors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            Card(
-                modifier = Modifier
-                    .width(450.dp)
-                    .padding(24.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = CodeNestColors.surfaceContainer
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MenuBook,
-                        contentDescription = "Manual de Usuario",
-                        tint = CodeNestColors.primary,
-                        modifier = Modifier.size(72.dp)
-                    )
-                    
-                    Spacer(modifier = Modifier.height(24.dp))
-                    
-                    Text(
-                        text = "Documentación de Usuario",
-                        color = CodeNestColors.onSurface,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                    
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    Text(
-                        text = "Consulta la guía interactiva y el manual de pantallas de CodeNest. Haz clic en el botón de abajo para abrir la presentación.",
-                        color = CodeNestColors.onSurfaceVariant,
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 20.sp
-                    )
-                    
-                    Spacer(modifier = Modifier.height(32.dp))
-                    
-                    Button(
-                        onClick = {
-                            openLocalFile("CodeNest_Pantallas.pptx")
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = CodeNestColors.primary,
-                            contentColor = CodeNestColors.onPrimaryContainer
-                        )
-                    ) {
-                        Text(
-                            text = "Abrir Manual de Usuario",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        )
-                    }
-                }
-            }
-        }
+        PlaceholderContent(
+            icon = Icons.Default.MenuBook,
+            title = "Documentación",
+            subtitle = "Explora guías, tutoriales y referencias técnicas para mejorar tu código."
+        )
     }
 }
 

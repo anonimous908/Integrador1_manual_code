@@ -322,7 +322,7 @@ private fun HeaderBar(
 private fun GhostButton(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, onClick: () -> Unit) {
     OutlinedButton(
         onClick = onClick,
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(8.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, CodeNestColors.outlineVariant),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = CodeNestColors.onSurface)
     ) {
@@ -342,11 +342,34 @@ private fun TagsAndMeta(snippet: SnippetDetail, isEditing: Boolean, onSnippetCha
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            snippet.tags.forEach { tag ->
-                val (bg, fg) = when {
-                    tag.contains("Python") -> CodeNestColors.tertiary.copy(alpha = 0.15f) to CodeNestColors.tertiary
-                    tag.contains("Tkinter") -> CodeNestColors.primary.copy(alpha = 0.10f) to CodeNestColors.primary
-                    else -> CodeNestColors.secondary.copy(alpha = 0.10f) to CodeNestColors.secondary
+            if (isEditing) {
+                OutlinedTextField(
+                    value = snippet.tags.joinToString(" "),
+                    onValueChange = { 
+                        val newTags = it.split(" ").filter { tag -> tag.isNotBlank() }
+                        onSnippetChange(snippet.copy(tags = newTags)) 
+                    },
+                    placeholder = { Text("#etiquetas separadas por espacio") },
+                    textStyle = TextStyle(fontSize = 12.sp, fontFamily = FontFamily.Monospace),
+                    modifier = Modifier.width(300.dp)
+                )
+            } else {
+                snippet.tags.forEach { tag ->
+                    val (bg, fg) = when {
+                        tag.contains("Python") -> CodeNestColors.tertiary.copy(alpha = 0.15f) to CodeNestColors.tertiary
+                        tag.contains("Tkinter") -> CodeNestColors.primary.copy(alpha = 0.10f) to CodeNestColors.primary
+                        else -> CodeNestColors.secondary.copy(alpha = 0.10f) to CodeNestColors.secondary
+                    }
+                    Text(
+                        text = tag,
+                        color = fg,
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(bg)
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                    )
                 }
                 Text(
                     text = tag,
@@ -407,7 +430,17 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
                         textStyle = TextStyle(color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
                     )
                 } else {
-                    Text(snippet.fileName, color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(snippet.fileName, color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                        if (snippet.language.isNotBlank()) {
+                            Box(
+                                modifier = Modifier.background(CodeNestColors.primary.copy(alpha = 0.12f), RoundedCornerShape(6.dp))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Text(snippet.language, color = CodeNestColors.primary, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
                 }
             }
             if (!isEditing) {
@@ -417,7 +450,7 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
                         containerColor = if (copied) CodeNestColors.secondary else CodeNestColors.primary,
                         contentColor = if (copied) CodeNestColors.onSecondary else CodeNestColors.onPrimary
                     ),
-                    shape = RoundedCornerShape(4.dp),
+                    shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                 ) {
                     Icon(
@@ -492,13 +525,13 @@ private fun highlightPython(line: String) = buildAnnotatedString {
 
 @Composable
 private fun DescriptionCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetChange: (SnippetDetail) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(CodeNestColors.GlassPanel)
-            .padding(16.dp)
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        shadowElevation = 2.dp,
+        color = CodeNestColors.GlassPanel
     ) {
+        Column(modifier = Modifier.padding(16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -547,18 +580,35 @@ private fun DescriptionCard(snippet: SnippetDetail, isEditing: Boolean, onSnippe
                 }
             }
         }
+        }
     }
 }
 
 @Composable
-private fun EvidenceCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetChange: (SnippetDetail) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(CodeNestColors.GlassPanel)
-            .padding(16.dp)
+private fun EvidenceCard(
+    snippet: SnippetDetail,
+    isEditing: Boolean,
+    onSnippetChange: (SnippetDetail) -> Unit,
+    onCodeChange: (String, String) -> Unit
+) {
+    val aiService = koinInject<AiApiService>()
+    val coroutineScope = rememberCoroutineScope()
+    var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
+    var analyzing by remember { mutableStateOf(false) }
+    var statusMessage by remember { mutableStateOf<String?>(null) }
+
+    val pickImage = rememberImagePickerLauncher { bytes ->
+        imageBytes = bytes
+        statusMessage = "Imagen cargada (${bytes.size / 1024} KB). Escribe qué quieres hacer y presiona 'Analizar con IA'."
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        shadowElevation = 2.dp,
+        color = CodeNestColors.GlassPanel
     ) {
+        Column(modifier = Modifier.padding(16.dp)) {
         SectionHeader(icon = Icons.Default.Verified, title = "Evidencia", tint = CodeNestColors.secondary)
         
         if (isEditing) {
@@ -604,6 +654,7 @@ private fun EvidenceCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetCh
                     Icon(Icons.Default.Image, contentDescription = null, tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(32.dp))
                 }
             }
+        }
         }
     }
 }
