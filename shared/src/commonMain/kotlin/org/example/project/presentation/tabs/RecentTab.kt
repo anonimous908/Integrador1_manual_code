@@ -28,6 +28,10 @@ object RecentTab : Tab {
 
     @Composable
     override fun Content() {
-        PlaceholderContent(stringResource(Res.string.placeholder_content, "Recientes"))
+        PlaceholderContent(
+            icon = Icons.Default.History,
+            title = "Reciente",
+            subtitle = "Tus snippets y recetas vistas recientemente."
+        )
     }
 }

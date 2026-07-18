@@ -69,9 +69,9 @@ object DocumentationTab : Tab {
                         tint = CodeNestColors.primary,
                         modifier = Modifier.size(72.dp)
                     )
-                    
+
                     Spacer(modifier = Modifier.height(24.dp))
-                    
+
                     Text(
                         text = "Documentación de Usuario",
                         color = CodeNestColors.onSurface,
@@ -79,9 +79,9 @@ object DocumentationTab : Tab {
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
                     )
-                    
+
                     Spacer(modifier = Modifier.height(12.dp))
-                    
+
                     Text(
                         text = "Consulta la guía interactiva y el manual de pantallas de CodeNest. Haz clic en el botón de abajo para abrir la presentación.",
                         color = CodeNestColors.onSurfaceVariant,
@@ -89,9 +89,9 @@ object DocumentationTab : Tab {
                         textAlign = TextAlign.Center,
                         lineHeight = 20.sp
                     )
-                    
+
                     Spacer(modifier = Modifier.height(32.dp))
-                    
+
                     Button(
                         onClick = {
                             openLocalFile("CodeNest_Pantallas.pptx")

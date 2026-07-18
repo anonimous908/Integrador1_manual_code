@@ -1,7 +1,7 @@
 package org.example.project.presentation.tabs
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -16,7 +16,7 @@ object SupportTab : Tab {
         @Composable
         get() {
             val title = stringResource(Res.string.sidebar_support)
-            val icon = rememberVectorPainter(Icons.AutoMirrored.Filled.HelpOutline)
+            val icon = rememberVectorPainter(Icons.Default.HelpOutline)
             return remember {
                 TabOptions(
                     index = 5u,
@@ -28,6 +28,10 @@ object SupportTab : Tab {
 
     @Composable
     override fun Content() {
-        PlaceholderContent(stringResource(Res.string.placeholder_content, "Soporte"))
+        PlaceholderContent(
+            icon = Icons.Default.HelpOutline,
+            title = "Soporte",
+            subtitle = "Encuentra ayuda, reporta problemas o contacta con nuestro equipo."
+        )
     }
 }

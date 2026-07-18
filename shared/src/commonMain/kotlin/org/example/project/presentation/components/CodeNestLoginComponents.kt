@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.Surface
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,12 +39,19 @@ fun CodeNestLoginForm(
 
     Column(modifier = Modifier.fillMaxWidth()) {
         if (state.errorMessage != null) {
-            Text(
-                text = state.errorMessage ?: "",
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                color = CodeNestColors.error.copy(alpha = 0.1f)
+            ) {
+                Text(
+                    text = state.errorMessage ?: "",
+                    color = CodeNestColors.error,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(12.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
         }
         CodeNestTextField(
             label = stringResource(Res.string.email_label),
@@ -73,7 +81,7 @@ fun CodeNestLoginForm(
 
         Text(
             text = stringResource(Res.string.forgot_password),
-            color = MaterialTheme.colorScheme.primary,
+            color = CodeNestColors.primary,
             fontSize = 12.sp,
             modifier = Modifier
                 .align(Alignment.End)
@@ -86,18 +94,18 @@ fun CodeNestLoginForm(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp * scaleFactor),
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            containerColor = CodeNestColors.primary,
+            contentColor = CodeNestColors.onPrimary,
+            disabledContainerColor = CodeNestColors.primary.copy(alpha = 0.5f)
         ),
         enabled = !state.isLoading
     ) {
         if (state.isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp * scaleFactor),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = CodeNestColors.onPrimary,
                 strokeWidth = 2.dp
             )
         } else {

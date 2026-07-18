@@ -1,8 +1,11 @@
 package org.example.project.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,9 +14,13 @@ import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,14 +40,20 @@ fun CodeNestSidebar(
     onLogout: () -> Unit,
     onNewSnippet: () -> Unit = {}
 ) {
-    Column(
+    Surface(
         modifier = Modifier
             .width(260.dp)
-            .fillMaxHeight()
-            .background(CodeNestColors.surfaceContainerLow)
-            .border(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.3f))
-            .padding(vertical = 16.dp, horizontal = 12.dp)
+            .fillMaxHeight(),
+        shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp),
+        shadowElevation = 2.dp,
+        color = CodeNestColors.surfaceContainerLow,
+        border = BorderStroke(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.3f))
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 16.dp, horizontal = 12.dp)
+        ) {
         // Logo and Brand
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -49,10 +62,10 @@ fun CodeNestSidebar(
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp)),
+                    .background(CodeNestColors.primary.copy(alpha = 0.15f), RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text("{ }", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("{ }", color = CodeNestColors.onPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
@@ -120,9 +133,10 @@ fun CodeNestSidebar(
             Column(modifier = Modifier.weight(1f)) {
                 val name = email.substringBefore("@").replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                 Text(text = name, color = CodeNestColors.onSurface, fontWeight = FontWeight.Medium, fontSize = 14.sp)
-                Text(text = stringResource(Res.string.logout), color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
+                Text(text = stringResource(Res.string.logout), color = CodeNestColors.onSurfaceVariant, fontSize = 12.sp)
             }
-            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Logout", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(20.dp))
+            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Logout", tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(20.dp))
+        }
         }
     }
 }
@@ -145,8 +159,9 @@ private fun SidebarItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isSelected) CodeNestColors.primary else Color.Transparent
-    val contentColor = if (isSelected) CodeNestColors.onPrimaryContainer else CodeNestColors.onSurfaceVariant
+    val backgroundColor = if (isSelected) CodeNestColors.primary.copy(alpha = 0.12f) else Color.Transparent
+    val contentColor = if (isSelected) CodeNestColors.onSurface else CodeNestColors.onSurfaceVariant
+    val interactionSource = remember { MutableInteractionSource() }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -154,7 +169,21 @@ private fun SidebarItem(
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(backgroundColor)
-            .clickable { onClick() }
+            .then(
+                if (isSelected) Modifier.drawBehind {
+                    drawRect(
+                        color = CodeNestColors.primary,
+                        topLeft = Offset.Zero,
+                        size = Size(3.dp.toPx(), size.height)
+                    )
+                } else Modifier
+            )
+            .hoverable(interactionSource)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            )
             .padding(vertical = 12.dp, horizontal = 12.dp)
     ) {
         if (icon != null) {

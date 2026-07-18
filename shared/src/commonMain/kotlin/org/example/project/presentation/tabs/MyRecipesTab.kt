@@ -185,8 +185,8 @@ private fun TopNavBar(
             Box(modifier = Modifier.weight(1f)) {
                 if (query.isEmpty()) {
                     Text(
-                        "Search recipes, tags, or code...",
-                        color = CodeNestColors.outline,
+                        "Buscar recetas, etiquetas o código...",
+                        color = CodeNestColors.onSurfaceVariant,
                         fontSize = 14.sp
                     )
                 }

@@ -1,5 +1,9 @@
 package org.example.project.presentation.theme
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -12,39 +16,274 @@ import androidx.compose.ui.unit.dp
  * Basados en los colores del tailwind.config del proyecto original.
  */
 object CodeNestColors {
-    val background = Color(0xFF131313)
-    val onBackground = Color(0xFFE5E2E1)
-    val surface = Color(0xFF131313)
-    val surfaceDim = Color(0xFF131313)
-    val surfaceBright = Color(0xFF393939)
-    val surfaceContainer = Color(0xFF201F1F)
-    val surfaceContainerLow = Color(0xFF1C1B1B)
-    val surfaceContainerLowest = Color(0xFF0E0E0E)
-    val surfaceContainerHigh = Color(0xFF2A2A2A)
-    val surfaceContainerHighest = Color(0xFF353534)
-    val surfaceVariant = Color(0xFF353534)
-    val onSurface = Color(0xFFE5E2E1)
-    val onSurfaceVariant = Color(0xFFBEC7D4)
-    val outline = Color(0xFF88919D)
-    val outlineVariant = Color(0xFF3F4852)
+    // ─── Paleta oscura (default) ──────────────────────────────────────────
+    private val DarkBackground = Color(0xFF131313)
+    private val DarkOnBackground = Color(0xFFE5E2E1)
+    private val DarkSurface = Color(0xFF131313)
+    private val DarkSecondary = Color(0xFFD7FFC5)
+    private val DarkOnSecondary = Color(0xFF053900)
+    private val DarkTertiary = Color(0xFFD7BAFF)
+    private val DarkOnTertiary = Color(0xFF411478)
+    private val DarkError = Color(0xFFFFB4AB)
+    private val DarkOnError = Color(0xFF690005)
+    private val DarkSurfaceDim = Color(0xFF131313)
+    private val DarkSurfaceBright = Color(0xFF393939)
+    private val DarkSurfaceContainer = Color(0xFF201F1F)
+    private val DarkSurfaceContainerLow = Color(0xFF1C1B1B)
+    private val DarkSurfaceContainerLowest = Color(0xFF0E0E0E)
+    private val DarkSurfaceContainerHigh = Color(0xFF2A2A2A)
+    private val DarkSurfaceContainerHighest = Color(0xFF353534)
+    private val DarkSurfaceVariant = Color(0xFF353534)
+    private val DarkOnSurface = Color(0xFFE5E2E1)
+    private val DarkOnSurfaceVariant = Color(0xFFBEC7D4)
+    private val DarkOutline = Color(0xFF88919D)
+    private val DarkOutlineVariant = Color(0xFF3F4852)
 
-    val primary = Color(0xFF98CBFF)
-    val onPrimary = Color(0xFF003354)
+    // ─── Paleta clara ─────────────────────────────────────────────────────
+    private val LightBackground = Color(0xFFF8F9FA)
+    private val LightOnBackground = Color(0xFF1A1A2E)
+    private val LightSurface = Color(0xFFFFFFFF)
+    private val LightSecondary = Color(0xFFD7FFC5)
+    private val LightOnSecondary = Color(0xFF053900)
+    private val LightTertiary = Color(0xFFD7BAFF)
+    private val LightOnTertiary = Color(0xFF411478)
+    private val LightError = Color(0xFFFFB4AB)
+    private val LightOnError = Color(0xFF690005)
+    private val LightSurfaceDim = Color(0xFFE8E8ED)
+    private val LightSurfaceBright = Color(0xFFFFFFFF)
+    private val LightSurfaceContainer = Color(0xFFF0F0F5)
+    private val LightSurfaceContainerLow = Color(0xFFF5F5FA)
+    private val LightSurfaceContainerLowest = Color(0xFFFFFFFF)
+    private val LightSurfaceContainerHigh = Color(0xFFE5E5EA)
+    private val LightSurfaceContainerHighest = Color(0xFFD9D9E0)
+    private val LightSurfaceVariant = Color(0xFFE0E0E5)
+    private val LightOnSurface = Color(0xFF1A1A2E)
+    private val LightOnSurfaceVariant = Color(0xFF5F6368)
+    private val LightOutline = Color(0xFFDADCE0)
+    private val LightOutlineVariant = Color(0xFFE8EAED)
+
+    // ─── Valores reactivos (seleccionan oscuro o claro según el tema) ────
+    // Usamos MutableState explícito en vez de "by mutableStateOf" para evitar
+    // problemas de resolución de delegates con JDK 17 en CI.
+    private val _background = mutableStateOf(DarkBackground)
+    var background: Color get() = _background.value; private set(v) { _background.value = v }
+
+    private val _onBackground = mutableStateOf(DarkOnBackground)
+    var onBackground: Color get() = _onBackground.value; private set(v) { _onBackground.value = v }
+
+    private val _surface = mutableStateOf(DarkSurface)
+    var surface: Color get() = _surface.value; private set(v) { _surface.value = v }
+
+    private val _surfaceDim = mutableStateOf(DarkSurfaceDim)
+    var surfaceDim: Color get() = _surfaceDim.value; private set(v) { _surfaceDim.value = v }
+
+    private val _surfaceBright = mutableStateOf(DarkSurfaceBright)
+    var surfaceBright: Color get() = _surfaceBright.value; private set(v) { _surfaceBright.value = v }
+
+    private val _surfaceContainer = mutableStateOf(DarkSurfaceContainer)
+    var surfaceContainer: Color get() = _surfaceContainer.value; private set(v) { _surfaceContainer.value = v }
+
+    private val _surfaceContainerLow = mutableStateOf(DarkSurfaceContainerLow)
+    var surfaceContainerLow: Color get() = _surfaceContainerLow.value; private set(v) { _surfaceContainerLow.value = v }
+
+    private val _surfaceContainerLowest = mutableStateOf(DarkSurfaceContainerLowest)
+    var surfaceContainerLowest: Color get() = _surfaceContainerLowest.value; private set(v) { _surfaceContainerLowest.value = v }
+
+    private val _surfaceContainerHigh = mutableStateOf(DarkSurfaceContainerHigh)
+    var surfaceContainerHigh: Color get() = _surfaceContainerHigh.value; private set(v) { _surfaceContainerHigh.value = v }
+
+    private val _surfaceContainerHighest = mutableStateOf(DarkSurfaceContainerHighest)
+    var surfaceContainerHighest: Color get() = _surfaceContainerHighest.value; private set(v) { _surfaceContainerHighest.value = v }
+
+    private val _surfaceVariant = mutableStateOf(DarkSurfaceVariant)
+    var surfaceVariant: Color get() = _surfaceVariant.value; private set(v) { _surfaceVariant.value = v }
+
+    private val _onSurface = mutableStateOf(DarkOnSurface)
+    var onSurface: Color get() = _onSurface.value; private set(v) { _onSurface.value = v }
+
+    private val _onSurfaceVariant = mutableStateOf(DarkOnSurfaceVariant)
+    var onSurfaceVariant: Color get() = _onSurfaceVariant.value; private set(v) { _onSurfaceVariant.value = v }
+
+    private val _outline = mutableStateOf(DarkOutline)
+    var outline: Color get() = _outline.value; private set(v) { _outline.value = v }
+
+    private val _outlineVariant = mutableStateOf(DarkOutlineVariant)
+    var outlineVariant: Color get() = _outlineVariant.value; private set(v) { _outlineVariant.value = v }
+
+    private val _primary = mutableStateOf(Color(0xFF98CBFF))
+    var primary: Color get() = _primary.value; private set(v) { _primary.value = v }
+
+    private val _onPrimary = mutableStateOf(Color(0xFF003354))
+    var onPrimary: Color get() = _onPrimary.value; private set(v) { _onPrimary.value = v }
+
+    private val _secondary = mutableStateOf(DarkSecondary)
+    var secondary: Color get() = _secondary.value; private set(v) { _secondary.value = v }
+
+    private val _onSecondary = mutableStateOf(DarkOnSecondary)
+    var onSecondary: Color get() = _onSecondary.value; private set(v) { _onSecondary.value = v }
+
+    private val _tertiary = mutableStateOf(DarkTertiary)
+    var tertiary: Color get() = _tertiary.value; private set(v) { _tertiary.value = v }
+
+    private val _onTertiary = mutableStateOf(DarkOnTertiary)
+    var onTertiary: Color get() = _onTertiary.value; private set(v) { _onTertiary.value = v }
+
+    private val _error = mutableStateOf(DarkError)
+    var error: Color get() = _error.value; private set(v) { _error.value = v }
+
+    private val _onError = mutableStateOf(DarkOnError)
+    var onError: Color get() = _onError.value; private set(v) { _onError.value = v }
+
+    fun updateAccent(color: Color) {
+        primary = color
+        onPrimary = if (color.luminance() > 0.5) Color.Black else Color.White
+    }
+
+    fun updateSecondary(color: Color) {
+        secondary = color
+        onSecondary = if (color.luminance() > 0.5) Color.Black else Color.White
+    }
+
+    fun updateTertiary(color: Color) {
+        tertiary = color
+        onTertiary = if (color.luminance() > 0.5) Color.Black else Color.White
+    }
+
+    fun updateError(color: Color) {
+        error = color
+        onError = if (color.luminance() > 0.5) Color.Black else Color.White
+    }
+
+    fun updateSurface(color: Color) {
+        surface = color
+        surfaceDim = color
+        surfaceBright = color
+        surfaceContainer = color
+        surfaceContainerLow = color
+        surfaceContainerLowest = color
+        surfaceContainerHigh = color
+        surfaceContainerHighest = color
+        surfaceVariant = color
+    }
+
+    fun resetToDefaults() {
+        val isDark = surface == DarkSurface // heuristic: are we in dark mode?
+        if (isDark) {
+            primary = Color(0xFF98CBFF)
+            onPrimary = Color(0xFF003354)
+            secondary = DarkSecondary
+            onSecondary = DarkOnSecondary
+            tertiary = DarkTertiary
+            onTertiary = DarkOnTertiary
+            error = DarkError
+            onError = DarkOnError
+            background = DarkBackground
+            onBackground = DarkOnBackground
+            surface = DarkSurface
+            surfaceDim = DarkSurfaceDim
+            surfaceBright = DarkSurfaceBright
+            surfaceContainer = DarkSurfaceContainer
+            surfaceContainerLow = DarkSurfaceContainerLow
+            surfaceContainerLowest = DarkSurfaceContainerLowest
+            surfaceContainerHigh = DarkSurfaceContainerHigh
+            surfaceContainerHighest = DarkSurfaceContainerHighest
+            surfaceVariant = DarkSurfaceVariant
+            onSurface = DarkOnSurface
+            onSurfaceVariant = DarkOnSurfaceVariant
+            outline = DarkOutline
+            outlineVariant = DarkOutlineVariant
+        } else {
+            primary = Color(0xFF98CBFF)
+            onPrimary = Color(0xFF003354)
+            secondary = LightSecondary
+            onSecondary = LightOnSecondary
+            tertiary = LightTertiary
+            onTertiary = LightOnTertiary
+            error = LightError
+            onError = LightOnError
+            background = LightBackground
+            onBackground = LightOnBackground
+            surface = LightSurface
+            surfaceDim = LightSurfaceDim
+            surfaceBright = LightSurfaceBright
+            surfaceContainer = LightSurfaceContainer
+            surfaceContainerLow = LightSurfaceContainerLow
+            surfaceContainerLowest = LightSurfaceContainerLowest
+            surfaceContainerHigh = LightSurfaceContainerHigh
+            surfaceContainerHighest = LightSurfaceContainerHighest
+            surfaceVariant = LightSurfaceVariant
+            onSurface = LightOnSurface
+            onSurfaceVariant = LightOnSurfaceVariant
+            outline = LightOutline
+            outlineVariant = LightOutlineVariant
+        }
+    }
+
+    fun updateTheme(isDark: Boolean) {
+        val currentSecondary = secondary
+        val currentTertiary = tertiary
+        val currentError = error
+        val currentSurface = surface // save customizations if any
+
+        if (isDark) {
+            background = DarkBackground
+            onBackground = DarkOnBackground
+            surface = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurface
+            surfaceDim = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurfaceDim
+            surfaceBright = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurfaceBright
+            surfaceContainer = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurfaceContainer
+            surfaceContainerLow = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurfaceContainerLow
+            surfaceContainerLowest = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurfaceContainerLowest
+            surfaceContainerHigh = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurfaceContainerHigh
+            surfaceContainerHighest = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurfaceContainerHighest
+            surfaceVariant = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else DarkSurfaceVariant
+            onSurface = DarkOnSurface
+            onSurfaceVariant = DarkOnSurfaceVariant
+            outline = DarkOutline
+            outlineVariant = DarkOutlineVariant
+            secondary = if (currentSecondary != LightSecondary && currentSecondary != DarkSecondary) currentSecondary else DarkSecondary
+            onSecondary = if (currentSecondary == DarkSecondary || currentSecondary == LightSecondary) DarkOnSecondary else if (currentSecondary.luminance() > 0.5) Color.Black else Color.White
+            tertiary = if (currentTertiary != LightTertiary && currentTertiary != DarkTertiary) currentTertiary else DarkTertiary
+            onTertiary = if (currentTertiary == DarkTertiary || currentTertiary == LightTertiary) DarkOnTertiary else if (currentTertiary.luminance() > 0.5) Color.Black else Color.White
+            error = if (currentError != LightError && currentError != DarkError) currentError else DarkError
+            onError = if (currentError == DarkError || currentError == LightError) DarkOnError else if (currentError.luminance() > 0.5) Color.Black else Color.White
+        } else {
+            background = LightBackground
+            onBackground = LightOnBackground
+            surface = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurface
+            surfaceDim = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurfaceDim
+            surfaceBright = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurfaceBright
+            surfaceContainer = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurfaceContainer
+            surfaceContainerLow = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurfaceContainerLow
+            surfaceContainerLowest = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurfaceContainerLowest
+            surfaceContainerHigh = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurfaceContainerHigh
+            surfaceContainerHighest = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurfaceContainerHighest
+            surfaceVariant = if (currentSurface != LightSurface && currentSurface != DarkSurface) currentSurface else LightSurfaceVariant
+            onSurface = LightOnSurface
+            onSurfaceVariant = LightOnSurfaceVariant
+            outline = LightOutline
+            outlineVariant = LightOutlineVariant
+            secondary = if (currentSecondary != LightSecondary && currentSecondary != DarkSecondary) currentSecondary else LightSecondary
+            onSecondary = if (currentSecondary == DarkSecondary || currentSecondary == LightSecondary) LightOnSecondary else if (currentSecondary.luminance() > 0.5) Color.Black else Color.White
+            tertiary = if (currentTertiary != LightTertiary && currentTertiary != DarkTertiary) currentTertiary else LightTertiary
+            onTertiary = if (currentTertiary == DarkTertiary || currentTertiary == LightTertiary) LightOnTertiary else if (currentTertiary.luminance() > 0.5) Color.Black else Color.White
+            error = if (currentError != LightError && currentError != DarkError) currentError else LightError
+            onError = if (currentError == DarkError || currentError == LightError) LightOnError else if (currentError.luminance() > 0.5) Color.Black else Color.White
+        }
+    }
+
+    private fun Color.luminance(): Double = 0.299 * red + 0.587 * green + 0.114 * blue
+
     val primaryContainer = Color(0xFF00A3FF)
     val onPrimaryContainer = Color(0xFF00375A)
     val primaryFixed = Color(0xFFCFE5FF)
 
-    val secondary = Color(0xFFD7FFC5)
-    val onSecondary = Color(0xFF053900)
     val secondaryContainer = Color(0xFF2FF801)
     val onSecondaryContainer = Color(0xFF0F6D00)
 
-    val tertiary = Color(0xFFD7BAFF)
-    val onTertiary = Color(0xFF411478)
     val tertiaryContainer = Color(0xFFB289EE)
     val onTertiaryContainer = Color(0xFF451A7C)
 
-    val error = Color(0xFFFFB4AB)
     val errorContainer = Color(0xFF93000A)
 
     // Colores del editor de código (estilo Dracula, igual al mockup)
@@ -56,6 +295,7 @@ object CodeNestColors {
     val codeComment = Color(0xFF6272A4)
     val codeNumber = Color(0xFFBD93F9)
     val codeParam = Color(0xFFFFB86C)
+
 
     // Additions from Register
     val InputBackground   = Color(0xFF0A0A0A)

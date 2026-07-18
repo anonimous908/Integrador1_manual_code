@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.withStyle
 
+import androidx.compose.material3.Surface
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -222,23 +223,23 @@ private fun AuthCard(
     onTermsClick: () -> Unit,
     onPrivacyClick: () -> Unit,
 ) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(CodeNestColors.GlassPanel)
-            .border(
-                width = 1.dp,
-                brush = Brush.verticalGradient(
-                    listOf(
-                        CodeNestColors.primary.copy(alpha = 0.20f),
-                        CodeNestColors.outlineVariant.copy(alpha = 0.50f),
-                    )
-                ),
-                shape = RoundedCornerShape(12.dp)
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        shadowElevation = 4.dp,
+        color = CodeNestColors.GlassPanel,
+        border = BorderStroke(
+            1.dp,
+            Brush.verticalGradient(
+                listOf(
+                    CodeNestColors.primary.copy(alpha = 0.20f),
+                    CodeNestColors.outlineVariant.copy(alpha = 0.50f),
+                )
             )
-            .padding(24.dp)
+        )
     ) {
         Column(
+            modifier = Modifier.padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -309,7 +310,7 @@ private fun AuthCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                shape    = RoundedCornerShape(4.dp),
+                shape    = RoundedCornerShape(8.dp),
                 colors   = ButtonDefaults.buttonColors(
                     containerColor = CodeNestColors.primary,
                     contentColor   = CodeNestColors.onPrimaryContainer,
