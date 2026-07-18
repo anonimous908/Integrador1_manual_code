@@ -31,8 +31,12 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import org.example.project.presentation.theme.CodeNestColors
+import org.example.project.domain.model.Recipe
+import org.example.project.domain.repository.RecipeRepository
 import org.example.project.presentation.grabado_online.PlatformGrabadoOnlineButton
 import org.example.project.presentation.grabado_online.PlatformGrabadoOnlineBanner
+import org.koin.compose.koinInject
+import kotlinx.coroutines.launch
 
 /* ---------------------------------------------------------
  * MODELOS
@@ -60,12 +64,46 @@ data class SnippetDetail(
     }
 }
 
+/**
+ * Adapter: maps a [SnippetDetail] (presentation model) to a [Recipe] (domain model).
+ *
+ * @param userId The owner's user ID (from [SnippetDetailTab.email]).
+ * @param recipeId Optional existing recipe ID for updates. If null, a new UUID is generated.
+ */
+/**
+ * Adapter: maps a [SnippetDetail] (presentation model) to a [Recipe] (domain model).
+ *
+ * @param userId The owner's user ID (from [SnippetDetailTab.email]).
+ * @param recipeId Optional existing recipe ID for updates. If null, a new UUID is generated.
+ *
+ * Tags are parsed from the `#Tag` format used in [SnippetDetail.tags].
+ * Timestamps default to 0L (set by the repository during create/update).
+ */
+fun SnippetDetail.toRecipe(userId: String, recipeId: String? = null): Recipe {
+    val tag1 = tags.getOrNull(0)?.removePrefix("#")?.trim() ?: ""
+    val tag2 = tags.getOrNull(1)?.removePrefix("#")?.trim()
+    return Recipe(
+        id = recipeId ?: kotlin.uuid.Uuid.random().toString(),
+        userId = userId,
+        title = title,
+        languageTag = tag1,
+        secondaryTag = if (tag2.isNullOrBlank()) null else tag2,
+        code = code.map { it.content },
+        description = description,
+        dependencies = listOfNotNull(dependencies.ifBlank { null }),
+        evidence = evidenceText,
+        createdAt = 0L,
+        updatedAt = 0L
+    )
+}
+
 /* ---------------------------------------------------------
  * PANTALLA PRINCIPAL (detalle de snippet)
  * --------------------------------------------------------- */
 class SnippetDetailTab(
     val email: String,
-    val snippet: SnippetDetail = emptySnippetDetail
+    val snippet: SnippetDetail = emptySnippetDetail,
+    val recipeId: String? = null
 ) : Tab {
 
     override val options: TabOptions
@@ -85,10 +123,29 @@ class SnippetDetailTab(
     @Composable
     override fun Content() {
         val tabNavigator = LocalTabNavigator.current
+        val recipeRepository = koinInject<RecipeRepository>()
+        val scope = rememberCoroutineScope()
         var isEditing by remember { mutableStateOf(snippet == emptySnippetDetail) }
         var currentSnippet by remember { mutableStateOf(snippet) }
+        var saveError by remember { mutableStateOf<String?>(null) }
         val grabadoViewModel = remember { GrabadoOnlineViewModel() }
         val grabadoState by grabadoViewModel.state.collectAsState()
+
+        val onSaveRecipe: () -> Unit = {
+            scope.launch {
+                try {
+                    val recipe = currentSnippet.toRecipe(email, recipeId)
+                    if (recipeId != null) {
+                        recipeRepository.update(recipe)
+                    } else {
+                        recipeRepository.create(recipe)
+                    }
+                    tabNavigator.current = org.example.project.presentation.tabs.MyRecipesTab(email)
+                } catch (e: Exception) {
+                    saveError = e.message ?: "Error saving recipe"
+                }
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -103,10 +160,33 @@ class SnippetDetailTab(
                 onToggleGrabado = { grabadoViewModel.onEvent(GrabadoOnlineEvent.ToggleRecording) },
                 onSnippetChange = { currentSnippet = it },
                 onEditToggle = { isEditing = !isEditing },
+                onSaveRecipe = onSaveRecipe,
                 onBack = { tabNavigator.current = org.example.project.presentation.tabs.MyRecipesTab(email) },
                 onShare = { /* TODO */ },
                 onDelete = { /* TODO */ }
             )
+
+            // Save error snackbar
+            if (saveError != null) {
+                LaunchedEffect(saveError) {
+                    kotlinx.coroutines.delay(3000)
+                    saveError = null
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
+                        .background(CodeNestColors.error.copy(alpha = 0.2f))
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        saveError ?: "",
+                        color = CodeNestColors.onSurface,
+                        fontSize = 13.sp
+                    )
+                }
+            }
 
             Row(
                 modifier = Modifier
@@ -154,6 +234,7 @@ private fun HeaderBar(
     onToggleGrabado: () -> Unit,
     onSnippetChange: (SnippetDetail) -> Unit,
     onEditToggle: () -> Unit,
+    onSaveRecipe: () -> Unit,
     onBack: () -> Unit,
     onShare: () -> Unit,
     onDelete: () -> Unit
@@ -216,11 +297,19 @@ private fun HeaderBar(
                 state = grabadoState,
                 onToggle = onToggleGrabado
             )
-            GhostButton(
-                icon = if (isEditing) Icons.Default.Check else Icons.Default.Edit,
-                label = if (isEditing) "Guardar" else "Editar",
-                onClick = onEditToggle
-            )
+            if (isEditing) {
+                GhostButton(
+                    icon = Icons.Default.Check,
+                    label = "Guardar",
+                    onClick = onSaveRecipe
+                )
+            } else {
+                GhostButton(
+                    icon = Icons.Default.Edit,
+                    label = "Editar",
+                    onClick = onEditToggle
+                )
+            }
             GhostButton(icon = Icons.Default.Share, label = "Compartir", onClick = onShare)
             IconButton(onClick = onDelete) {
                 Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = CodeNestColors.onSurfaceVariant)
