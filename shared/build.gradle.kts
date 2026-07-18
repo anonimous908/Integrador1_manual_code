@@ -84,7 +84,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.0.0"))
+            implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.1.0"))
             implementation("io.insert-koin:koin-core")
             implementation("io.insert-koin:koin-compose")
             implementation("io.insert-koin:koin-compose-viewmodel")
