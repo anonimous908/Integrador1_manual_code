@@ -23,13 +23,13 @@ import kotlinx.serialization.json.Json
 import org.example.project.domain.service.SyntaxHighlighter
 import org.example.project.domain.service.getSyntaxHighlighter
 import org.example.project.domain.repository.RecipeRepository
-import org.example.project.data.repository.MockRecipeRepositoryImpl
+import org.example.project.data.repository.SettingsRecipeRepositoryImpl
 
 val appModule = module {
     single { Settings() }
     
     single<SyntaxHighlighter> { getSyntaxHighlighter() }
-    single<RecipeRepository> { MockRecipeRepositoryImpl() }
+    single<RecipeRepository> { SettingsRecipeRepositoryImpl(settings = get()) }
     
     single<HashService> { HashServiceImpl() }
     
