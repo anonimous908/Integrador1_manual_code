@@ -1,15 +1,19 @@
 package org.example.project.domain.usecase
 
 import kotlinx.coroutines.test.runTest
+import org.example.project.domain.model.User
 import org.example.project.domain.repository.AuthRepository
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class RegisterUseCaseTest {
 
     private val dummyRepository = object : AuthRepository {
-        override suspend fun login(email: String, pass: String): Result<Unit> = Result.success(Unit)
-        override suspend fun register(name: String, email: String, pass: String): Result<Unit> = Result.success(Unit)
+        override suspend fun login(email: String, pass: String): Result<User> =
+            Result.success(User(id = email, name = "Test", email = email))
+        override suspend fun register(name: String, email: String, pass: String): Result<User> =
+            Result.success(User(id = email, name = name, email = email))
     }
 
     private val useCase = RegisterUseCase(dummyRepository)
@@ -18,6 +22,9 @@ class RegisterUseCaseTest {
     fun testValidEmailFormat_ShouldSucceed() = runTest {
         val result = useCase("Test User", "test@example.com", "password123")
         assertTrue(result.isSuccess, "El registro debería ser exitoso con un correo válido.")
+        val user = result.getOrNull()
+        assertEquals("Test User", user?.name)
+        assertEquals("test@example.com", user?.email)
     }
 
     @Test

@@ -72,7 +72,7 @@ class CreateAccountScreen : Screen {
 
         LaunchedEffect(state.success) {
             if (state.success) {
-                navigator.replace(HomeScreen(state.email))
+                navigator.replace(HomeScreen(state.user?.email ?: state.email))
             }
         }
 

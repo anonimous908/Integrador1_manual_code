@@ -68,7 +68,7 @@ class CodeNestLoginScreen : Screen {
             viewModel.state.collect { state ->
                 if (state.isLoggedIn) {
                     viewModel.onEvent(LoginEvent.Reset)
-                    navigator.replace(HomeScreen(state.email))
+                    navigator.replace(HomeScreen(state.user?.email ?: state.email))
                 }
             }
         }

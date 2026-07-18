@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
@@ -17,6 +18,8 @@ dependencies {
     implementation("io.insert-koin:koin-android:4.0.0")
 
     implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
 
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)

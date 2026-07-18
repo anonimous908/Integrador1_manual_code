@@ -6,6 +6,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.example.project.domain.model.User
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.usecase.LoginWithEmailUseCase
 import org.example.project.domain.usecase.ValidateEmailUseCase
@@ -14,6 +15,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -42,6 +44,7 @@ class LoginViewModelTest {
         assertEquals("", state.pass, "pass should default to empty string")
         assertEquals(false, state.isLoading, "isLoading should default to false")
         assertEquals(false, state.isLoggedIn, "isLoggedIn should default to false")
+        assertNull(state.user, "user should default to null")
         assertNull(state.errorMessage, "errorMessage should default to null")
     }
 
@@ -92,9 +95,10 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `login success sets isLoggedIn to true and clears loading`() = runTest {
+    fun `login success sets isLoggedIn to true, stores user, and clears loading`() = runTest {
+        val testUser = User(id = "test-id", name = "Test User", email = "test@example.com")
         val fakeRepo = FakeAuthRepository().apply {
-            loginResult = Result.success(Unit)
+            loginResult = Result.success(testUser)
         }
         val useCase = LoginWithEmailUseCase(fakeRepo)
         val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
@@ -108,6 +112,10 @@ class LoginViewModelTest {
         assertTrue(viewModel.state.value.isLoggedIn, "isLoggedIn should be true after successful login")
         assertEquals(false, viewModel.state.value.isLoading, "isLoading should be false after completion")
         assertNull(viewModel.state.value.errorMessage, "errorMessage should be null after successful login")
+        assertNotNull(viewModel.state.value.user, "user should not be null after successful login")
+        assertEquals("test-id", viewModel.state.value.user?.id)
+        assertEquals("Test User", viewModel.state.value.user?.name)
+        assertEquals("test@example.com", viewModel.state.value.user?.email)
     }
 
     @Test
@@ -187,9 +195,9 @@ class LoginViewModelTest {
  * A fake [AuthRepository] that allows controlling login/register results in tests.
  */
 class FakeAuthRepository : AuthRepository {
-    var loginResult: Result<Unit> = Result.success(Unit)
-    var registerResult: Result<Unit> = Result.success(Unit)
+    var loginResult: Result<User> = Result.success(User(id = "test-id", name = "Test User", email = "test@example.com"))
+    var registerResult: Result<User> = Result.success(User(id = "test-id", name = "Test User", email = "test@example.com"))
 
-    override suspend fun login(email: String, pass: String): Result<Unit> = loginResult
-    override suspend fun register(name: String, email: String, pass: String): Result<Unit> = registerResult
+    override suspend fun login(email: String, pass: String): Result<User> = loginResult
+    override suspend fun register(name: String, email: String, pass: String): Result<User> = registerResult
 }

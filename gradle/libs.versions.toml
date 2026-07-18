@@ -14,6 +14,7 @@ kotlinxSerializationJson = "1.7.1"
 kotlincrypto = "0.5.4"
 napier = "2.7.1"
 syntaxmp = "0.3.0"
+firebaseBom = "33.12.0"
 
 
 [libraries]
@@ -46,6 +47,8 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "kotlincrypto" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 syntaxmp = { module = "com.gallatinapps.syntaxmp:syntaxmp", version.ref = "syntaxmp" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
 
 
 [plugins]
@@ -56,3 +59,4 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+googleServices = { id = "com.google.gms.google-services", version = "4.4.2" }
