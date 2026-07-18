@@ -84,6 +84,7 @@ data class MyRecipesTab(val email: String) : Tab {
         }
 
         // Adaptar a SnippetCardData para el componente grid existente
+        @Suppress("DEPRECATION")
         val cards = remember(filteredRecipes) {
             filteredRecipes.map { it.toSnippetCardData() }
         }
@@ -250,6 +251,7 @@ private fun IconButtonSlot(
 }
 
 @Composable
+@Suppress("DEPRECATION")
 private fun ContentCanvas(
     cards: List<org.example.project.domain.model.SnippetCardData>,
     recipes: List<Recipe>,

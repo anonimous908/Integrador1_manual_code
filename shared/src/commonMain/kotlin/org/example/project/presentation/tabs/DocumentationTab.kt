@@ -1,7 +1,7 @@
 package org.example.project.presentation.tabs
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -16,7 +16,7 @@ object DocumentationTab : Tab {
         @Composable
         get() {
             val title = stringResource(Res.string.sidebar_documentation)
-            val icon = rememberVectorPainter(Icons.Default.MenuBook)
+            val icon = rememberVectorPainter(Icons.AutoMirrored.Filled.MenuBook)
             return remember {
                 TabOptions(
                     index = 4u,
