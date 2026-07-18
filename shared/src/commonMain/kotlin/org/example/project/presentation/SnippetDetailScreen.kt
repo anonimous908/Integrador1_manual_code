@@ -219,7 +219,7 @@ class SnippetDetailTab(
                 Column(modifier = Modifier.weight(1f)) {
                     DescriptionCard(currentSnippet, isEditing) { currentSnippet = it }
                     Spacer(Modifier.height(24.dp))
-                    EvidenceCard(currentSnippet, isEditing) { currentSnippet = it }
+                    EvidenceCard(currentSnippet, isEditing, onSnippetChange = { currentSnippet = it })
                 }
             }
         }
@@ -371,16 +371,6 @@ private fun TagsAndMeta(snippet: SnippetDetail, isEditing: Boolean, onSnippetCha
                             .padding(horizontal = 8.dp, vertical = 2.dp)
                     )
                 }
-                Text(
-                    text = tag,
-                    color = fg,
-                    fontSize = 11.sp,
-                    fontFamily = FontFamily.Monospace,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(bg)
-                        .padding(horizontal = 8.dp, vertical = 2.dp)
-                )
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -432,12 +422,13 @@ private fun CodeBlockCard(snippet: SnippetDetail, isEditing: Boolean, onSnippetC
                 } else {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(snippet.fileName, color = CodeNestColors.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
-                        if (snippet.language.isNotBlank()) {
+                        val langTag = snippet.tags.firstOrNull { !it.startsWith("#") } ?: snippet.tags.firstOrNull()?.removePrefix("#")
+                        if (langTag != null) {
                             Box(
                                 modifier = Modifier.background(CodeNestColors.primary.copy(alpha = 0.12f), RoundedCornerShape(6.dp))
                                     .padding(horizontal = 6.dp, vertical = 2.dp)
                             ) {
-                                Text(snippet.language, color = CodeNestColors.primary, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                Text(langTag, color = CodeNestColors.primary, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -588,20 +579,8 @@ private fun DescriptionCard(snippet: SnippetDetail, isEditing: Boolean, onSnippe
 private fun EvidenceCard(
     snippet: SnippetDetail,
     isEditing: Boolean,
-    onSnippetChange: (SnippetDetail) -> Unit,
-    onCodeChange: (String, String) -> Unit
+    onSnippetChange: (SnippetDetail) -> Unit
 ) {
-    val aiService = koinInject<AiApiService>()
-    val coroutineScope = rememberCoroutineScope()
-    var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
-    var analyzing by remember { mutableStateOf(false) }
-    var statusMessage by remember { mutableStateOf<String?>(null) }
-
-    val pickImage = rememberImagePickerLauncher { bytes ->
-        imageBytes = bytes
-        statusMessage = "Imagen cargada (${bytes.size / 1024} KB). Escribe qué quieres hacer y presiona 'Analizar con IA'."
-    }
-
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
@@ -610,7 +589,7 @@ private fun EvidenceCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
         SectionHeader(icon = Icons.Default.Verified, title = "Evidencia", tint = CodeNestColors.secondary)
-        
+
         if (isEditing) {
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(

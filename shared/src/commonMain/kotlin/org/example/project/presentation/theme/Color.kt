@@ -1,6 +1,9 @@
 package org.example.project.presentation.theme
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -60,30 +63,76 @@ object CodeNestColors {
     private val LightOutlineVariant = Color(0xFFE8EAED)
 
     // ─── Valores reactivos (seleccionan oscuro o claro según el tema) ────
-    var background by mutableStateOf(DarkBackground); private set
-    var onBackground by mutableStateOf(DarkOnBackground); private set
-    var surface by mutableStateOf(DarkSurface); private set
-    var surfaceDim by mutableStateOf(DarkSurfaceDim); private set
-    var surfaceBright by mutableStateOf(DarkSurfaceBright); private set
-    var surfaceContainer by mutableStateOf(DarkSurfaceContainer); private set
-    var surfaceContainerLow by mutableStateOf(DarkSurfaceContainerLow); private set
-    var surfaceContainerLowest by mutableStateOf(DarkSurfaceContainerLowest); private set
-    var surfaceContainerHigh by mutableStateOf(DarkSurfaceContainerHigh); private set
-    var surfaceContainerHighest by mutableStateOf(DarkSurfaceContainerHighest); private set
-    var surfaceVariant by mutableStateOf(DarkSurfaceVariant); private set
-    var onSurface by mutableStateOf(DarkOnSurface); private set
-    var onSurfaceVariant by mutableStateOf(DarkOnSurfaceVariant); private set
-    var outline by mutableStateOf(DarkOutline); private set
-    var outlineVariant by mutableStateOf(DarkOutlineVariant); private set
+    // Usamos MutableState explícito en vez de "by mutableStateOf" para evitar
+    // problemas de resolución de delegates con JDK 17 en CI.
+    private val _background = mutableStateOf(DarkBackground)
+    var background: Color get() = _background.value; private set(v) { _background.value = v }
 
-    var primary by mutableStateOf(Color(0xFF98CBFF)); private set
-    var onPrimary by mutableStateOf(Color(0xFF003354)); private set
-    var secondary by mutableStateOf(DarkSecondary); private set
-    var onSecondary by mutableStateOf(DarkOnSecondary); private set
-    var tertiary by mutableStateOf(DarkTertiary); private set
-    var onTertiary by mutableStateOf(DarkOnTertiary); private set
-    var error by mutableStateOf(DarkError); private set
-    var onError by mutableStateOf(DarkOnError); private set
+    private val _onBackground = mutableStateOf(DarkOnBackground)
+    var onBackground: Color get() = _onBackground.value; private set(v) { _onBackground.value = v }
+
+    private val _surface = mutableStateOf(DarkSurface)
+    var surface: Color get() = _surface.value; private set(v) { _surface.value = v }
+
+    private val _surfaceDim = mutableStateOf(DarkSurfaceDim)
+    var surfaceDim: Color get() = _surfaceDim.value; private set(v) { _surfaceDim.value = v }
+
+    private val _surfaceBright = mutableStateOf(DarkSurfaceBright)
+    var surfaceBright: Color get() = _surfaceBright.value; private set(v) { _surfaceBright.value = v }
+
+    private val _surfaceContainer = mutableStateOf(DarkSurfaceContainer)
+    var surfaceContainer: Color get() = _surfaceContainer.value; private set(v) { _surfaceContainer.value = v }
+
+    private val _surfaceContainerLow = mutableStateOf(DarkSurfaceContainerLow)
+    var surfaceContainerLow: Color get() = _surfaceContainerLow.value; private set(v) { _surfaceContainerLow.value = v }
+
+    private val _surfaceContainerLowest = mutableStateOf(DarkSurfaceContainerLowest)
+    var surfaceContainerLowest: Color get() = _surfaceContainerLowest.value; private set(v) { _surfaceContainerLowest.value = v }
+
+    private val _surfaceContainerHigh = mutableStateOf(DarkSurfaceContainerHigh)
+    var surfaceContainerHigh: Color get() = _surfaceContainerHigh.value; private set(v) { _surfaceContainerHigh.value = v }
+
+    private val _surfaceContainerHighest = mutableStateOf(DarkSurfaceContainerHighest)
+    var surfaceContainerHighest: Color get() = _surfaceContainerHighest.value; private set(v) { _surfaceContainerHighest.value = v }
+
+    private val _surfaceVariant = mutableStateOf(DarkSurfaceVariant)
+    var surfaceVariant: Color get() = _surfaceVariant.value; private set(v) { _surfaceVariant.value = v }
+
+    private val _onSurface = mutableStateOf(DarkOnSurface)
+    var onSurface: Color get() = _onSurface.value; private set(v) { _onSurface.value = v }
+
+    private val _onSurfaceVariant = mutableStateOf(DarkOnSurfaceVariant)
+    var onSurfaceVariant: Color get() = _onSurfaceVariant.value; private set(v) { _onSurfaceVariant.value = v }
+
+    private val _outline = mutableStateOf(DarkOutline)
+    var outline: Color get() = _outline.value; private set(v) { _outline.value = v }
+
+    private val _outlineVariant = mutableStateOf(DarkOutlineVariant)
+    var outlineVariant: Color get() = _outlineVariant.value; private set(v) { _outlineVariant.value = v }
+
+    private val _primary = mutableStateOf(Color(0xFF98CBFF))
+    var primary: Color get() = _primary.value; private set(v) { _primary.value = v }
+
+    private val _onPrimary = mutableStateOf(Color(0xFF003354))
+    var onPrimary: Color get() = _onPrimary.value; private set(v) { _onPrimary.value = v }
+
+    private val _secondary = mutableStateOf(DarkSecondary)
+    var secondary: Color get() = _secondary.value; private set(v) { _secondary.value = v }
+
+    private val _onSecondary = mutableStateOf(DarkOnSecondary)
+    var onSecondary: Color get() = _onSecondary.value; private set(v) { _onSecondary.value = v }
+
+    private val _tertiary = mutableStateOf(DarkTertiary)
+    var tertiary: Color get() = _tertiary.value; private set(v) { _tertiary.value = v }
+
+    private val _onTertiary = mutableStateOf(DarkOnTertiary)
+    var onTertiary: Color get() = _onTertiary.value; private set(v) { _onTertiary.value = v }
+
+    private val _error = mutableStateOf(DarkError)
+    var error: Color get() = _error.value; private set(v) { _error.value = v }
+
+    private val _onError = mutableStateOf(DarkOnError)
+    var onError: Color get() = _onError.value; private set(v) { _onError.value = v }
 
     fun updateAccent(color: Color) {
         primary = color

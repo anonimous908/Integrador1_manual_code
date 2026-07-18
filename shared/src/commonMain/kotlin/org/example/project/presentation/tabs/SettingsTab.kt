@@ -286,7 +286,12 @@ private fun colorToHex(color: Color): String {
     val r = (color.red * 255).toInt().coerceIn(0, 255)
     val g = (color.green * 255).toInt().coerceIn(0, 255)
     val b = (color.blue * 255).toInt().coerceIn(0, 255)
-    return "#%02X%02X%02X".format(r, g, b)
+    return buildString {
+        append('#')
+        append(r.toString(16).padStart(2, '0').uppercase())
+        append(g.toString(16).padStart(2, '0').uppercase())
+        append(b.toString(16).padStart(2, '0').uppercase())
+    }
 }
 
 private fun Color.luminance(): Double = 0.299 * red + 0.587 * green + 0.114 * blue
