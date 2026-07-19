@@ -52,3 +52,44 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
+val generateMockGoogleServicesIfNeeded by tasks.registering {
+    val projectDirLayout = layout.projectDirectory
+    doLast {
+        val googleServicesFile = projectDirLayout.file("google-services.json").asFile
+        if (!googleServicesFile.exists()) {
+            val srcGoogleServices = projectDirLayout.file("src/debug/google-services.json").asFile
+            if (!srcGoogleServices.exists()) {
+                googleServicesFile.writeText("""
+                {
+                  "project_info": {
+                    "project_number": "000000000000",
+                    "project_id": "codenest-placeholder",
+                    "storage_bucket": "codenest-placeholder.appspot.com"
+                  },
+                  "client": [
+                    {
+                      "client_info": {
+                        "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                        "android_client_info": {
+                          "package_name": "org.example.project"
+                        }
+                      },
+                      "api_key": [
+                        {
+                          "current_key": "AIzaSyDummyKeyForGoogleServicesPluginBuild"
+                        }
+                      ]
+                    }
+                  ],
+                  "configuration_version": "1"
+                }
+                """.trimIndent())
+            }
+        }
+    }
+}
+
+tasks.matching { it.name.startsWith("process") && it.name.endsWith("GoogleServices") }.configureEach {
+    dependsOn(generateMockGoogleServicesIfNeeded)
+}
