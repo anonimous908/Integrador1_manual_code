@@ -16,7 +16,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Row
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.style.TextAlign
+
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -334,3 +339,46 @@ fun CodeNestFooter(
         )
     }
 }
+
+// ─── Shared UI Primitives (Anti-Duplication) ──────────────────────────────────
+
+@Composable
+fun ErrorBanner(
+    errorMessage: String?,
+    modifier: Modifier = Modifier
+) {
+    if (errorMessage == null) return
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        color = CodeNestColors.error.copy(alpha = 0.1f)
+    ) {
+        Text(
+            text = errorMessage,
+            color = CodeNestColors.error,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(12.dp),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun CodeNestTagChip(
+    text: String,
+    accent: Color,
+    modifier: Modifier = Modifier,
+    shapeRadius: Dp = 6.dp
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(shapeRadius))
+            .background(accent.copy(alpha = 0.15f))
+            .border(1.dp, accent.copy(alpha = 0.3f), RoundedCornerShape(shapeRadius))
+            .padding(horizontal = 6.dp, vertical = 2.dp)
+    ) {
+        Text(text = text, color = accent, fontSize = 10.sp)
+    }
+}
+
+

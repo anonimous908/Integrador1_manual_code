@@ -40,10 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import org.jetbrains.compose.resources.stringResource
-import kotlinproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
-import org.example.project.AppConfig
 import org.example.project.presentation.theme.CodeNestLoginBrand
+import kotlinproject.shared.generated.resources.*
+import org.example.project.AppConfig
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -52,9 +52,11 @@ import org.example.project.presentation.login.LoginViewModel
 import org.example.project.presentation.login.LoginEvent
 import org.example.project.presentation.login.LoginState
 import org.example.project.presentation.login.rememberGoogleSignInLauncher
-
-import org.example.project.presentation.components.calculateBrandPadding
-import org.example.project.presentation.components.CodeNestLoginForm
+import org.example.project.presentation.components.GoogleSignInButton
+import org.example.project.presentation.components.CodeNestTextField
+import org.example.project.presentation.components.PasswordTextField
+import org.example.project.presentation.components.ErrorBanner
+import org.example.project.presentation.components.EmailDivider
 
 class CodeNestLoginScreen : Screen {
     @Composable
@@ -171,25 +173,7 @@ class CodeNestLoginScreen : Screen {
 
                 Spacer(modifier = Modifier.height(16.dp * scaleFactor))
 
-                OutlinedButton(
-                    onClick = launchGoogleSignIn,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = CodeNestColors.surfaceContainerHigh,
-                        contentColor = CodeNestColors.onSurface
-                    ),
-                    border = BorderStroke(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.5f))
-                ) {
-                    Image(
-                        painter = painterResource(Res.drawable.google_logo),
-                        contentDescription = "Google Logo",
-                        modifier = Modifier.size(20.dp * scaleFactor)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp * scaleFactor))
-                    Text(stringResource(Res.string.google_login), fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                }
-
+                GoogleSignInButton(onClick = launchGoogleSignIn)
                 Spacer(modifier = Modifier.height(16.dp * scaleFactor))
                 
                 EmailDivider(text = stringResource(Res.string.login_divider))
@@ -300,6 +284,86 @@ class CodeNestLoginScreen : Screen {
                     }
                 }
             }
+        }
+    }
+}
+
+internal fun calculateBrandPadding(totalSize: Dp): Dp = maxOf(16.dp, totalSize * 0.03f)
+
+@Composable
+fun CodeNestLoginForm(
+    viewModel: LoginViewModel,
+    scaleFactor: Float,
+    state: LoginState
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        ErrorBanner(errorMessage = state.errorMessage)
+        if (state.errorMessage != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        CodeNestTextField(
+            label = stringResource(Res.string.email_label),
+            value = state.email,
+            onValueChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
+            placeholder = stringResource(Res.string.email_placeholder),
+            keyboardType = KeyboardType.Email,
+            trailingIcon = { Icon(Icons.Default.Email, contentDescription = "Email", tint = CodeNestColors.outline, modifier = Modifier.size(18.dp * scaleFactor)) },
+            error = state.emailError
+        )
+    }
+
+    Spacer(modifier = Modifier.height(16.dp * scaleFactor))
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        PasswordTextField(
+            label = stringResource(Res.string.password_label),
+            value = state.pass,
+            onValueChange = { viewModel.onEvent(LoginEvent.PassChanged(it)) },
+            visible = passwordVisible,
+            onToggleVisible = { passwordVisible = !passwordVisible },
+            error = state.passError
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = stringResource(Res.string.forgot_password),
+            color = CodeNestColors.primary,
+            fontSize = 12.sp,
+            modifier = Modifier
+                .align(Alignment.End)
+                .clickable { /* TODO */ }
+        )
+    }
+
+    Button(
+        onClick = { viewModel.onEvent(LoginEvent.Submit) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp * scaleFactor),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = CodeNestColors.primary,
+            contentColor = CodeNestColors.onPrimary,
+            disabledContainerColor = CodeNestColors.primary.copy(alpha = 0.5f)
+        ),
+        enabled = !state.isLoading
+    ) {
+        if (state.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp * scaleFactor),
+                color = CodeNestColors.onPrimary,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Text(
+                text = stringResource(Res.string.login_button),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

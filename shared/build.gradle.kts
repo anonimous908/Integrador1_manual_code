@@ -120,16 +120,23 @@ kotlin {
         val jvmMain by getting {
             dependsOn(syntaxMpMain)
         }
+        val webMain by creating {
+            dependsOn(commonMain)
+        }
         val wasmJsMain by getting {
             dependsOn(syntaxMpMain)
+            dependsOn(webMain)
+        }
+        val jsMain by getting {
+            dependsOn(webMain)
+            dependencies {
+                implementation(libs.wrappers.browser)
+            }
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation("io.insert-koin:koin-test")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
-        }
-        jsMain.dependencies {
-            implementation(libs.wrappers.browser)
         }
     }
 }

@@ -5,5 +5,5 @@ import cafe.adriel.voyager.navigator.Navigator
 
 @Composable
 actual fun PlatformLoginActions(navigator: Navigator) {
-    // WasmJs: no aplica cámara Android OCR
+    // Web (JS/Wasm): no se muestra el botón exclusivo de cámara Android OCR
 }

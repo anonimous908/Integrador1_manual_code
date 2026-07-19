@@ -2,6 +2,8 @@ package org.example.project.presentation
 import org.example.project.presentation.components.GoogleSignInButton
 import org.example.project.presentation.components.TermsCheckbox
 import org.example.project.presentation.components.CodeNestFooter
+import org.example.project.presentation.components.ErrorBanner
+
 
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.painterResource
@@ -272,21 +274,8 @@ private fun AuthCard(
                 )
             }
 
-            if (errorMessage != null) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    color = CodeNestColors.error.copy(alpha = 0.1f)
-                ) {
-                    Text(
-                        text = errorMessage,
-                        color = CodeNestColors.error,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(12.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            ErrorBanner(errorMessage = errorMessage)
+
 
             // Google button
             GoogleSignInButton(onClick = onSignInWithGoogle)

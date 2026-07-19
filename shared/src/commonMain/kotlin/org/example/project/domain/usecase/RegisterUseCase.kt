@@ -10,7 +10,7 @@ class RegisterUseCase(
         if (name.isBlank() || email.isBlank() || pass.isBlank()) {
             return Result.failure(IllegalArgumentException("Todos los campos son requeridos."))
         }
-        if (!EmailValidator.isValid(email)) {
+        if (!isValidEmail(email)) {
             return Result.failure(IllegalArgumentException("Formato de correo inválido."))
         }
         if (pass.length < 6) {

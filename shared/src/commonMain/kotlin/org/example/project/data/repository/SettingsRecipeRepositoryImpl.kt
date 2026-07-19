@@ -23,19 +23,11 @@ class SettingsRecipeRepositoryImpl(
 
     private val recipeKey = "recipe_all"
 
-    override suspend fun getPersonalRecipes(): List<Recipe> {
-        return try {
-            val stored = settings.getStringOrNull(recipeKey)
-            if (stored.isNullOrBlank()) {
-                emptyList()
-            } else {
-                json.decodeFromString<List<Recipe>>(stored)
-            }
-        } catch (e: Exception) {
-            // Log error and return empty on corruption
-            emptyList()
-        }
-    }
+    override suspend fun getPersonalRecipes(): List<Recipe> = runCatching {
+        val stored = settings.getStringOrNull(recipeKey)
+        if (stored.isNullOrBlank()) emptyList()
+        else json.decodeFromString<List<Recipe>>(stored)
+    }.getOrDefault(emptyList())
 
     override suspend fun getById(id: String): Recipe? {
         return getPersonalRecipes().find { it.id == id }
@@ -67,11 +59,7 @@ class SettingsRecipeRepositoryImpl(
         return removed
     }
 
-    private fun saveRecipes(recipes: List<Recipe>) {
-        try {
-            settings.putString(recipeKey, json.encodeToString(recipes))
-        } catch (e: Exception) {
-            // Log error on save failure
-        }
+    private fun saveRecipes(recipes: List<Recipe>) = runCatching {
+        settings.putString(recipeKey, json.encodeToString(recipes))
     }
 }

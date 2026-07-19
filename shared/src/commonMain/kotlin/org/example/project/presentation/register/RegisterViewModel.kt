@@ -1,15 +1,13 @@
 package org.example.project.presentation.register
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.example.project.domain.model.User
 import org.example.project.domain.usecase.LoginWithGoogleUseCase
 import org.example.project.domain.usecase.RegisterUseCase
+import org.example.project.presentation.base.BaseViewModel
 
 data class RegisterState(
     val name: String = "",
@@ -35,60 +33,47 @@ sealed class RegisterEvent {
 class RegisterViewModel(
     private val registerUseCase: RegisterUseCase,
     private val loginWithGoogleUseCase: LoginWithGoogleUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _state = MutableStateFlow(RegisterState())
     val state: StateFlow<RegisterState> = _state.asStateFlow()
 
     fun onEvent(event: RegisterEvent) {
         when (event) {
-            is RegisterEvent.NameChanged -> _state.update { it.copy(name = event.name) }
-            is RegisterEvent.EmailChanged -> _state.update { it.copy(email = event.email) }
-            is RegisterEvent.PassChanged -> _state.update { it.copy(pass = event.pass) }
-            is RegisterEvent.TermsAcceptedChanged -> _state.update { it.copy(termsAccepted = event.accepted) }
-            is RegisterEvent.RegisterWithGoogle -> submitGoogleData(event.idToken)
+            is RegisterEvent.NameChanged           -> _state.update { it.copy(name = event.name) }
+            is RegisterEvent.EmailChanged          -> _state.update { it.copy(email = event.email) }
+            is RegisterEvent.PassChanged           -> _state.update { it.copy(pass = event.pass) }
+            is RegisterEvent.TermsAcceptedChanged  -> _state.update { it.copy(termsAccepted = event.accepted) }
+            is RegisterEvent.RegisterWithGoogle    -> submitGoogleData(event.idToken)
             is RegisterEvent.RegisterWithGoogleError -> _state.update { it.copy(isLoading = false, errorMessage = event.message) }
-            RegisterEvent.Submit -> submitData()
+            RegisterEvent.Submit                   -> submitData()
         }
     }
 
     private fun submitGoogleData(idToken: String) {
-        _state.update { it.copy(isLoading = true, errorMessage = null) }
-        viewModelScope.launch {
-            try {
-                val result = loginWithGoogleUseCase(idToken)
-                if (result.isSuccess) {
-                    val user = result.getOrNull()
-                    _state.update { it.copy(isLoading = false, success = true, user = user) }
-                } else {
-                    _state.update { it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.message ?: "Error al registrarse con Google") }
-                }
-            } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, errorMessage = e.message ?: "Error en registro con Google") }
-            }
+        launchSafely(
+            setLoading = { loading -> _state.update { it.copy(isLoading = loading) } },
+            onError = { msg -> _state.update { it.copy(errorMessage = msg) } }
+        ) {
+            loginWithGoogleUseCase(idToken)
+                .onSuccess { user -> _state.update { it.copy(success = true, user = user) } }
+                .onFailure { e -> _state.update { it.copy(errorMessage = e.message ?: "Error al registrarse con Google") } }
         }
     }
 
     private fun submitData() {
-        val currentState = _state.value
-        if (!currentState.termsAccepted) {
+        if (!_state.value.termsAccepted) {
             _state.update { it.copy(errorMessage = "Debes aceptar los términos y condiciones.") }
             return
         }
-
-        _state.update { it.copy(isLoading = true, errorMessage = null) }
-        viewModelScope.launch {
-            try {
-                val result = registerUseCase(currentState.name, currentState.email, currentState.pass)
-                if (result.isSuccess) {
-                    val user = result.getOrNull()
-                    _state.update { it.copy(isLoading = false, success = true, user = user) }
-                } else {
-                    _state.update { it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.message ?: "Error desconocido") }
-                }
-            } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, errorMessage = e.message ?: "Error al registrar") }
-            }
+        val s = _state.value
+        launchSafely(
+            setLoading = { loading -> _state.update { it.copy(isLoading = loading) } },
+            onError = { msg -> _state.update { it.copy(errorMessage = msg) } }
+        ) {
+            registerUseCase(s.name, s.email, s.pass)
+                .onSuccess { user -> _state.update { it.copy(success = true, user = user) } }
+                .onFailure { e -> _state.update { it.copy(errorMessage = e.message ?: "Error desconocido") } }
         }
     }
 }

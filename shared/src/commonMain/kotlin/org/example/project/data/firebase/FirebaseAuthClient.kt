@@ -28,79 +28,24 @@ class FirebaseAuthClient(
 ) : FirebaseAuthClientApi {
     private val json = Json { ignoreUnknownKeys = true }
 
-    /**
-     * Sign in with email and password.
-     * Returns a [FirebaseUser] on success.
-     */
-    override suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser> {
-        return try {
-            val response: SignInResponse = httpClient.post("${FirebaseConfig.authBaseUrl}/accounts:signInWithPassword") {
+    /** Shared POST helper — eliminates repeated header/key boilerplate. */
+    private suspend inline fun <reified B : Any> authPost(endpoint: String, body: B): Result<FirebaseUser> =
+        runCatching {
+            httpClient.post("${FirebaseConfig.authBaseUrl}/$endpoint") {
                 parameter("key", FirebaseConfig.apiKey)
                 contentType(ContentType.Application.Json)
-                setBody(SignInRequest(email, password, true))
-            }.body()
-
-            Result.success(FirebaseUser(
-                idToken = response.idToken,
-                localId = response.localId,
-                email = response.email,
-                refreshToken = response.refreshToken,
-                registered = response.registered,
-                displayName = response.displayName
-            ))
-        } catch (e: Exception) {
-            Result.failure(e)
+                setBody(body)
+            }.body<SignInResponse>().toFirebaseUser()
         }
-    }
 
-    /**
-     * Create a new user with email and password.
-     * Optionally accepts [displayName] to set the user's display name on registration.
-     */
-    override suspend fun signUp(email: String, password: String, displayName: String?): Result<FirebaseUser> {
-        return try {
-            val response: SignInResponse = httpClient.post("${FirebaseConfig.authBaseUrl}/accounts:signUp") {
-                parameter("key", FirebaseConfig.apiKey)
-                contentType(ContentType.Application.Json)
-                setBody(SignInRequest(email, password, false, displayName))
-            }.body()
+    override suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser> =
+        authPost("accounts:signInWithPassword", SignInRequest(email, password, true))
 
-            Result.success(FirebaseUser(
-                idToken = response.idToken,
-                localId = response.localId,
-                email = response.email,
-                refreshToken = response.refreshToken,
-                registered = false,
-                displayName = response.displayName
-            ))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+    override suspend fun signUp(email: String, password: String, displayName: String?): Result<FirebaseUser> =
+        authPost("accounts:signUp", SignInRequest(email, password, false, displayName))
 
-    /**
-     * Sign in with Google ID token using Firebase Identity Toolkit REST API (accounts:signInWithIdp).
-     */
-    override suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser> {
-        return try {
-            val response: SignInResponse = httpClient.post("${FirebaseConfig.authBaseUrl}/accounts:signInWithIdp") {
-                parameter("key", FirebaseConfig.apiKey)
-                contentType(ContentType.Application.Json)
-                setBody(SignInWithIdpRequest(postBody = "id_token=$idToken&providerId=google.com"))
-            }.body()
-
-            Result.success(FirebaseUser(
-                idToken = response.idToken,
-                localId = response.localId,
-                email = response.email,
-                refreshToken = response.refreshToken,
-                registered = response.registered,
-                displayName = response.displayName
-            ))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+    override suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser> =
+        authPost("accounts:signInWithIdp", SignInWithIdpRequest(postBody = "id_token=$idToken&providerId=google.com"))
 }
 
 data class FirebaseUser(
@@ -136,4 +81,6 @@ private data class SignInResponse(
     val refreshToken: String = "",
     val registered: Boolean = false,
     val displayName: String = ""
-)
+) {
+    fun toFirebaseUser() = FirebaseUser(idToken, localId, email, refreshToken, registered, displayName)
+}

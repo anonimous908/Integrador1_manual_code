@@ -2,36 +2,15 @@ package org.example.project.presentation.tabs
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabOptions
-import org.example.project.presentation.components.PlaceholderContent
-import kotlinproject.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
+import org.example.project.presentation.base.PlaceholderTab
+import kotlinproject.shared.generated.resources.Res
+import kotlinproject.shared.generated.resources.sidebar_recent
 
-object RecentTab : Tab {
-    override val options: TabOptions
-        @Composable
-        get() {
-            val title = stringResource(Res.string.sidebar_recent)
-            val icon = rememberVectorPainter(Icons.Default.History)
-            return remember {
-                TabOptions(
-                    index = 2u,
-                    title = title,
-                    icon = icon
-                )
-            }
-        }
+object RecentTab : PlaceholderTab(
+    tabIndex = 2u,
+    titleRes = Res.string.sidebar_recent,
+    iconVector = Icons.Default.History,
+    contentTitle = "Reciente",
+    contentSubtitle = "Tus snippets y recetas vistas recientemente."
+)
 
-    @Composable
-    override fun Content() {
-        PlaceholderContent(
-            icon = Icons.Default.History,
-            title = "Reciente",
-            subtitle = "Tus snippets y recetas vistas recientemente."
-        )
-    }
-}

@@ -32,11 +32,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import org.example.project.domain.model.Recipe
-import org.example.project.domain.model.toSnippetCardData
 import org.example.project.domain.service.SyntaxHighlighter
 import org.example.project.presentation.AISearchScreen
 import org.example.project.presentation.components.SnippetCard
 import org.example.project.presentation.components.SnippetListItem
+import org.example.project.presentation.base.LoadingState
+import org.example.project.presentation.base.ErrorState
 import org.example.project.presentation.theme.CodeNestColors
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -83,11 +84,7 @@ data class MyRecipesTab(val email: String) : Tab {
             }
         }
 
-        // Adaptar a SnippetCardData para el componente grid existente
-        @Suppress("DEPRECATION")
-        val cards = remember(filteredRecipes) {
-            filteredRecipes.map { it.toSnippetCardData() }
-        }
+
 
         Box(modifier = Modifier.fillMaxSize().background(CodeNestColors.background)) {
             Column(modifier = Modifier.fillMaxSize()) {
@@ -102,7 +99,6 @@ data class MyRecipesTab(val email: String) : Tab {
 
                 // ContentCanvas with ViewModel-driven state
                 ContentCanvas(
-                    cards = cards,
                     recipes = filteredRecipes,
                     isListView = state.isListView,
                     isLoading = state.isLoading,
@@ -251,9 +247,7 @@ private fun IconButtonSlot(
 }
 
 @Composable
-@Suppress("DEPRECATION")
 private fun ContentCanvas(
-    cards: List<org.example.project.domain.model.SnippetCardData>,
     recipes: List<Recipe>,
     isListView: Boolean,
     isLoading: Boolean,
@@ -352,56 +346,8 @@ private fun ContentCanvas(
         Spacer(modifier = Modifier.height(24.dp))
 
         when {
-            isLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator(
-                            color = CodeNestColors.primary
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            "Loading recipes...",
-                            color = CodeNestColors.onSurfaceVariant,
-                            fontSize = 14.sp
-                        )
-                    }
-                }
-            }
-            error != null -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            Icons.Filled.ErrorOutline,
-                            contentDescription = null,
-                            tint = CodeNestColors.error,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            "Error loading recipes",
-                            color = CodeNestColors.onSurface,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            error,
-                            color = CodeNestColors.onSurfaceVariant,
-                            fontSize = 14.sp
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        OutlinedButton(onClick = onRefresh) {
-                            Text("Retry")
-                        }
-                    }
-                }
-            }
+            isLoading -> LoadingState("Loading recipes...")
+            error != null -> ErrorState(error, onRetry = onRefresh)
             recipes.isEmpty() -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -437,9 +383,9 @@ private fun ContentCanvas(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(cards, key = { it.title + it.codeLines.hashCode() }) { card ->
+                    items(recipes, key = { it.id }) { recipe ->
                         SnippetCard(
-                            card = card,
+                            recipe = recipe,
                             syntaxHighlighter = syntaxHighlighter,
                             onCopied = onCopied
                         )

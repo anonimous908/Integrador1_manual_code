@@ -5,7 +5,7 @@ import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import org.example.project.presentation.components.calculateBrandPadding
+import org.example.project.presentation.calculateBrandPadding
 
 class SharedCommonTest {
 

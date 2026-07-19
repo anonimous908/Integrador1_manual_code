@@ -1,13 +1,11 @@
 package org.example.project.presentation.tabs
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.example.project.domain.repository.RecipeRepository
+import org.example.project.presentation.base.BaseViewModel
 
 /**
  * ViewModel for [MyRecipesTab].
@@ -19,58 +17,34 @@ import org.example.project.domain.repository.RecipeRepository
  */
 class MyRecipesViewModel(
     private val repository: RecipeRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _state = MutableStateFlow(MyRecipesState())
     val state: StateFlow<MyRecipesState> = _state.asStateFlow()
 
-    init {
-        loadRecipes()
-    }
+    init { loadRecipes() }
 
-    /**
-     * Processes [MyRecipesEvent] intents from the UI.
-     */
     fun onEvent(event: MyRecipesEvent) {
         when (event) {
-            MyRecipesEvent.ToggleView -> {
-                _state.update { it.copy(isListView = !it.isListView) }
-            }
-            is MyRecipesEvent.DeleteRecipe -> {
-                deleteRecipe(event.id)
-            }
-            MyRecipesEvent.Refresh -> {
-                loadRecipes()
-            }
+            MyRecipesEvent.ToggleView    -> _state.update { it.copy(isListView = !it.isListView) }
+            is MyRecipesEvent.DeleteRecipe -> deleteRecipe(event.id)
+            MyRecipesEvent.Refresh       -> loadRecipes()
         }
     }
 
     private fun loadRecipes() {
-        _state.update { it.copy(isLoading = true, error = null) }
-        viewModelScope.launch {
-            try {
-                val recipes = repository.getPersonalRecipes()
-                _state.update {
-                    it.copy(recipes = recipes, isLoading = false)
-                }
-            } catch (e: Exception) {
-                _state.update {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
-                }
-            }
+        launchSafely(
+            setLoading = { loading -> _state.update { it.copy(isLoading = loading, error = null) } },
+            onError = { msg -> _state.update { it.copy(error = msg) } }
+        ) {
+            _state.update { it.copy(recipes = repository.getPersonalRecipes()) }
         }
     }
 
     private fun deleteRecipe(id: String) {
-        viewModelScope.launch {
-            try {
-                repository.delete(id)
-                loadRecipes()
-            } catch (e: Exception) {
-                _state.update {
-                    it.copy(error = e.message ?: "Failed to delete")
-                }
-            }
+        launchSafely(onError = { msg -> _state.update { it.copy(error = msg) } }) {
+            repository.delete(id)
+            loadRecipes()
         }
     }
 }

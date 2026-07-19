@@ -1,6 +1,7 @@
 package org.example.project.data.repository
 
 import org.example.project.data.firebase.FirebaseAuthClientApi
+import org.example.project.data.firebase.FirebaseUser
 import org.example.project.domain.model.User
 import org.example.project.domain.repository.AuthRepository
 
@@ -15,36 +16,27 @@ class FirebaseAuthRepositoryImpl(
     private val firebaseAuthClient: FirebaseAuthClientApi
 ) : AuthRepository {
 
-    override suspend fun login(email: String, pass: String): Result<User> {
-        return firebaseAuthClient.signInWithEmail(email, pass)
-            .map { firebaseUser ->
-                User(
-                    id = firebaseUser.localId,
-                    name = firebaseUser.displayName.ifBlank { firebaseUser.email },
-                    email = firebaseUser.email
-                )
-            }
-    }
+    private fun FirebaseUser.mapToUser() = User(
+        id = localId,
+        name = displayName.ifBlank { email },
+        email = email
+    )
 
-    override suspend fun register(name: String, email: String, pass: String): Result<User> {
-        return firebaseAuthClient.signUp(email, pass, displayName = name)
-            .map { firebaseUser ->
-                User(
-                    id = firebaseUser.localId,
-                    name = firebaseUser.displayName.ifBlank { name },
-                    email = firebaseUser.email
-                )
-            }
-    }
+    override suspend fun login(email: String, pass: String): Result<User> =
+        firebaseAuthClient.signInWithEmail(email, pass).map { it.mapToUser() }
 
-    override suspend fun loginWithGoogle(idToken: String): Result<User> {
-        return firebaseAuthClient.signInWithGoogle(idToken)
-            .map { firebaseUser ->
-                User(
-                    id = firebaseUser.localId,
-                    name = firebaseUser.displayName.ifBlank { firebaseUser.email },
-                    email = firebaseUser.email
-                )
-            }
-    }
+    override suspend fun register(name: String, email: String, pass: String): Result<User> =
+        firebaseAuthClient.signUp(email, pass, displayName = name).map { response ->
+            response.toUser(nameFallback = name)
+        }
+
+    /** Maps a [FirebaseUser] response to a domain [User], using a fallback name when displayName is empty. */
+    private fun FirebaseUser.toUser(nameFallback: String? = null) = User(
+        id = localId,
+        name = displayName.ifBlank { nameFallback ?: email },
+        email = email
+    )
+
+    override suspend fun loginWithGoogle(idToken: String): Result<User> =
+        firebaseAuthClient.signInWithGoogle(idToken).map { it.mapToUser() }
 }

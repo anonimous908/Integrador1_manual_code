@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.buildAnnotatedString
@@ -27,7 +28,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.example.project.domain.model.SnippetCardData
+import org.example.project.domain.model.Recipe
 import org.example.project.domain.service.SyntaxHighlighter
 import org.example.project.presentation.theme.CodeNestColors
 
@@ -35,15 +36,24 @@ private val monoFont = FontFamily.Monospace
 
 @Composable
 fun SnippetCard(
-    card: SnippetCardData,
+    recipe: Recipe,
     syntaxHighlighter: SyntaxHighlighter,
     onCopied: () -> Unit
 ) {
     val clipboardManager = LocalClipboardManager.current
-    val fullCode = remember(card) { card.codeLines.joinToString("\n") }
-    val highlightedLines = remember(card, fullCode) {
-        syntaxHighlighter.highlight(fullCode, card.languageTag).splitLines()
+    val fullCode = remember(recipe) { recipe.code.joinToString("\n") }
+    val highlightedLines = remember(recipe, fullCode) {
+        syntaxHighlighter.highlight(fullCode, recipe.languageTag).splitLines()
     }
+    val iconAccent = remember(recipe.languageTag) {
+        when (recipe.languageTag.lowercase()) {
+            "kotlin" -> Color(0xFF6C63FF)
+            "python" -> Color(0xFF4CAF50)
+            "javascript", "js" -> Color(0xFFF1C40F)
+            else -> Color(0xFF3498DB)
+        }
+    }
+    val footerLabel = if (recipe.evidence.isNotBlank()) "Evidence" else "Details"
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -53,156 +63,131 @@ fun SnippetCard(
         border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Header de la card
-            Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(CodeNestColors.surfaceContainerLow.copy(alpha = 0.5f))
-                .border(width = 0.5.dp, color = CodeNestColors.outlineVariant.copy(alpha = 0.5f))
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Folder, contentDescription = null, tint = card.iconAccent, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(card.title, color = CodeNestColors.onSurface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Tag(text = card.languageTag, accent = card.iconAccent)
-                Spacer(modifier = Modifier.width(4.dp))
-                Tag(text = card.secondaryTag, accent = CodeNestColors.onSurfaceVariant)
-                Spacer(modifier = Modifier.width(8.dp))
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .clickable {
-                            val code = card.codeLines.joinToString("\n")
-                            clipboardManager.setText(AnnotatedString(code))
-                            onCopied()
-                        }
-                        .padding(2.dp)
-                ) {
-                    Icon(Icons.Filled.Share, contentDescription = "Compartir", tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(18.dp))
-                }
-            }
-        }
-
-        // Bloque de código
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(CodeNestColors.codeBg)
-                .padding(8.dp)
-        ) {
-            card.codeLines.forEachIndexed { index, line ->
-                val isActive = index == card.activeLineIndex
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(if (isActive) CodeNestColors.primary.copy(alpha = 0.05f) else Color.Transparent)
-                ) {
-                    if (isActive) {
-                        Box(modifier = Modifier.width(2.dp).fillMaxHeight().background(CodeNestColors.primary))
-                    } else {
-                        Spacer(modifier = Modifier.width(2.dp))
-                    }
-                    Text(
-                        text = "${index + 1}",
-                        color = CodeNestColors.tertiaryContainer.copy(alpha = 0.5f),
-                        fontFamily = monoFont,
-                        fontSize = 13.sp,
-                        modifier = Modifier.width(28.dp).padding(end = 8.dp),
-                    )
-                    Text(
-                        text = highlightedLines.getOrElse(index) { AnnotatedString(line) },
-                        color = CodeNestColors.onSurfaceVariant,
-                        fontFamily = monoFont,
-                        fontSize = 13.sp,
-                        lineHeight = 19.sp
-                    )
-                }
-            }
-        }
-
-        // Footer: evidencia visual o log de terminal
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(96.dp)
-                .background(CodeNestColors.surfaceContainerLowest)
-                .border(width = 0.5.dp, color = CodeNestColors.outlineVariant.copy(alpha = 0.5f))
-        ) {
-            if (card.showTerminalOutput) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(CodeNestColors.surfaceContainerLowest)
-                        .padding(8.dp)
-                ) {
-                    card.terminalLines.forEach { line ->
-                        Text(
-                            line,
-                            color = CodeNestColors.secondary.copy(alpha = 0.7f),
-                            fontFamily = monoFont,
-                            fontSize = 10.sp
-                        )
-                    }
-                }
-            }
-            // Degradado inferior con etiqueta + botón compartir
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, CodeNestColors.background.copy(alpha = 0.85f))
-                        )
-                    )
-            )
             Row(
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
                     .fillMaxWidth()
+                    .background(CodeNestColors.surfaceContainerLow.copy(alpha = 0.5f))
+                    .border(width = 0.5.dp, color = CodeNestColors.outlineVariant.copy(alpha = 0.5f))
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(card.footerIcon, contentDescription = null, tint = CodeNestColors.onSurface, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Filled.Folder, contentDescription = null, tint = iconAccent, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(recipe.title, color = CodeNestColors.onSurface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CodeNestTagChip(text = recipe.languageTag, accent = iconAccent)
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(card.footerLabel, color = CodeNestColors.onSurface, fontSize = 11.sp)
+                    if (!recipe.secondaryTag.isNullOrBlank()) {
+                        CodeNestTagChip(text = recipe.secondaryTag, accent = CodeNestColors.onSurfaceVariant)
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .clickable {
+                                clipboardManager.setText(AnnotatedString(fullCode))
+                                onCopied()
+                            }
+                            .padding(2.dp)
+                    ) {
+                        Icon(Icons.Filled.Share, contentDescription = "Compartir", tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(CodeNestColors.codeBg)
+                    .padding(8.dp)
+            ) {
+                recipe.code.forEachIndexed { index, line ->
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "${index + 1}",
+                            color = CodeNestColors.tertiaryContainer.copy(alpha = 0.5f),
+                            fontFamily = monoFont,
+                            fontSize = 13.sp,
+                            modifier = Modifier.width(28.dp).padding(end = 8.dp),
+                        )
+                        Text(
+                            text = highlightedLines.getOrElse(index) { AnnotatedString(line) },
+                            color = CodeNestColors.onSurfaceVariant,
+                            fontFamily = monoFont,
+                            fontSize = 13.sp,
+                            lineHeight = 19.sp
+                        )
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(96.dp)
+                    .background(CodeNestColors.surfaceContainerLowest)
+                    .border(width = 0.5.dp, color = CodeNestColors.outlineVariant.copy(alpha = 0.5f))
+            ) {
+                if (recipe.evidence.isNotBlank()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(CodeNestColors.surfaceContainerLowest)
+                            .padding(8.dp)
+                    ) {
+                        recipe.evidence.split("\n").forEach { line ->
+                            Text(
+                                line,
+                                color = CodeNestColors.secondary.copy(alpha = 0.7f),
+                                fontFamily = monoFont,
+                                fontSize = 10.sp
+                            )
+                        }
+                    }
                 }
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .clickable {
-                            val code = card.codeLines.joinToString("\n")
-                            clipboardManager.setText(AnnotatedString(code))
-                            onCopied()
-                        }
-                        .padding(2.dp)
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, CodeNestColors.background.copy(alpha = 0.85f))
+                            )
+                        )
+                )
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Filled.Share, contentDescription = "Compartir", tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Filled.Visibility, contentDescription = null, tint = CodeNestColors.onSurface, modifier = Modifier.size(14.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(footerLabel, color = CodeNestColors.onSurface, fontSize = 11.sp)
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .clickable {
+                                clipboardManager.setText(AnnotatedString(fullCode))
+                                onCopied()
+                            }
+                            .padding(2.dp)
+                    ) {
+                        Icon(Icons.Filled.Share, contentDescription = "Compartir", tint = CodeNestColors.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                    }
                 }
             }
         }
     }
-    }
 }
 
-@Composable
-private fun Tag(text: String, accent: Color) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(6.dp))
-            .background(accent.copy(alpha = 0.15f))
-            .border(1.dp, accent.copy(alpha = 0.3f), RoundedCornerShape(6.dp))
-            .padding(horizontal = 6.dp, vertical = 2.dp)
-    ) {
-        Text(text, color = accent, fontSize = 10.sp)
-    }
-}
 
 private fun AnnotatedString.splitLines(): List<AnnotatedString> {
     val lines = text.split('\n')
@@ -230,3 +215,51 @@ private fun AnnotatedString.splitLines(): List<AnnotatedString> {
         }
     }
 }
+
+@Composable
+fun SnippetListItem(
+    recipe: Recipe,
+    onClick: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(6.dp))
+            .clickable(onClick = onClick)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = recipe.title,
+                color = CodeNestColors.onSurface,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f)
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                CodeNestTagChip(
+                    text = recipe.languageTag,
+                    accent = CodeNestColors.tertiary,
+                    shapeRadius = 4.dp
+                )
+                if (!recipe.secondaryTag.isNullOrBlank()) {
+                    CodeNestTagChip(
+                        text = recipe.secondaryTag,
+                        accent = CodeNestColors.onSurfaceVariant,
+                        shapeRadius = 4.dp
+                    )
+                }
+            }
+        }
+        HorizontalDivider(
+            thickness = 0.5.dp,
+            color = CodeNestColors.outlineVariant.copy(alpha = 0.5f)
+        )
+    }
+}
+

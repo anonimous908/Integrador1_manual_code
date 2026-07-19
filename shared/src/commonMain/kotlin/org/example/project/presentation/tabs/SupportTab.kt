@@ -2,36 +2,15 @@ package org.example.project.presentation.tabs
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabOptions
-import org.example.project.presentation.components.PlaceholderContent
-import kotlinproject.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
+import org.example.project.presentation.base.PlaceholderTab
+import kotlinproject.shared.generated.resources.Res
+import kotlinproject.shared.generated.resources.sidebar_support
 
-object SupportTab : Tab {
-    override val options: TabOptions
-        @Composable
-        get() {
-            val title = stringResource(Res.string.sidebar_support)
-            val icon = rememberVectorPainter(Icons.Default.HelpOutline)
-            return remember {
-                TabOptions(
-                    index = 5u,
-                    title = title,
-                    icon = icon
-                )
-            }
-        }
+object SupportTab : PlaceholderTab(
+    tabIndex = 5u,
+    titleRes = Res.string.sidebar_support,
+    iconVector = Icons.Default.HelpOutline,
+    contentTitle = "Soporte",
+    contentSubtitle = "Encuentra ayuda, reporta problemas o contacta con nuestro equipo."
+)
 
-    @Composable
-    override fun Content() {
-        PlaceholderContent(
-            icon = Icons.Default.HelpOutline,
-            title = "Soporte",
-            subtitle = "Encuentra ayuda, reporta problemas o contacta con nuestro equipo."
-        )
-    }
-}

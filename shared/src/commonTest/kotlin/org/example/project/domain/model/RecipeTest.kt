@@ -1,8 +1,5 @@
 package org.example.project.domain.model
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -146,57 +143,5 @@ class RecipeTest {
         assertEquals("", recipe.evidence)
         assertEquals(0L, recipe.createdAt)
         assertEquals(0L, recipe.updatedAt)
-    }
-
-    // ─── SnippetCardData adapter ───────────────────────────────────────
-
-    @Test
-    fun `SnippetCardData toRecipe maps fields correctly`() {
-        val card = SnippetCardData(
-            title = "Test Recipe",
-            languageTag = "Kotlin",
-            secondaryTag = "Mobile",
-            iconAccent = Color(0xFF6C63FF),
-            codeLines = listOf("fun main() {}"),
-            footerLabel = "Evidence",
-            footerIcon = Icons.Filled.Visibility,
-            activeLineIndex = -1,
-            showTerminalOutput = false,
-            terminalLines = emptyList()
-        )
-
-        val recipe = card.toRecipe(userId = "user@domain.com")
-
-        assertEquals(card.title, recipe.title)
-        assertEquals(card.languageTag, recipe.languageTag)
-        assertEquals(card.secondaryTag, recipe.secondaryTag)
-        assertEquals(card.codeLines, recipe.code)
-        assertEquals("user@domain.com", recipe.userId)
-        assertNotNull(recipe.id, "toRecipe should generate an ID")
-        assertTrue(recipe.id.isNotBlank())
-    }
-
-    @Test
-    fun `Recipe toSnippetCardData maps fields correctly`() {
-        val recipe = Recipe(
-            id = "abc-123",
-            userId = "user@ex.com",
-            title = "My Recipe",
-            languageTag = "Python",
-            secondaryTag = "Data",
-            code = listOf("print('hello')"),
-            description = "A test recipe",
-            dependencies = listOf("Python 3.x"),
-            evidence = "Screenshot",
-            createdAt = 1000L,
-            updatedAt = 2000L
-        )
-
-        val card = recipe.toSnippetCardData()
-
-        assertEquals(recipe.title, card.title)
-        assertEquals(recipe.languageTag, card.languageTag)
-        assertEquals(recipe.secondaryTag, card.secondaryTag)
-        assertEquals(recipe.code, card.codeLines)
     }
 }
