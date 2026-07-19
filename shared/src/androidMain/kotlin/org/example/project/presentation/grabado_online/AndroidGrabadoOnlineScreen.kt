@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.example.project.data.network.AndroidOcrClientBridge
 import org.example.project.domain.usecase.CheckOcrModificationsUseCase
@@ -54,12 +55,24 @@ fun AndroidGrabadoOnlineScreen(
 
     val deepSeekClient = remember { org.example.project.data.network.DeepSeekV4FlashClient() }
     val coroutineScope = rememberCoroutineScope()
+    var currentAiJob by remember { mutableStateOf<Job?>(null) }
 
     var hasCameraPermission by remember { mutableStateOf(true) }
     var isScanningActive by remember { mutableStateOf(true) }
     var latestLiveOcrText by remember { mutableStateOf("") }
     var recordedFileText by remember { mutableStateOf("") }
     val logs = remember { mutableStateListOf<OcrScanLogEntry>() }
+
+    val launchAiAnalysis: (String) -> Unit = { ocrTextToAnalyze ->
+        currentAiJob?.cancel()
+        currentAiJob = coroutineScope.launch {
+            deepSeekClient.analyzeOcrTextStream(ocrTextToAnalyze).collect { streamingProgress ->
+                if (logs.isNotEmpty()) {
+                    logs[0] = logs[0].copy(message = streamingProgress)
+                }
+            }
+        }
+    }
 
     // Escaneo continuo en tiempo real y transmisión OCR sin cuenta regresiva
     LaunchedEffect(isScanningActive) {
@@ -86,16 +99,11 @@ fun AndroidGrabadoOnlineScreen(
                     OcrScanLogEntry(
                         timestamp = "Escaneo Automático",
                         hasModifications = true,
-                        message = "Diferencias detectadas -> Transmitiendo texto OCR actualizado.",
+                        message = "Analizando en vivo con DeepSeek v4 Flash (Streaming)...",
                         extractedTextSnippet = currentOcr.take(60) + if (currentOcr.length > 60) "..." else ""
                     )
                 )
-                coroutineScope.launch {
-                    val aiMsg = deepSeekClient.analyzeOcrText(currentOcr)
-                    if (logs.isNotEmpty()) {
-                        logs[0] = logs[0].copy(message = aiMsg)
-                    }
-                }
+                launchAiAnalysis(currentOcr)
             } else {
                 logs.add(
                     0,
@@ -268,16 +276,11 @@ fun AndroidGrabadoOnlineScreen(
                                         OcrScanLogEntry(
                                             timestamp = "Captura Ahora",
                                             hasModifications = true,
-                                            message = "Captura manual guardada en archivo.txt -> Transmitiendo OCR.",
+                                            message = "Analizando en vivo con DeepSeek v4 Flash (Streaming)...",
                                             extractedTextSnippet = currentOcr.take(60) + if (currentOcr.length > 60) "..." else ""
                                         )
                                     )
-                                    coroutineScope.launch {
-                                        val aiMsg = deepSeekClient.analyzeOcrText(currentOcr)
-                                        if (logs.isNotEmpty()) {
-                                            logs[0] = logs[0].copy(message = aiMsg)
-                                        }
-                                    }
+                                    launchAiAnalysis(currentOcr)
                                 } else {
                                     logs.add(
                                         0,
