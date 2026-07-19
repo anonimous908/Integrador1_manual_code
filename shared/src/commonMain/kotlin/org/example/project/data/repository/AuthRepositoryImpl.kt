@@ -65,4 +65,13 @@ class AuthRepositoryImpl(
             }
         }
     }
+
+    override suspend fun loginWithGoogle(idToken: String): Result<User> {
+        return withContext(Dispatchers.Default) {
+            val email = "google_user_${idToken.take(8)}@codenest.dev"
+            val name = "Usuario Google"
+            settings.putString("current_user", email)
+            Result.success(User(id = email, name = name, email = email))
+        }
+    }
 }

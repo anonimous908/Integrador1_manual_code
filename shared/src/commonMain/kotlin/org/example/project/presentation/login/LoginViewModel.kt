@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.domain.usecase.LoginWithEmailUseCase
+import org.example.project.domain.usecase.LoginWithGoogleUseCase
 import org.example.project.domain.usecase.ValidateEmailUseCase
 import org.example.project.domain.usecase.ValidatePasswordUseCase
 
@@ -17,6 +18,7 @@ import org.example.project.domain.usecase.ValidatePasswordUseCase
  */
 class LoginViewModel(
     private val loginWithEmailUseCase: LoginWithEmailUseCase,
+    private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase
 ) : ViewModel() {
@@ -47,12 +49,24 @@ class LoginViewModel(
                 val error = validatePasswordUseCase(event.pass)
                 _state.update { it.copy(pass = event.pass, passError = error, errorMessage = null) }
             }
+            is LoginEvent.LoginWithGoogle -> {
+                loginWithGoogle(event.idToken)
+            }
             LoginEvent.Submit -> {
                 submitData()
             }
             LoginEvent.Reset -> {
                 _state.value = LoginState()
             }
+        }
+    }
+
+    private fun loginWithGoogle(idToken: String) {
+        _state.update { it.copy(isLoading = true, errorMessage = null) }
+        viewModelScope.launch {
+            loginWithGoogleUseCase(idToken)
+                .onSuccess { user -> _state.update { it.copy(isLoading = false, isLoggedIn = true, user = user) } }
+                .onFailure { error -> _state.update { it.copy(isLoading = false, errorMessage = error.message ?: "Error al autenticar con Google") } }
         }
     }
 

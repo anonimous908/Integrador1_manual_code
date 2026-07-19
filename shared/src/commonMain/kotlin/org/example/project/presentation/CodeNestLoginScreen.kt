@@ -51,6 +51,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.example.project.presentation.login.LoginViewModel
 import org.example.project.presentation.login.LoginEvent
 import org.example.project.presentation.login.LoginState
+import org.example.project.presentation.login.rememberGoogleSignInLauncher
 
 import org.example.project.presentation.components.calculateBrandPadding
 import org.example.project.presentation.components.CodeNestLoginForm
@@ -64,11 +65,18 @@ class CodeNestLoginScreen : Screen {
         val state by viewModel.state.collectAsState()
         val appState by appViewModel.state.collectAsState()
 
+        val launchGoogleSignIn = rememberGoogleSignInLauncher(
+            onTokenReceived = { token ->
+                viewModel.onEvent(LoginEvent.LoginWithGoogle(token))
+            },
+            onError = { _ -> }
+        )
+
         LaunchedEffect(viewModel) {
             viewModel.state.collect { state ->
                 if (state.isLoggedIn) {
                     viewModel.onEvent(LoginEvent.Reset)
-                    navigator.replace(HomeScreen(state.user?.email ?: state.email))
+                    navigator.replaceAll(HomeScreen(state.user?.email ?: state.email))
                 }
             }
         }
@@ -164,7 +172,7 @@ class CodeNestLoginScreen : Screen {
                 Spacer(modifier = Modifier.height(16.dp * scaleFactor))
 
                 OutlinedButton(
-                    onClick = { /* TODO: Google Login */ },
+                    onClick = launchGoogleSignIn,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.outlinedButtonColors(

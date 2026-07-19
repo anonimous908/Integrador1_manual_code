@@ -189,6 +189,15 @@ class LoginViewModelTest {
         assertEquals(false, viewModel.state.value.isLoading)
         assertNull(viewModel.state.value.errorMessage)
     }
+
+    @Test
+    fun `when LoginWithGoogle event is processed, user is logged in successfully`() = runTest {
+        viewModel.onEvent(LoginEvent.LoginWithGoogle("fake-google-id-token"))
+
+        assertTrue(viewModel.state.value.isLoggedIn)
+        assertEquals("test@example.com", viewModel.state.value.user?.email)
+        assertNull(viewModel.state.value.errorMessage)
+    }
 }
 
 /**
@@ -197,7 +206,9 @@ class LoginViewModelTest {
 class FakeAuthRepository : AuthRepository {
     var loginResult: Result<User> = Result.success(User(id = "test-id", name = "Test User", email = "test@example.com"))
     var registerResult: Result<User> = Result.success(User(id = "test-id", name = "Test User", email = "test@example.com"))
+    var googleLoginResult: Result<User> = Result.success(User(id = "test-id", name = "Test User", email = "test@example.com"))
 
     override suspend fun login(email: String, pass: String): Result<User> = loginResult
     override suspend fun register(name: String, email: String, pass: String): Result<User> = registerResult
+    override suspend fun loginWithGoogle(idToken: String): Result<User> = googleLoginResult
 }

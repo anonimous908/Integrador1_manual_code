@@ -19,3 +19,8 @@ captures
 node_modules/
 # SDD skill registry (auto-generated)
 .atl/
+
+# Firebase credentials & API keys
+google-services.json
+GoogleService-Info.plist
+FirebaseConfig.kt

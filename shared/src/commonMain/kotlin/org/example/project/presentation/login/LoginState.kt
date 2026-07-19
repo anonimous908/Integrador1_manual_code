@@ -16,6 +16,7 @@ data class LoginState(
 sealed interface LoginEvent {
     data class EmailChanged(val email: String) : LoginEvent
     data class PassChanged(val pass: String) : LoginEvent
+    data class LoginWithGoogle(val idToken: String) : LoginEvent
     object Submit : LoginEvent
     object Reset : LoginEvent
 }

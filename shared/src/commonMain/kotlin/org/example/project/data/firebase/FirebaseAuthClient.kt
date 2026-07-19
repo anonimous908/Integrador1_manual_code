@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 interface FirebaseAuthClientApi {
     suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser>
     suspend fun signUp(email: String, password: String, displayName: String? = null): Result<FirebaseUser>
+    suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser>
 }
 
 /**
@@ -76,6 +77,30 @@ class FirebaseAuthClient(
             Result.failure(e)
         }
     }
+
+    /**
+     * Sign in with Google ID token using Firebase Identity Toolkit REST API (accounts:signInWithIdp).
+     */
+    override suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser> {
+        return try {
+            val response: SignInResponse = httpClient.post("${FirebaseConfig.authBaseUrl}/accounts:signInWithIdp") {
+                parameter("key", FirebaseConfig.apiKey)
+                contentType(ContentType.Application.Json)
+                setBody(SignInWithIdpRequest(postBody = "id_token=$idToken&providerId=google.com"))
+            }.body()
+
+            Result.success(FirebaseUser(
+                idToken = response.idToken,
+                localId = response.localId,
+                email = response.email,
+                refreshToken = response.refreshToken,
+                registered = response.registered,
+                displayName = response.displayName
+            ))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
 
 data class FirebaseUser(
@@ -93,6 +118,14 @@ private data class SignInRequest(
     val password: String,
     val returnSecureToken: Boolean,
     val displayName: String? = null
+)
+
+@Serializable
+private data class SignInWithIdpRequest(
+    val postBody: String,
+    val requestUri: String = "http://localhost",
+    val returnIdpCredential: Boolean = true,
+    val returnSecureToken: Boolean = true
 )
 
 @Serializable

@@ -4,6 +4,7 @@ import org.example.project.data.repository.AuthRepositoryImpl
 import org.example.project.data.repository.FirebaseAuthRepositoryImpl
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.usecase.LoginWithEmailUseCase
+import org.example.project.domain.usecase.LoginWithGoogleUseCase
 import org.example.project.domain.usecase.RegisterUseCase
 import org.example.project.presentation.login.LoginViewModel
 import org.example.project.presentation.register.RegisterViewModel
@@ -56,6 +57,7 @@ val appModule = module {
     single<AuthRepository>(named("local")) { AuthRepositoryImpl(settings = get(), hashService = get()) }
     
     factoryOf(::LoginWithEmailUseCase)
+    factoryOf(::LoginWithGoogleUseCase)
     factoryOf(::ValidateEmailUseCase)
     factoryOf(::ValidatePasswordUseCase)
     factoryOf(::RegisterUseCase)
