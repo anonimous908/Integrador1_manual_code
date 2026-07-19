@@ -186,6 +186,10 @@ class FakeFirebaseAuthClient : FirebaseAuthClientApi {
         return signInResult
     }
 
+    override suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser> {
+        return signInResult
+    }
+
     override suspend fun signUp(email: String, password: String, displayName: String?): Result<FirebaseUser> {
         lastSignUpEmail = email
         lastSignUpPassword = password
