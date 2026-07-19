@@ -1,29 +1,28 @@
 package org.example.project.presentation.grabado_online
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.example.project.domain.model.GrabadoOnlineSession
 import org.example.project.domain.service.LiveOcrReceiverHub
 import org.example.project.domain.usecase.ToggleGrabadoOnlineUseCase
+import androidx.lifecycle.viewModelScope
+import org.example.project.presentation.base.BaseViewModel
 
 /**
  * ViewModel que gestiona el estado y la lógica de negocio de Grabado Online (MVVM + Clean Architecture).
  */
 class GrabadoOnlineViewModel(
     private val toggleGrabadoOnlineUseCase: ToggleGrabadoOnlineUseCase = ToggleGrabadoOnlineUseCase()
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _state = MutableStateFlow(GrabadoOnlineState())
     val state: StateFlow<GrabadoOnlineState> = _state.asStateFlow()
 
     init {
         org.example.project.data.network.RemoteOcrSyncRelay.startListeningRemoteCaptures(viewModelScope)
-        viewModelScope.launch {
+        launchSafely {
             LiveOcrReceiverHub.incomingOcrCaptures.collect { ocrCapture ->
                 if (_state.value.isRecording) {
                     onEvent(GrabadoOnlineEvent.OnOcrCaptureReceived(

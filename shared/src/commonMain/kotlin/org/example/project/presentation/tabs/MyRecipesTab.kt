@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +37,7 @@ import org.example.project.presentation.components.SnippetCard
 import org.example.project.presentation.components.SnippetListItem
 import org.example.project.presentation.base.LoadingState
 import org.example.project.presentation.base.ErrorState
+import org.example.project.presentation.base.rememberTabOptions
 import org.example.project.presentation.theme.CodeNestColors
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -47,17 +47,11 @@ import kotlinx.coroutines.delay
 data class MyRecipesTab(val email: String) : Tab {
     override val options: TabOptions
         @Composable
-        get() {
-            val title = stringResource(Res.string.sidebar_my_recipes)
-            val icon = rememberVectorPainter(Icons.Default.Book)
-            return remember {
-                TabOptions(
-                    index = 0u,
-                    title = title,
-                    icon = icon
-                )
-            }
-        }
+        get() = rememberTabOptions(
+            index = 0u,
+            title = stringResource(Res.string.sidebar_my_recipes),
+            icon = Icons.Default.Book
+        )
 
     @Composable
     override fun Content() {

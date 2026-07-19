@@ -32,17 +32,20 @@ class MyRecipesViewModel(
         }
     }
 
+    private fun safeLaunch(block: suspend () -> Unit) = launchSafely(
+        setLoading = { loading -> _state.update { it.copy(isLoading = loading, error = null) } },
+        onError = { msg -> _state.update { it.copy(error = msg) } },
+        block = block
+    )
+
     private fun loadRecipes() {
-        launchSafely(
-            setLoading = { loading -> _state.update { it.copy(isLoading = loading, error = null) } },
-            onError = { msg -> _state.update { it.copy(error = msg) } }
-        ) {
+        safeLaunch {
             _state.update { it.copy(recipes = repository.getPersonalRecipes()) }
         }
     }
 
     private fun deleteRecipe(id: String) {
-        launchSafely(onError = { msg -> _state.update { it.copy(error = msg) } }) {
+        safeLaunch {
             repository.delete(id)
             loadRecipes()
         }

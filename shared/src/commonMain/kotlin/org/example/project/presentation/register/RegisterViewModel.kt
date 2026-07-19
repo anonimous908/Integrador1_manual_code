@@ -50,11 +50,14 @@ class RegisterViewModel(
         }
     }
 
+    private fun safeLaunch(block: suspend () -> Unit) = launchSafely(
+        setLoading = { loading -> _state.update { it.copy(isLoading = loading) } },
+        onError = { msg -> _state.update { it.copy(errorMessage = msg) } },
+        block = block
+    )
+
     private fun submitGoogleData(idToken: String) {
-        launchSafely(
-            setLoading = { loading -> _state.update { it.copy(isLoading = loading) } },
-            onError = { msg -> _state.update { it.copy(errorMessage = msg) } }
-        ) {
+        safeLaunch {
             loginWithGoogleUseCase(idToken)
                 .onSuccess { user -> _state.update { it.copy(success = true, user = user) } }
                 .onFailure { e -> _state.update { it.copy(errorMessage = e.message ?: "Error al registrarse con Google") } }
@@ -67,10 +70,7 @@ class RegisterViewModel(
             return
         }
         val s = _state.value
-        launchSafely(
-            setLoading = { loading -> _state.update { it.copy(isLoading = loading) } },
-            onError = { msg -> _state.update { it.copy(errorMessage = msg) } }
-        ) {
+        safeLaunch {
             registerUseCase(s.name, s.email, s.pass)
                 .onSuccess { user -> _state.update { it.copy(success = true, user = user) } }
                 .onFailure { e -> _state.update { it.copy(errorMessage = e.message ?: "Error desconocido") } }

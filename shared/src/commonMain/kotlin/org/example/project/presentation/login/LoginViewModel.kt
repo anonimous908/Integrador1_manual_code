@@ -38,11 +38,14 @@ class LoginViewModel(
         }
     }
 
+    private fun safeLaunch(block: suspend () -> Unit) = launchSafely(
+        setLoading = { loading -> _state.update { it.copy(isLoading = loading) } },
+        onError = { msg -> _state.update { it.copy(errorMessage = msg) } },
+        block = block
+    )
+
     private fun loginWithGoogle(idToken: String) {
-        launchSafely(
-            setLoading = { loading -> _state.update { it.copy(isLoading = loading) } },
-            onError = { msg -> _state.update { it.copy(errorMessage = msg) } }
-        ) {
+        safeLaunch {
             loginWithGoogleUseCase(idToken)
                 .onSuccess { user -> _state.update { it.copy(isLoggedIn = true, user = user) } }
                 .onFailure { error -> _state.update { it.copy(errorMessage = error.message ?: "Error al autenticar con Google") } }
@@ -57,10 +60,7 @@ class LoginViewModel(
             _state.update { it.copy(emailError = emailError, passError = passError, errorMessage = "Falta completar estos datos") }
             return
         }
-        launchSafely(
-            setLoading = { loading -> _state.update { it.copy(isLoading = loading) } },
-            onError = { msg -> _state.update { it.copy(errorMessage = msg) } }
-        ) {
+        safeLaunch {
             loginWithEmailUseCase(s.email, s.pass)
                 .onSuccess { user -> _state.update { it.copy(isLoggedIn = true, user = user) } }
                 .onFailure { error -> _state.update { it.copy(errorMessage = error.message ?: "Error desconocido") } }

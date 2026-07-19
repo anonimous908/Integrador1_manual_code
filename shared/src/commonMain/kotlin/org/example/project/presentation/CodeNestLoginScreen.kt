@@ -1,62 +1,53 @@
 package org.example.project.presentation
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
-import org.example.project.presentation.theme.CodeNestColors
-import org.example.project.presentation.components.CodeNestTextField
-import org.example.project.presentation.components.PasswordTextField
-import org.example.project.presentation.components.EmailDivider
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.painterResource
-import org.example.project.presentation.theme.CodeNestLoginBrand
-import kotlinproject.shared.generated.resources.*
-import org.example.project.AppConfig
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.koin.compose.viewmodel.koinViewModel
-import org.example.project.presentation.login.LoginViewModel
+import kotlinproject.shared.generated.resources.*
+import org.example.project.AppConfig
+import org.example.project.presentation.base.NavigateOnSuccess
+import org.example.project.presentation.components.CodeNestTextField
+import org.example.project.presentation.components.DecorativeGlow
+import org.example.project.presentation.components.EmailDivider
+import org.example.project.presentation.components.ErrorBanner
+import org.example.project.presentation.components.GoogleSignInButton
+import org.example.project.presentation.components.PasswordTextField
 import org.example.project.presentation.login.LoginEvent
 import org.example.project.presentation.login.LoginState
+import org.example.project.presentation.login.LoginViewModel
 import org.example.project.presentation.login.rememberGoogleSignInLauncher
-import org.example.project.presentation.components.GoogleSignInButton
-import org.example.project.presentation.components.CodeNestTextField
-import org.example.project.presentation.components.PasswordTextField
-import org.example.project.presentation.components.ErrorBanner
-import org.example.project.presentation.components.EmailDivider
+import org.example.project.presentation.theme.CodeNestColors
+import org.example.project.presentation.theme.CodeNestLoginBrand
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 class CodeNestLoginScreen : Screen {
     @Composable
@@ -74,14 +65,15 @@ class CodeNestLoginScreen : Screen {
             onError = { _ -> }
         )
 
-        LaunchedEffect(viewModel) {
-            viewModel.state.collect { state ->
-                if (state.isLoggedIn) {
-                    viewModel.onEvent(LoginEvent.Reset)
-                    navigator.replaceAll(HomeScreen(state.user?.email ?: state.email))
-                }
+        NavigateOnSuccess(
+            state = viewModel.state,
+            isSuccess = { it.isLoggedIn },
+            getEmail = { it.user?.email ?: it.email },
+            onNavigate = { email ->
+                viewModel.onEvent(LoginEvent.Reset)
+                navigator.replaceAll(HomeScreen(email))
             }
-        }
+        )
 
         BoxWithConstraints(
             modifier = Modifier
@@ -90,24 +82,10 @@ class CodeNestLoginScreen : Screen {
         ) {
             val scaleFactor = remember(maxWidth) { (maxWidth / 480.dp).coerceIn(0.5f, 1.5f) }
             val glowSize = remember(maxWidth, maxHeight) { (minOf(maxWidth, maxHeight) * 0.7f).coerceIn(200.dp, 800.dp) }
-            val primaryContainer = CodeNestColors.primaryContainer
-            val glowBrush = remember(primaryContainer) {
-                Brush.radialGradient(
-                    colors = listOf(
-                        primaryContainer.copy(alpha = 0.08f),
-                        Color.Transparent
-                    )
-                )
-            }
 
-            Box(
-                modifier = Modifier
-                    .size(glowSize)
-                    .align(Alignment.Center)
-                    .background(
-                        brush = glowBrush,
-                        shape = CircleShape
-                    )
+            DecorativeGlow(
+                glowColor = CodeNestColors.primaryContainer.copy(alpha = 0.08f),
+                size = glowSize
             )
 
             Surface(

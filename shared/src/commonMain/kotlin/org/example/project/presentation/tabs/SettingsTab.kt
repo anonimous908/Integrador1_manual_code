@@ -23,17 +23,17 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import org.example.project.presentation.theme.CodeNestColors
 import org.example.project.presentation.theme.ThemeMode
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import org.example.project.presentation.theme.luminance
+import org.example.project.presentation.base.rememberTabOptions
 
 object SettingsTab : Tab {
     override val options: TabOptions
         @Composable
-        get() {
-            val icon = rememberVectorPainter(Icons.Default.Settings)
-            return remember {
-                TabOptions(index = 3u, title = "Configuración", icon = icon)
-            }
-        }
+        get() = rememberTabOptions(
+            index = 3u,
+            title = "Configuración",
+            icon = Icons.Default.Settings
+        )
 
     @Composable
     override fun Content() {
@@ -294,4 +294,3 @@ private fun colorToHex(color: Color): String {
     }
 }
 
-private fun Color.luminance(): Double = 0.299 * red + 0.587 * green + 0.114 * blue

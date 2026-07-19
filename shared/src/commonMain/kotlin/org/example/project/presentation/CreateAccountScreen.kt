@@ -11,8 +11,7 @@ import kotlinproject.shared.generated.resources.*
 import org.example.project.presentation.components.EmailDivider
 import org.example.project.presentation.components.CodeNestTextField
 import org.example.project.presentation.components.PasswordTextField
-import org.example.project.presentation.components.Inter
-import org.example.project.presentation.components.JetBrainsMono
+import org.example.project.presentation.components.DecorativeGlow
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -20,30 +19,22 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.text.withStyle
-
-import androidx.compose.material3.Surface
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import org.example.project.presentation.theme.CodeNestColors
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -51,16 +42,12 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.koin.compose.viewmodel.koinViewModel
-import org.example.project.presentation.register.RegisterViewModel
-import org.example.project.presentation.register.RegisterEvent
-import androidx.compose.runtime.collectAsState
+import org.example.project.presentation.base.NavigateOnSuccess
 import org.example.project.presentation.login.rememberGoogleSignInLauncher
-
-// ─── Design Tokens ───────────────────────────────────────────────────────────
-
-
-private val Manrope     = FontFamily.Default
+import org.example.project.presentation.register.RegisterEvent
+import org.example.project.presentation.register.RegisterViewModel
+import org.example.project.presentation.theme.CodeNestColors
+import org.koin.compose.viewmodel.koinViewModel
 
 
 
@@ -83,13 +70,12 @@ class CreateAccountScreen : Screen {
             }
         )
 
-        LaunchedEffect(viewModel) {
-            viewModel.state.collect { state ->
-                if (state.success) {
-                    navigator.replaceAll(HomeScreen(state.user?.email ?: state.email))
-                }
-            }
-        }
+        NavigateOnSuccess(
+            state = viewModel.state,
+            isSuccess = { it.success },
+            getEmail = { it.user?.email ?: it.email },
+            onNavigate = { email -> navigator.replaceAll(HomeScreen(email)) }
+        )
 
         CreateAccountScreenContent(
             name = state.name,
@@ -133,14 +119,7 @@ internal fun CreateAccountScreenContent(
             .fillMaxSize()
             .background(CodeNestColors.background)
     ) {
-        // ── Decorative glow blob ──────────────────────────────────────────
-        Box(
-            modifier = Modifier
-                .size(600.dp)
-                .align(Alignment.Center)
-                .blur(80.dp)
-                .background(CodeNestColors.PrimaryGlow, CircleShape)
-        )
+        DecorativeGlow(glowColor = CodeNestColors.PrimaryGlow)
 
         Column(
             modifier = Modifier
@@ -205,7 +184,7 @@ private fun CodeNestHeader() {
     ) {
         Text(
             text       = stringResource(Res.string.app_name),
-            fontFamily = Manrope,
+            fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Bold,
             fontSize   = 24.sp,
             color      = CodeNestColors.primary,
@@ -257,7 +236,7 @@ private fun AuthCard(
             ) {
                 Text(
                     text       = stringResource(Res.string.create_account_title),
-                    fontFamily = Manrope,
+                    fontFamily = FontFamily.Default,
                     fontWeight = FontWeight.Bold,
                     fontSize   = 32.sp,
                     lineHeight = 40.sp,
@@ -267,7 +246,7 @@ private fun AuthCard(
                 )
                 Text(
                     text       = stringResource(Res.string.create_account_subtitle),
-                    fontFamily = Inter,
+                    fontFamily = FontFamily.Default,
                     fontSize   = 14.sp,
                     color      = CodeNestColors.onSurfaceVariant,
                     textAlign  = TextAlign.Center,
@@ -330,7 +309,7 @@ private fun AuthCard(
             ) {
                 Text(
                     text       = stringResource(Res.string.create_account_button),
-                    fontFamily = JetBrainsMono,
+                    fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Medium,
                     fontSize   = 12.sp,
                 )
@@ -339,7 +318,7 @@ private fun AuthCard(
             // Already have an account
             Text(
                 text      = stringResource(Res.string.already_have_account),
-                fontFamily = Inter,
+                fontFamily = FontFamily.Default,
                 fontSize   = 14.sp,
                 color      = CodeNestColors.onSurfaceVariant,
                 textDecoration = TextDecoration.None,

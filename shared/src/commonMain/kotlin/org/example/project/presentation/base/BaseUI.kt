@@ -5,9 +5,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.HeadsetMic
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +26,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import kotlinx.coroutines.flow.StateFlow
+import kotlinproject.shared.generated.resources.*
 import org.example.project.presentation.theme.CodeNestColors
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -174,4 +180,46 @@ fun ErrorState(message: String, onRetry: (() -> Unit)? = null) {
             }
         }
     }
+}
+
+@Composable
+fun <S> NavigateOnSuccess(
+    state: StateFlow<S>,
+    isSuccess: (S) -> Boolean,
+    getEmail: (S) -> String,
+    onNavigate: (String) -> Unit
+) {
+    LaunchedEffect(Unit) {
+        state.collect { s ->
+            if (isSuccess(s)) {
+                onNavigate(getEmail(s))
+            }
+        }
+    }
+}
+
+@Composable
+fun rememberTabOptions(index: UShort, title: String, icon: ImageVector): TabOptions {
+    val iconPainter = rememberVectorPainter(icon)
+    return remember(icon, title) {
+        TabOptions(index = index, title = title, icon = iconPainter)
+    }
+}
+
+object PlaceholderTabs {
+    val Community: Tab get() = PlaceholderTab(
+        tabIndex = 1u, titleRes = Res.string.sidebar_community_examples,
+        iconVector = Icons.Default.Groups,
+        contentTitle = "Comunidad CodeNest", contentSubtitle = "Explora ejemplos de código de la comunidad..."
+    )
+    val Recent: Tab get() = PlaceholderTab(
+        tabIndex = 2u, titleRes = Res.string.sidebar_recent,
+        iconVector = Icons.Default.History,
+        contentTitle = "Reciente", contentSubtitle = "No hay actividad reciente para mostrar."
+    )
+    val Support: Tab get() = PlaceholderTab(
+        tabIndex = 4u, titleRes = Res.string.sidebar_support,
+        iconVector = Icons.Default.HeadsetMic,
+        contentTitle = "Soporte CodeNest", contentSubtitle = "Comunícate con el equipo de desarrollo..."
+    )
 }

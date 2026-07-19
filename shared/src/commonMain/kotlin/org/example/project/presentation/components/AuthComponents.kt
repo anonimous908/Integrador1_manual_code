@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.Row
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.text.style.TextAlign
 
@@ -44,8 +46,8 @@ import kotlinproject.shared.generated.resources.Res
 import kotlinproject.shared.generated.resources.hide_password
 import kotlinproject.shared.generated.resources.show_password
 import kotlinproject.shared.generated.resources.email_divider
-val Inter = FontFamily.Default
-val JetBrainsMono = FontFamily.Monospace
+private val Inter = FontFamily.Default
+private val JetBrainsMono = FontFamily.Monospace
 
 @Composable
 fun CodeNestTextField(
@@ -381,4 +383,17 @@ fun CodeNestTagChip(
     }
 }
 
-
+@Composable
+fun DecorativeGlow(glowColor: Color, size: Dp = 600.dp) {
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(
+                brush = Brush.radialGradient(
+                    colors = listOf(glowColor, Color.Transparent)
+                ),
+                shape = CircleShape
+            )
+    )
+}
