@@ -223,7 +223,7 @@ fun AndroidGrabadoOnlineScreen(
                         )
                     }
 
-                     Button(
+                    Button(
                         onClick = {
                             val currentOcr = latestLiveOcrText.trim()
                             if (currentOcr.isNotEmpty()) {

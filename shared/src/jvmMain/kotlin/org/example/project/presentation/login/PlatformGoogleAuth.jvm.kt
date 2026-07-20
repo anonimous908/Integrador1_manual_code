@@ -75,6 +75,7 @@ private object DesktopOAuthServer {
                     server = newServer
                 }
 
+                // Abrimos directamente la URL oficial de Google OAuth 2.0 en el navegador del sistema
                 val authUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
                         "client_id=${FirebaseConfig.webClientId}" +
                         "&redirect_uri=http://localhost:$port/callback" +

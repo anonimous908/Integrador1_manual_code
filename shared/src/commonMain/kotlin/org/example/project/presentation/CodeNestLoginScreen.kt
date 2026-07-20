@@ -1,9 +1,7 @@
 package org.example.project.presentation
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -83,44 +80,17 @@ class CodeNestLoginScreen : Screen {
             val scaleFactor = remember(maxWidth) { (maxWidth / 480.dp).coerceIn(0.5f, 1.5f) }
             val glowSize = remember(maxWidth, maxHeight) { (minOf(maxWidth, maxHeight) * 0.7f).coerceIn(200.dp, 800.dp) }
 
-            DecorativeGlow(
-                glowColor = CodeNestColors.primaryContainer.copy(alpha = 0.08f),
-                size = glowSize
-            )
+            DecorativeGlow(glowColor = CodeNestColors.primary.copy(alpha = 0.15f), size = glowSize)
 
-            Surface(
+            Column(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .widthIn(max = (maxWidth * 0.85f).coerceIn(320.dp, 500.dp))
-                    .padding(horizontal = 16.dp * scaleFactor),
-                shape = RoundedCornerShape(8.dp),
-                shadowElevation = 4.dp,
-                color = CodeNestColors.surfaceContainer.copy(alpha = 0.6f),
-                border = BorderStroke(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.3f))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .padding(12.dp * scaleFactor),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 32.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp * scaleFactor)
-                        .background(CodeNestColors.surfaceContainerHigh, RoundedCornerShape(8.dp))
-                        .border(1.dp, CodeNestColors.outlineVariant.copy(alpha = 0.5f), RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Terminal,
-                        contentDescription = "Terminal Icon",
-                        tint = CodeNestColors.primary
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp * scaleFactor))
-
+                Spacer(modifier = Modifier.height(16.dp * scaleFactor))
                 Text(
                     text = "CodeNest",
                     color = CodeNestColors.onSurface,
@@ -207,7 +177,6 @@ class CodeNestLoginScreen : Screen {
                             modifier = Modifier.clickable { navigator.push(PrivacyPolicyScreen()) }
                         )
                     }
-                }
                 }
             }
 
@@ -316,6 +285,8 @@ fun CodeNestLoginForm(
                 .clickable { /* TODO */ }
         )
     }
+
+    Spacer(modifier = Modifier.height(16.dp * scaleFactor))
 
     Button(
         onClick = { viewModel.onEvent(LoginEvent.Submit) },
