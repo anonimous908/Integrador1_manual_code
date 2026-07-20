@@ -73,7 +73,6 @@ fun AndroidGrabadoOnlineScreen(
             }
         }
     }
-
     // Escaneo continuo en tiempo real y transmisión OCR sin cuenta regresiva
     LaunchedEffect(isScanningActive) {
         while (isScanningActive) {
