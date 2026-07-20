@@ -53,6 +53,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.example.project.presentation.register.RegisterViewModel
 import org.example.project.presentation.register.RegisterEvent
 import androidx.compose.runtime.collectAsState
+import org.example.project.presentation.login.rememberGoogleSignInLauncher
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
 
@@ -71,9 +72,20 @@ class CreateAccountScreen : Screen {
         val viewModel: RegisterViewModel = koinViewModel()
         val state by viewModel.state.collectAsState()
 
-        LaunchedEffect(state.success) {
-            if (state.success) {
-                navigator.replace(HomeScreen(state.user?.email ?: state.email))
+        val launchGoogleSignIn = rememberGoogleSignInLauncher(
+            onTokenReceived = { token ->
+                viewModel.onEvent(RegisterEvent.RegisterWithGoogle(token))
+            },
+            onError = { errorMsg ->
+                viewModel.onEvent(RegisterEvent.RegisterWithGoogleError(errorMsg))
+            }
+        )
+
+        LaunchedEffect(viewModel) {
+            viewModel.state.collect { state ->
+                if (state.success) {
+                    navigator.replaceAll(HomeScreen(state.user?.email ?: state.email))
+                }
             }
         }
 
@@ -89,7 +101,7 @@ class CreateAccountScreen : Screen {
             isLoading = state.isLoading,
             errorMessage = state.errorMessage,
             onCreateAccount = { viewModel.onEvent(RegisterEvent.Submit) },
-            onSignInWithGoogle = { },
+            onSignInWithGoogle = launchGoogleSignIn,
             onNavigateToLogin = { navigator.pop() },
             onTermsClick = { navigator.push(TermsAndConditionsScreen()) },
             onPrivacyClick = { navigator.push(PrivacyPolicyScreen()) }
@@ -140,19 +152,11 @@ internal fun CreateAccountScreenContent(
             // ── Auth card ────────────────────────────────────────────────
             Spacer(modifier = Modifier.weight(1f, fill = false))
 
-            if (errorMessage != null) {
-                Text(
-                    text = errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
             AuthCard(
                 modifier = Modifier
                     .widthIn(max = 420.dp)
                     .padding(horizontal = 16.dp, vertical = 24.dp),
+                errorMessage    = errorMessage,
                 name            = name,
                 onNameChange    = onNameChange,
                 email           = email,
@@ -212,6 +216,7 @@ private fun CodeNestHeader() {
 @Composable
 private fun AuthCard(
     modifier: Modifier = Modifier,
+    errorMessage: String?,
     name: String, onNameChange: (String) -> Unit,
     email: String, onEmailChange: (String) -> Unit,
     password: String, onPasswordChange: (String) -> Unit,
@@ -265,6 +270,22 @@ private fun AuthCard(
                     color      = CodeNestColors.onSurfaceVariant,
                     textAlign  = TextAlign.Center,
                 )
+            }
+
+            if (errorMessage != null) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    color = CodeNestColors.error.copy(alpha = 0.1f)
+                ) {
+                    Text(
+                        text = errorMessage,
+                        color = CodeNestColors.error,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(12.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
             // Google button

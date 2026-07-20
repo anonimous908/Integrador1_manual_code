@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.domain.model.User
+import org.example.project.domain.usecase.LoginWithGoogleUseCase
 import org.example.project.domain.usecase.RegisterUseCase
 
 data class RegisterState(
@@ -26,11 +27,14 @@ sealed class RegisterEvent {
     data class EmailChanged(val email: String) : RegisterEvent()
     data class PassChanged(val pass: String) : RegisterEvent()
     data class TermsAcceptedChanged(val accepted: Boolean) : RegisterEvent()
+    data class RegisterWithGoogle(val idToken: String) : RegisterEvent()
+    data class RegisterWithGoogleError(val message: String) : RegisterEvent()
     object Submit : RegisterEvent()
 }
 
 class RegisterViewModel(
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val loginWithGoogleUseCase: LoginWithGoogleUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RegisterState())
@@ -42,7 +46,26 @@ class RegisterViewModel(
             is RegisterEvent.EmailChanged -> _state.update { it.copy(email = event.email) }
             is RegisterEvent.PassChanged -> _state.update { it.copy(pass = event.pass) }
             is RegisterEvent.TermsAcceptedChanged -> _state.update { it.copy(termsAccepted = event.accepted) }
+            is RegisterEvent.RegisterWithGoogle -> submitGoogleData(event.idToken)
+            is RegisterEvent.RegisterWithGoogleError -> _state.update { it.copy(isLoading = false, errorMessage = event.message) }
             RegisterEvent.Submit -> submitData()
+        }
+    }
+
+    private fun submitGoogleData(idToken: String) {
+        _state.update { it.copy(isLoading = true, errorMessage = null) }
+        viewModelScope.launch {
+            try {
+                val result = loginWithGoogleUseCase(idToken)
+                if (result.isSuccess) {
+                    val user = result.getOrNull()
+                    _state.update { it.copy(isLoading = false, success = true, user = user) }
+                } else {
+                    _state.update { it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.message ?: "Error al registrarse con Google") }
+                }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, errorMessage = e.message ?: "Error en registro con Google") }
+            }
         }
     }
 

@@ -1,0 +1,22 @@
+package org.example.project.data.firebase
+
+/**
+ * Plantilla para la configuración de Firebase de CodeNest.
+ * 
+ * INSTRUCCIONES:
+ * 1. Renombra o copia este archivo como `FirebaseConfig.kt` (en esta misma carpeta).
+ * 2. Reemplaza los valores con tus credenciales reales de la consola de Firebase.
+ * 3. `FirebaseConfig.kt` está ignorado en `.gitignore` para proteger tus API Keys.
+ */
+object FirebaseConfig {
+    const val apiKey = "TU_API_KEY_AQUI"
+    const val authDomain = "tu-proyecto.firebaseapp.com"
+    const val projectId = "tu-proyecto-id"
+    const val storageBucket = "tu-proyecto.firebasestorage.app"
+    const val messagingSenderId = "TU_SENDER_ID"
+    const val appId = "TU_APP_ID_AQUI"
+    const val webClientId = "TU_WEB_CLIENT_ID.apps.googleusercontent.com"
+
+    /** Base URL for Firebase Auth REST API. */
+    const val authBaseUrl = "https://identitytoolkit.googleapis.com/v1"
+}

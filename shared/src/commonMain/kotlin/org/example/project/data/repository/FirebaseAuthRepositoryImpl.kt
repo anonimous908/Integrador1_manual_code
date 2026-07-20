@@ -36,4 +36,15 @@ class FirebaseAuthRepositoryImpl(
                 )
             }
     }
+
+    override suspend fun loginWithGoogle(idToken: String): Result<User> {
+        return firebaseAuthClient.signInWithGoogle(idToken)
+            .map { firebaseUser ->
+                User(
+                    id = firebaseUser.localId,
+                    name = firebaseUser.displayName.ifBlank { firebaseUser.email },
+                    email = firebaseUser.email
+                )
+            }
+    }
 }

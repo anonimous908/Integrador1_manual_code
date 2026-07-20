@@ -57,18 +57,14 @@ fun AndroidGrabadoOnlineScreen(
 
     var hasCameraPermission by remember { mutableStateOf(true) }
     var isScanningActive by remember { mutableStateOf(true) }
-    var secondsUntilNextScan by remember { mutableStateOf(9) }
     var latestLiveOcrText by remember { mutableStateOf("") }
     var recordedFileText by remember { mutableStateOf("") }
     val logs = remember { mutableStateListOf<OcrScanLogEntry>() }
 
-    // Cuenta regresiva periódica descendente {9, 8, 7, 6...} en tiempo real
+    // Escaneo continuo en tiempo real y transmisión OCR sin cuenta regresiva
     LaunchedEffect(isScanningActive) {
         while (isScanningActive) {
-            for (i in 9 downTo 1) {
-                secondsUntilNextScan = i
-                delay(1000)
-            }
+            delay(2500)
             val currentOcr = latestLiveOcrText.trim()
             val result = checkModificationsUseCase(
                 newOcrText = currentOcr,
@@ -208,21 +204,25 @@ fun AndroidGrabadoOnlineScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "⏱️ PRÓXIMA CAPTURA OCR EN:",
-                        color = CodeNestColors.onSurfaceVariant,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        text = "${secondsUntilNextScan} seg",
-                        color = if (secondsUntilNextScan <= 3) Color(0xFFFF5252) else CodeNestColors.primary,
-                        fontSize = 38.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontFamily = FontFamily.Monospace,
-                        textAlign = TextAlign.Center
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(12.dp)
+                                .clip(androidx.compose.foundation.shape.CircleShape)
+                                .background(if (isScanningActive) Color(0xFFFF5252) else Color.Gray)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = if (isScanningActive) "GRABANDO EN VIVO (TIEMPO REAL)" else "GRABACIÓN PAUSADA",
+                            color = if (isScanningActive) Color(0xFFFF5252) else CodeNestColors.onSurfaceVariant,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                        )
+                    }
                     Spacer(Modifier.height(12.dp))
 
                     Row(
@@ -252,7 +252,6 @@ fun AndroidGrabadoOnlineScreen(
                          Button(
                             onClick = {
                                 val currentOcr = latestLiveOcrText.trim()
-                                secondsUntilNextScan = 9
                                 if (currentOcr.isNotEmpty()) {
                                     recordedFileText = currentOcr
                                     org.example.project.domain.service.LiveOcrReceiverHub.tryEmitOcrCapture(
@@ -346,7 +345,7 @@ fun AndroidGrabadoOnlineScreen(
                     colors = CardDefaults.cardColors(containerColor = CodeNestColors.surface)
                 ) {
                     Text(
-                        text = "Esperando primera captura automática en ${secondsUntilNextScan} seg...",
+                        text = "Escaneando código en tiempo real desde la cámara...",
                         color = CodeNestColors.onSurfaceVariant,
                         fontSize = 13.sp,
                         modifier = Modifier.padding(14.dp)

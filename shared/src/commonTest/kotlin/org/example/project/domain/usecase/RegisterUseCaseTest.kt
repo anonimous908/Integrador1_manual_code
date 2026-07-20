@@ -14,6 +14,8 @@ class RegisterUseCaseTest {
             Result.success(User(id = email, name = "Test", email = email))
         override suspend fun register(name: String, email: String, pass: String): Result<User> =
             Result.success(User(id = email, name = name, email = email))
+        override suspend fun loginWithGoogle(idToken: String): Result<User> =
+            Result.success(User(id = idToken, name = "Google User", email = "test@google.com"))
     }
 
     private val useCase = RegisterUseCase(dummyRepository)

@@ -39,4 +39,12 @@ interface AuthRepository {
      * ```
      */
     suspend fun register(name: String, email: String, pass: String): Result<User>
+
+    /**
+     * Autentica al usuario en el sistema utilizando un token de Google OAuth / IdP.
+     *
+     * @param idToken [String] El id_token obtenido de Google Sign-In.
+     * @return [Result]<[User]> Retorna el usuario autenticado si el token es válido.
+     */
+    suspend fun loginWithGoogle(idToken: String): Result<User>
 }

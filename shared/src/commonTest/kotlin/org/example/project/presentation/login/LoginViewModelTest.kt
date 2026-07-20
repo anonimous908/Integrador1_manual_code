@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.setMain
 import org.example.project.domain.model.User
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.usecase.LoginWithEmailUseCase
+import org.example.project.domain.usecase.LoginWithGoogleUseCase
 import org.example.project.domain.usecase.ValidateEmailUseCase
 import org.example.project.domain.usecase.ValidatePasswordUseCase
 import kotlin.test.AfterTest
@@ -34,6 +35,15 @@ class LoginViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private fun createViewModel(fakeRepo: FakeAuthRepository = FakeAuthRepository()): LoginViewModel {
+        return LoginViewModel(
+            LoginWithEmailUseCase(fakeRepo),
+            LoginWithGoogleUseCase(fakeRepo),
+            ValidateEmailUseCase(),
+            ValidatePasswordUseCase()
+        )
+    }
+
     // ─── Task 3.2: LoginState defaults ───────────────────────────────────
 
     @Test
@@ -52,9 +62,7 @@ class LoginViewModelTest {
 
     @Test
     fun `emailChanged updates state email`() = runTest {
-        val fakeRepo = FakeAuthRepository()
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel()
 
         viewModel.onEvent(LoginEvent.EmailChanged("algo@mail.com"))
 
@@ -63,9 +71,7 @@ class LoginViewModelTest {
 
     @Test
     fun `emailChanged with different email updates state correctly`() = runTest {
-        val fakeRepo = FakeAuthRepository()
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel()
 
         viewModel.onEvent(LoginEvent.EmailChanged("otro@dominio.com"))
 
@@ -74,9 +80,7 @@ class LoginViewModelTest {
 
     @Test
     fun `passChanged updates state pass`() = runTest {
-        val fakeRepo = FakeAuthRepository()
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel()
 
         viewModel.onEvent(LoginEvent.PassChanged("123"))
 
@@ -85,9 +89,7 @@ class LoginViewModelTest {
 
     @Test
     fun `passChanged with different value updates state correctly`() = runTest {
-        val fakeRepo = FakeAuthRepository()
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel()
 
         viewModel.onEvent(LoginEvent.PassChanged("passwordSegura99"))
 
@@ -100,8 +102,7 @@ class LoginViewModelTest {
         val fakeRepo = FakeAuthRepository().apply {
             loginResult = Result.success(testUser)
         }
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel(fakeRepo)
 
         viewModel.onEvent(LoginEvent.EmailChanged("test@example.com"))
         viewModel.onEvent(LoginEvent.PassChanged("Password123"))
@@ -123,8 +124,7 @@ class LoginViewModelTest {
         val fakeRepo = FakeAuthRepository().apply {
             loginResult = Result.failure(Exception("Credenciales inválidas"))
         }
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel(fakeRepo)
 
         viewModel.onEvent(LoginEvent.EmailChanged("test@example.com"))
         viewModel.onEvent(LoginEvent.PassChanged("Password123"))
@@ -142,8 +142,7 @@ class LoginViewModelTest {
         val fakeRepo = FakeAuthRepository().apply {
             loginResult = Result.failure(Exception("Usuario no encontrado"))
         }
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel(fakeRepo)
 
         viewModel.onEvent(LoginEvent.EmailChanged("test@example.com"))
         viewModel.onEvent(LoginEvent.PassChanged("Password123"))
@@ -156,9 +155,7 @@ class LoginViewModelTest {
 
     @Test
     fun `reset returns state to initial values`() = runTest {
-        val fakeRepo = FakeAuthRepository()
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel()
 
         viewModel.onEvent(LoginEvent.EmailChanged("algo@mail.com"))
         viewModel.onEvent(LoginEvent.PassChanged("123"))
@@ -172,9 +169,7 @@ class LoginViewModelTest {
 
     @Test
     fun `reset after event sequence clears previous state`() = runTest {
-        val fakeRepo = FakeAuthRepository()
-        val useCase = LoginWithEmailUseCase(fakeRepo)
-        val viewModel = LoginViewModel(useCase, ValidateEmailUseCase(), ValidatePasswordUseCase())
+        val viewModel = createViewModel()
 
         // Accumulate state changes
         viewModel.onEvent(LoginEvent.EmailChanged("user@test.com"))
@@ -189,6 +184,18 @@ class LoginViewModelTest {
         assertEquals(false, viewModel.state.value.isLoading)
         assertNull(viewModel.state.value.errorMessage)
     }
+
+    @Test
+    fun `when LoginWithGoogle event is processed, user is logged in successfully`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onEvent(LoginEvent.LoginWithGoogle("fake-google-id-token"))
+
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.isLoggedIn)
+        assertEquals("test@example.com", viewModel.state.value.user?.email)
+        assertNull(viewModel.state.value.errorMessage)
+    }
 }
 
 /**
@@ -197,7 +204,9 @@ class LoginViewModelTest {
 class FakeAuthRepository : AuthRepository {
     var loginResult: Result<User> = Result.success(User(id = "test-id", name = "Test User", email = "test@example.com"))
     var registerResult: Result<User> = Result.success(User(id = "test-id", name = "Test User", email = "test@example.com"))
+    var googleLoginResult: Result<User> = Result.success(User(id = "test-id", name = "Test User", email = "test@example.com"))
 
     override suspend fun login(email: String, pass: String): Result<User> = loginResult
     override suspend fun register(name: String, email: String, pass: String): Result<User> = registerResult
+    override suspend fun loginWithGoogle(idToken: String): Result<User> = googleLoginResult
 }

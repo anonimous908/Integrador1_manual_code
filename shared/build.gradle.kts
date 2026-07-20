@@ -112,6 +112,10 @@ kotlin {
         }
         val androidMain by getting {
             dependsOn(syntaxMpMain)
+            dependencies {
+                implementation("com.google.android.gms:play-services-auth:21.2.0")
+                implementation("androidx.activity:activity-compose:1.9.1")
+            }
         }
         val jvmMain by getting {
             dependsOn(syntaxMpMain)
@@ -132,4 +136,35 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+val generateFirebaseConfigIfNeeded by tasks.registering {
+    val projectDirLayout = layout.projectDirectory
+    doLast {
+        val configFile = projectDirLayout.file("src/commonMain/kotlin/org/example/project/data/firebase/FirebaseConfig.kt").asFile
+        if (!configFile.exists()) {
+            val templateFile = projectDirLayout.file("src/commonMain/kotlin/org/example/project/data/firebase/FirebaseConfig.kt.template").asFile
+            if (templateFile.exists()) {
+                configFile.writeText(templateFile.readText())
+            } else {
+                configFile.writeText("""
+                    package org.example.project.data.firebase
+                    object FirebaseConfig {
+                        const val apiKey = "${System.getenv("FIREBASE_API_KEY") ?: ""}"
+                        const val authDomain = "${System.getenv("FIREBASE_AUTH_DOMAIN") ?: "codenest.firebaseapp.com"}"
+                        const val projectId = "${System.getenv("FIREBASE_PROJECT_ID") ?: "codenest"}"
+                        const val storageBucket = "${System.getenv("FIREBASE_STORAGE_BUCKET") ?: "codenest.appspot.com"}"
+                        const val messagingSenderId = "${System.getenv("FIREBASE_SENDER_ID") ?: ""}"
+                        const val appId = "${System.getenv("FIREBASE_APP_ID") ?: ""}"
+                        const val webClientId = "${System.getenv("FIREBASE_WEB_CLIENT_ID") ?: "dummy.apps.googleusercontent.com"}"
+                        const val authBaseUrl = "https://identitytoolkit.googleapis.com/v1"
+                    }
+                """.trimIndent())
+            }
+        }
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    dependsOn(generateFirebaseConfigIfNeeded)
 }
