@@ -1,9 +1,13 @@
 package org.example.project.presentation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -91,92 +95,44 @@ class CodeNestLoginScreen : Screen {
                 verticalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(16.dp * scaleFactor))
-                Text(
-                    text = "CodeNest",
-                    color = CodeNestColors.onSurface,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.5).sp
+
+                LoginCard(
+                    viewModel = viewModel,
+                    scaleFactor = scaleFactor,
+                    state = state,
+                    onSignInWithGoogle = launchGoogleSignIn,
+                    onNavigateToRegister = { navigator.push(CreateAccountScreen()) },
+                    navigator = navigator
                 )
 
-                Spacer(modifier = Modifier.height(4.dp * scaleFactor))
+                Spacer(modifier = Modifier.height(24.dp * scaleFactor))
 
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = CodeNestColors.onSurfaceVariant)) {
-                            append(stringResource(Res.string.login_slogan_part1))
-                        }
-                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = CodeNestColors.onSurfaceVariant)) {
-                            append(stringResource(Res.string.login_slogan_part2))
-                        }
-                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = CodeNestColors.onSurfaceVariant)) {
-                            append(stringResource(Res.string.login_slogan_part3))
-                        }
-                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = CodeNestColors.onSurfaceVariant)) {
-                            append(stringResource(Res.string.login_slogan_part4))
-                        }
-                    },
-                    fontSize = 14.sp
-                )
-
-                Spacer(modifier = Modifier.height(16.dp * scaleFactor))
-
-                GoogleSignInButton(onClick = launchGoogleSignIn)
-                Spacer(modifier = Modifier.height(16.dp * scaleFactor))
-                
-                EmailDivider(text = stringResource(Res.string.login_divider))
-
-                CodeNestLoginForm(viewModel, scaleFactor, state)
-
-                Column(
+                Row(
                     modifier = Modifier
                         .widthIn(max = 420.dp * scaleFactor)
                         .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(stringResource(Res.string.no_account_prompt), color = CodeNestColors.onSurfaceVariant, fontSize = 13.sp)
-                        Spacer(modifier = Modifier.width(4.dp * scaleFactor))
-                        Text(
-                            text = stringResource(Res.string.create_account_link),
-                            color = CodeNestColors.primary,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable { navigator.push(CreateAccountScreen()) }
-                        )
-                    }
-
-                    PlatformLoginActions(navigator = navigator)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Términos y Condiciones",
-                            color = CodeNestColors.onSurfaceVariant,
-                            fontSize = 12.sp,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable { navigator.push(TermsAndConditionsScreen()) }
-                        )
-                        Text(
-                            text = " | ",
-                            color = CodeNestColors.onSurfaceVariant.copy(alpha = 0.5f),
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "Política de Privacidad",
-                            color = CodeNestColors.onSurfaceVariant,
-                            fontSize = 12.sp,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable { navigator.push(PrivacyPolicyScreen()) }
-                        )
-                    }
+                    Text(
+                        text = "Términos y Condiciones",
+                        color = CodeNestColors.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable { navigator.push(TermsAndConditionsScreen()) }
+                    )
+                    Text(
+                        text = " | ",
+                        color = CodeNestColors.onSurfaceVariant.copy(alpha = 0.5f),
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = "Política de Privacidad",
+                        color = CodeNestColors.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable { navigator.push(PrivacyPolicyScreen()) }
+                    )
                 }
             }
 
@@ -313,6 +269,103 @@ fun CodeNestLoginForm(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold
             )
+        }
+    }
+}
+
+@Composable
+private fun LoginCard(
+    viewModel: LoginViewModel,
+    scaleFactor: Float,
+    state: LoginState,
+    onSignInWithGoogle: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    navigator: cafe.adriel.voyager.navigator.Navigator,
+) {
+    Box(
+        modifier = Modifier
+            .widthIn(max = 420.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(CodeNestColors.surface)
+            .border(
+                BorderStroke(
+                    1.dp,
+                    Brush.verticalGradient(
+                        listOf(
+                            CodeNestColors.primary.copy(alpha = 0.20f),
+                            CodeNestColors.outlineVariant.copy(alpha = 0.50f),
+                        )
+                    )
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Title block
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "CodeNest",
+                    color = CodeNestColors.onSurface,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.5).sp
+                )
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = CodeNestColors.onSurfaceVariant)) {
+                            append(stringResource(Res.string.login_slogan_part1))
+                        }
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = CodeNestColors.onSurfaceVariant)) {
+                            append(stringResource(Res.string.login_slogan_part2))
+                        }
+                        withStyle(SpanStyle(fontWeight = FontWeight.Normal, color = CodeNestColors.onSurfaceVariant)) {
+                            append(stringResource(Res.string.login_slogan_part3))
+                        }
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = CodeNestColors.onSurfaceVariant)) {
+                            append(stringResource(Res.string.login_slogan_part4))
+                        }
+                    },
+                    fontSize = 14.sp
+                )
+            }
+
+            // Google button
+            GoogleSignInButton(onClick = onSignInWithGoogle)
+
+            // Divider
+            EmailDivider(text = stringResource(Res.string.login_divider))
+
+            // Form
+            CodeNestLoginForm(viewModel, scaleFactor, state)
+
+            // No account prompt
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(stringResource(Res.string.no_account_prompt), color = CodeNestColors.onSurfaceVariant, fontSize = 13.sp)
+                Spacer(modifier = Modifier.width(4.dp * scaleFactor))
+                Text(
+                    text = stringResource(Res.string.create_account_link),
+                    color = CodeNestColors.primary,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable { onNavigateToRegister() }
+                )
+            }
+
+            // Platform specific actions
+            PlatformLoginActions(navigator = navigator)
         }
     }
 }
