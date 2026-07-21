@@ -1,14 +1,12 @@
 package org.example.project.presentation
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import org.example.project.data.network.GithubVersionChecker
 import org.example.project.AppConfig
+import org.example.project.data.network.GithubVersionChecker
+import org.example.project.presentation.base.BaseViewModel
 
 data class AppState(
     val updateAvailable: Boolean = false,
@@ -17,7 +15,7 @@ data class AppState(
 
 class AppViewModel(
     private val versionChecker: GithubVersionChecker
-) : ViewModel() {
+) : BaseViewModel() {
     private val _state = MutableStateFlow(AppState())
     val state: StateFlow<AppState> = _state.asStateFlow()
 
@@ -26,7 +24,7 @@ class AppViewModel(
     }
 
     private fun checkForUpdates() {
-        viewModelScope.launch {
+        launchSafely {
             val response = versionChecker.getLatestRelease()
             if (response != null) {
                 val latestVersion = response.tag_name.removePrefix("v")

@@ -23,7 +23,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +30,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
+import org.example.project.presentation.base.PlaceholderTabs
 import org.example.project.presentation.theme.CodeNestColors
 
 @Composable
@@ -94,8 +94,8 @@ fun CodeNestSidebar(
 
         // Navigation Items
         TabNavigationItem(org.example.project.presentation.tabs.MyRecipesTab(email), tabNavigator)
-        TabNavigationItem(org.example.project.presentation.tabs.CommunityExamplesTab, tabNavigator)
-        TabNavigationItem(org.example.project.presentation.tabs.RecentTab, tabNavigator)
+        TabNavigationItem(PlaceholderTabs.Community, tabNavigator)
+        TabNavigationItem(PlaceholderTabs.Recent, tabNavigator)
         TabNavigationItem(org.example.project.presentation.tabs.SettingsTab, tabNavigator)
 
         Spacer(modifier = Modifier.weight(1f))
@@ -108,7 +108,7 @@ fun CodeNestSidebar(
 
         // Bottom Links
         TabNavigationItem(org.example.project.presentation.tabs.DocumentationTab, tabNavigator)
-        TabNavigationItem(org.example.project.presentation.tabs.SupportTab, tabNavigator)
+        TabNavigationItem(PlaceholderTabs.Support, tabNavigator)
 
         Spacer(modifier = Modifier.height(16.dp))
 

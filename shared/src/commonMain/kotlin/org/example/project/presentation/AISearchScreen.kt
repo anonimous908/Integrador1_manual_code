@@ -11,10 +11,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,7 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.example.project.presentation.theme.CodeNestColors
 import org.example.project.presentation.components.SnippetCard
-import org.example.project.domain.model.SnippetCardData
+import org.example.project.domain.model.Recipe
 import org.example.project.domain.service.SyntaxHighlighter
 import org.koin.compose.koinInject
 
@@ -51,7 +49,7 @@ class AISearchScreen : Screen {
         var aiExplanation by remember { mutableStateOf("") }
         
         // Snippet recomendado/sugerido
-        var suggestedSnippet by remember { mutableStateOf<SnippetCardData?>(null) }
+        var suggestedSnippet by remember { mutableStateOf<Recipe?>(null) }
 
         val scrollState = rememberScrollState()
 
@@ -141,15 +139,13 @@ class AISearchScreen : Screen {
                                 hasMatch = true
                                 
                                 aiExplanation = "Analizando tu base de datos de recetas locales para resolver tu consulta: '$query'.\n\n[PROTOTIPO]: En la siguiente fase, esta consulta se enviará a la API de DeepSeek (con temperatura de 0.2 para alta fidelidad) para analizar semánticamente tus códigos y adaptarlos a lo que necesitas."
-                                suggestedSnippet = SnippetCardData(
+                                suggestedSnippet = Recipe(
+                                    id = "ai-simulated-1",
+                                    userId = "",
                                     title = "Sugerencia para: $query",
                                     languageTag = "AI Output",
                                     secondaryTag = "Simulado",
-                                    iconAccent = CodeNestColors.primaryContainer,
-                                    activeLineIndex = 2,
-                                    footerLabel = "Generado por DeepSeek",
-                                    footerIcon = Icons.Filled.Visibility,
-                                    codeLines = listOf(
+                                    code = listOf(
                                         "// Este es un prototipo de cómo se mostrará el código adaptado",
                                         "// para tu búsqueda: \"$query\"",
                                         "fun main() {",
@@ -228,7 +224,7 @@ class AISearchScreen : Screen {
                         
                         Box(modifier = Modifier.fillMaxWidth()) {
                             SnippetCard(
-                                card = snippet,
+                                recipe = snippet,
                                 syntaxHighlighter = syntaxHighlighter,
                                 onCopied = {
                                     showCopiedNotice = true

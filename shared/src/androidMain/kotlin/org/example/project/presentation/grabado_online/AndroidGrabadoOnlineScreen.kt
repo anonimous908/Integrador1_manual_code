@@ -57,7 +57,6 @@ fun AndroidGrabadoOnlineScreen(
     val coroutineScope = rememberCoroutineScope()
     var currentAiJob by remember { mutableStateOf<Job?>(null) }
 
-    var hasCameraPermission by remember { mutableStateOf(true) }
     var isScanningActive by remember { mutableStateOf(true) }
     var latestLiveOcrText by remember { mutableStateOf("") }
     var recordedFileText by remember { mutableStateOf("") }
@@ -154,156 +153,122 @@ fun AndroidGrabadoOnlineScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        if (!hasCameraPermission) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
-                shape = RoundedCornerShape(12.dp)
+        RealCameraPreview(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            onOcrTextDetected = { detectedText ->
+                latestLiveOcrText = detectedText
+            }
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        // TARJETA 2: CUENTA REGRESIVA {9, 8, 7, 6...} SEG EN TIEMPO REAL
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = CodeNestColors.surface),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Info, contentDescription = null, tint = Color(0xFFFFB300))
-                        Spacer(Modifier.width(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(if (isScanningActive) Color(0xFFFF5252) else Color.Gray)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = if (isScanningActive) "GRABANDO EN VIVO (TIEMPO REAL)" else "GRABACIÓN PAUSADA",
+                        color = if (isScanningActive) Color(0xFFFF5252) else CodeNestColors.onSurfaceVariant,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Button(
+                        onClick = { isScanningActive = !isScanningActive },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isScanningActive) Color(0xFFFFB300) else Color(0xFF4CAF50)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = if (isScanningActive) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                        Spacer(Modifier.width(6.dp))
                         Text(
-                            text = "🔒 Permiso de Cámara Requerido (android.permission.CAMERA)",
+                            text = if (isScanningActive) "Pausar" else "Reanudar",
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "Para activar la cámara posterior de Android y procesar texto OCR en la pizarra, concede acceso a la cámara.",
-                        color = Color.LightGray,
-                        fontSize = 13.sp
-                    )
-                    Spacer(Modifier.height(12.dp))
+
                     Button(
-                        onClick = { hasCameraPermission = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
-                    ) {
-                        Text("Otorgar Permiso de Cámara", color = Color.White, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-            Spacer(Modifier.height(16.dp))
-        } else {
-            RealCameraPreview(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                onOcrTextDetected = { detectedText ->
-                    latestLiveOcrText = detectedText
-                }
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            // TARJETA 2: CUENTA REGRESIVA {9, 8, 7, 6...} SEG EN TIEMPO REAL
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = CodeNestColors.surface),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(12.dp)
-                                .clip(androidx.compose.foundation.shape.CircleShape)
-                                .background(if (isScanningActive) Color(0xFFFF5252) else Color.Gray)
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = if (isScanningActive) "GRABANDO EN VIVO (TIEMPO REAL)" else "GRABACIÓN PAUSADA",
-                            color = if (isScanningActive) Color(0xFFFF5252) else CodeNestColors.onSurfaceVariant,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
-                        )
-                    }
-                    Spacer(Modifier.height(12.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Button(
-                            onClick = { isScanningActive = !isScanningActive },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isScanningActive) Color(0xFFFFB300) else Color(0xFF4CAF50)
-                            )
-                        ) {
-                            Icon(
-                                imageVector = if (isScanningActive) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                contentDescription = null,
-                                tint = Color.White
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            Text(
-                                text = if (isScanningActive) "Pausar" else "Reanudar",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                         Button(
-                            onClick = {
-                                val currentOcr = latestLiveOcrText.trim()
-                                if (currentOcr.isNotEmpty()) {
-                                    recordedFileText = currentOcr
-                                    org.example.project.domain.service.LiveOcrReceiverHub.tryEmitOcrCapture(
-                                        org.example.project.domain.model.OcrCodeCapture(
-                                            codeText = currentOcr,
-                                            sourceDevice = "Android ML Kit Camera"
-                                        )
+                        onClick = {
+                            val currentOcr = latestLiveOcrText.trim()
+                            if (currentOcr.isNotEmpty()) {
+                                recordedFileText = currentOcr
+                                org.example.project.domain.service.LiveOcrReceiverHub.tryEmitOcrCapture(
+                                    org.example.project.domain.model.OcrCodeCapture(
+                                        codeText = currentOcr,
+                                        sourceDevice = "Android ML Kit Camera"
                                     )
-                                    coroutineScope.launch {
-                                        org.example.project.data.network.RemoteOcrSyncRelay.sendOcrCapture(currentOcr)
-                                    }
-                                    logs.add(
-                                        0,
-                                        OcrScanLogEntry(
-                                            timestamp = "Captura Ahora",
-                                            hasModifications = true,
-                                            message = "Analizando en vivo con DeepSeek v4 Flash (Streaming)...",
-                                            extractedTextSnippet = currentOcr.take(60) + if (currentOcr.length > 60) "..." else ""
-                                        )
-                                    )
-                                    launchAiAnalysis(currentOcr)
-                                } else {
-                                    logs.add(
-                                        0,
-                                        OcrScanLogEntry(
-                                            timestamp = "Captura Ahora",
-                                            hasModifications = false,
-                                            message = "Captura vacía o sin texto detectado en cámara.",
-                                            extractedTextSnippet = "Sin texto detectado"
-                                        )
-                                    )
+                                )
+                                coroutineScope.launch {
+                                    org.example.project.data.network.RemoteOcrSyncRelay.sendOcrCapture(currentOcr)
                                 }
-                            },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.primary)
-                        ) {
-                            Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color.White)
-                            Spacer(Modifier.width(6.dp))
-                            Text("Capturar Ahora", color = Color.White, fontWeight = FontWeight.Bold)
-                        }
+                                logs.add(
+                                    0,
+                                    OcrScanLogEntry(
+                                        timestamp = "Captura Ahora",
+                                        hasModifications = true,
+                                        message = "Analizando en vivo con DeepSeek v4 Flash (Streaming)...",
+                                        extractedTextSnippet = currentOcr.take(60) + if (currentOcr.length > 60) "..." else ""
+                                    )
+                                )
+                                launchAiAnalysis(currentOcr)
+                            } else {
+                                logs.add(
+                                    0,
+                                    OcrScanLogEntry(
+                                        timestamp = "Captura Ahora",
+                                        hasModifications = false,
+                                        message = "Captura vacía o sin texto detectado en cámara.",
+                                        extractedTextSnippet = "Sin texto detectado"
+                                    )
+                                )
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(containerColor = CodeNestColors.primary)
+                    ) {
+                        Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color.White)
+                        Spacer(Modifier.width(6.dp))
+                        Text("Capturar Ahora", color = Color.White, fontWeight = FontWeight.Bold)
                     }
                 }
             }
-            Spacer(Modifier.height(16.dp))
         }
+        Spacer(Modifier.height(16.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),

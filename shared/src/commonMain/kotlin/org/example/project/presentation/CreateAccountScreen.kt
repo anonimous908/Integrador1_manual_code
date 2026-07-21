@@ -1,47 +1,24 @@
 package org.example.project.presentation
-import org.example.project.presentation.components.GoogleSignInButton
-import org.example.project.presentation.components.TermsCheckbox
-import org.example.project.presentation.components.CodeNestFooter
 
-import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.painterResource
-import kotlinproject.shared.generated.resources.*
-import org.example.project.presentation.components.EmailDivider
-import org.example.project.presentation.components.CodeNestTextField
-import org.example.project.presentation.components.PasswordTextField
-import org.example.project.presentation.components.Inter
-import org.example.project.presentation.components.JetBrainsMono
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.text.withStyle
-
-import androidx.compose.material3.Surface
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import org.example.project.presentation.theme.CodeNestColors
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -49,19 +26,22 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.koin.compose.viewmodel.koinViewModel
-import org.example.project.presentation.register.RegisterViewModel
-import org.example.project.presentation.register.RegisterEvent
-import androidx.compose.runtime.collectAsState
+import kotlinproject.shared.generated.resources.*
+import org.example.project.presentation.base.NavigateOnSuccess
+import org.example.project.presentation.components.CodeNestFooter
+import org.example.project.presentation.components.CodeNestTextField
+import org.example.project.presentation.components.DecorativeGlow
+import org.example.project.presentation.components.EmailDivider
+import org.example.project.presentation.components.ErrorBanner
+import org.example.project.presentation.components.GoogleSignInButton
+import org.example.project.presentation.components.PasswordTextField
+import org.example.project.presentation.components.TermsCheckbox
 import org.example.project.presentation.login.rememberGoogleSignInLauncher
-
-// ─── Design Tokens ───────────────────────────────────────────────────────────
-
-
-private val Manrope     = FontFamily.Default
-
-
-
+import org.example.project.presentation.register.RegisterEvent
+import org.example.project.presentation.register.RegisterViewModel
+import org.example.project.presentation.theme.CodeNestColors
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 // ─── Screen wrapper ──────────────────────────────────────────────────────────
 
@@ -81,44 +61,72 @@ class CreateAccountScreen : Screen {
             }
         )
 
-        LaunchedEffect(viewModel) {
-            viewModel.state.collect { state ->
-                if (state.success) {
-                    navigator.replaceAll(HomeScreen(state.user?.email ?: state.email))
-                }
+        NavigateOnSuccess(
+            state = viewModel.state,
+            isSuccess = { it.success },
+            getEmail = { it.user?.email ?: it.email },
+            onNavigate = { email -> navigator.replaceAll(HomeScreen(email)) }
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(CodeNestColors.background)
+        ) {
+            DecorativeGlow(glowColor = CodeNestColors.primary.copy(alpha = 0.15f))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 32.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Spacer(modifier = Modifier.height(32.dp))
+
+                RegisterCard(
+                    errorMessage   = state.errorMessage,
+                    name           = state.name,
+                    email          = state.email,
+                    password       = state.pass,
+                    termsAccepted  = state.termsAccepted,
+                    onCreateAccount = { viewModel.onEvent(RegisterEvent.Submit) },
+                    onNameChange   = { viewModel.onEvent(RegisterEvent.NameChanged(it)) },
+                    onEmailChange  = { viewModel.onEvent(RegisterEvent.EmailChanged(it)) },
+                    onPasswordChange = { viewModel.onEvent(RegisterEvent.PassChanged(it)) },
+                    onTermsChange  = { viewModel.onEvent(RegisterEvent.TermsAcceptedChanged(it)) },
+                    onSignInWithGoogle = launchGoogleSignIn,
+                    onNavigateToLogin = { navigator.pop() },
+                    onTermsClick   = { navigator.push(TermsAndConditionsScreen()) },
+                    onPrivacyClick = { navigator.push(PrivacyPolicyScreen()) },
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                CodeNestFooter(
+                    onTermsClick = { navigator.push(TermsAndConditionsScreen()) },
+                    onPrivacyClick = { navigator.push(PrivacyPolicyScreen()) }
+                )
             }
         }
-
-        CreateAccountScreenContent(
-            name = state.name,
-            onNameChange = { viewModel.onEvent(RegisterEvent.NameChanged(it)) },
-            email = state.email,
-            onEmailChange = { viewModel.onEvent(RegisterEvent.EmailChanged(it)) },
-            password = state.pass,
-            onPasswordChange = { viewModel.onEvent(RegisterEvent.PassChanged(it)) },
-            termsAccepted = state.termsAccepted,
-            onTermsChange = { viewModel.onEvent(RegisterEvent.TermsAcceptedChanged(it)) },
-            isLoading = state.isLoading,
-            errorMessage = state.errorMessage,
-            onCreateAccount = { viewModel.onEvent(RegisterEvent.Submit) },
-            onSignInWithGoogle = launchGoogleSignIn,
-            onNavigateToLogin = { navigator.pop() },
-            onTermsClick = { navigator.push(TermsAndConditionsScreen()) },
-            onPrivacyClick = { navigator.push(PrivacyPolicyScreen()) }
-        )
     }
 }
 
-// ─── Main Screen ─────────────────────────────────────────────────────────────
+// ─── Presentational Card ──────────────────────────────────────────────────────
 
 @Composable
-internal fun CreateAccountScreenContent(
-    name: String, onNameChange: (String) -> Unit,
-    email: String, onEmailChange: (String) -> Unit,
-    password: String, onPasswordChange: (String) -> Unit,
-    termsAccepted: Boolean, onTermsChange: (Boolean) -> Unit,
-    isLoading: Boolean, errorMessage: String?,
+private fun RegisterCard(
+    errorMessage: String?,
+    name: String,
+    email: String,
+    password: String,
+    termsAccepted: Boolean,
     onCreateAccount: () -> Unit,
+    onNameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onTermsChange: (Boolean) -> Unit,
     onSignInWithGoogle: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onTermsClick: () -> Unit,
@@ -128,120 +136,22 @@ internal fun CreateAccountScreenContent(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(CodeNestColors.background)
-    ) {
-        // ── Decorative glow blob ──────────────────────────────────────────
-        Box(
-            modifier = Modifier
-                .size(600.dp)
-                .align(Alignment.Center)
-                .blur(80.dp)
-                .background(CodeNestColors.PrimaryGlow, CircleShape)
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // ── Header ───────────────────────────────────────────────────
-            CodeNestHeader()
-
-            // ── Auth card ────────────────────────────────────────────────
-            Spacer(modifier = Modifier.weight(1f, fill = false))
-
-            AuthCard(
-                modifier = Modifier
-                    .widthIn(max = 420.dp)
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
-                errorMessage    = errorMessage,
-                name            = name,
-                onNameChange    = onNameChange,
-                email           = email,
-                onEmailChange   = onEmailChange,
-                password        = password,
-                onPasswordChange = onPasswordChange,
-                passwordVisible = passwordVisible,
-                onTogglePassword = { passwordVisible = !passwordVisible },
-                termsAccepted   = termsAccepted,
-                onTermsChange   = onTermsChange,
-                onSignInWithGoogle = onSignInWithGoogle,
-                onCreateAccount = onCreateAccount,
-                onNavigateToLogin = onNavigateToLogin,
-                onTermsClick    = onTermsClick,
-                onPrivacyClick  = onPrivacyClick,
-            )
-
-            Spacer(modifier = Modifier.weight(1f, fill = false))
-
-            // ── Footer ───────────────────────────────────────────────────
-            CodeNestFooter(
-                onTermsClick   = onTermsClick,
-                onPrivacyClick = onPrivacyClick,
-            )
-        }
-    }
-}
-
-// ─── Header ──────────────────────────────────────────────────────────────────
-
-@Composable
-private fun CodeNestHeader() {
-    Box(
-        modifier = Modifier
+            .widthIn(max = 420.dp)
             .fillMaxWidth()
-            .background(CodeNestColors.surfaceContainer)
+            .clip(RoundedCornerShape(16.dp))
+            .background(CodeNestColors.surface)
             .border(
-                width = 1.dp,
-                color = CodeNestColors.outlineVariant.copy(alpha = 0.30f),
-                shape = RoundedCornerShape(0.dp)
+                BorderStroke(
+                    1.dp,
+                    Brush.verticalGradient(
+                        listOf(
+                            CodeNestColors.primary.copy(alpha = 0.20f),
+                            CodeNestColors.outlineVariant.copy(alpha = 0.50f),
+                        )
+                    )
+                ),
+                shape = RoundedCornerShape(16.dp)
             )
-            .padding(vertical = 24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text       = stringResource(Res.string.app_name),
-            fontFamily = Manrope,
-            fontWeight = FontWeight.Bold,
-            fontSize   = 24.sp,
-            color      = CodeNestColors.primary,
-        )
-    }
-}
-
-// ─── Auth Card ───────────────────────────────────────────────────────────────
-
-@Composable
-private fun AuthCard(
-    modifier: Modifier = Modifier,
-    errorMessage: String?,
-    name: String, onNameChange: (String) -> Unit,
-    email: String, onEmailChange: (String) -> Unit,
-    password: String, onPasswordChange: (String) -> Unit,
-    passwordVisible: Boolean, onTogglePassword: () -> Unit,
-    termsAccepted: Boolean, onTermsChange: (Boolean) -> Unit,
-    onSignInWithGoogle: () -> Unit,
-    onCreateAccount: () -> Unit,
-    onNavigateToLogin: () -> Unit,
-    onTermsClick: () -> Unit,
-    onPrivacyClick: () -> Unit,
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        shadowElevation = 4.dp,
-        color = CodeNestColors.GlassPanel,
-        border = BorderStroke(
-            1.dp,
-            Brush.verticalGradient(
-                listOf(
-                    CodeNestColors.primary.copy(alpha = 0.20f),
-                    CodeNestColors.outlineVariant.copy(alpha = 0.50f),
-                )
-            )
-        )
     ) {
         Column(
             modifier = Modifier.padding(24.dp),
@@ -255,7 +165,7 @@ private fun AuthCard(
             ) {
                 Text(
                     text       = stringResource(Res.string.create_account_title),
-                    fontFamily = Manrope,
+                    fontFamily = FontFamily.Default,
                     fontWeight = FontWeight.Bold,
                     fontSize   = 32.sp,
                     lineHeight = 40.sp,
@@ -265,28 +175,14 @@ private fun AuthCard(
                 )
                 Text(
                     text       = stringResource(Res.string.create_account_subtitle),
-                    fontFamily = Inter,
+                    fontFamily = FontFamily.Default,
                     fontSize   = 14.sp,
                     color      = CodeNestColors.onSurfaceVariant,
                     textAlign  = TextAlign.Center,
                 )
             }
 
-            if (errorMessage != null) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    color = CodeNestColors.error.copy(alpha = 0.1f)
-                ) {
-                    Text(
-                        text = errorMessage,
-                        color = CodeNestColors.error,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(12.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            ErrorBanner(errorMessage = errorMessage)
 
             // Google button
             GoogleSignInButton(onClick = onSignInWithGoogle)
@@ -314,7 +210,7 @@ private fun AuthCard(
                 value           = password,
                 onValueChange   = onPasswordChange,
                 visible         = passwordVisible,
-                onToggleVisible = onTogglePassword,
+                onToggleVisible = { passwordVisible = !passwordVisible },
             )
 
             // Terms checkbox
@@ -341,7 +237,7 @@ private fun AuthCard(
             ) {
                 Text(
                     text       = stringResource(Res.string.create_account_button),
-                    fontFamily = JetBrainsMono,
+                    fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Medium,
                     fontSize   = 12.sp,
                 )
@@ -350,7 +246,7 @@ private fun AuthCard(
             // Already have an account
             Text(
                 text      = stringResource(Res.string.already_have_account),
-                fontFamily = Inter,
+                fontFamily = FontFamily.Default,
                 fontSize   = 14.sp,
                 color      = CodeNestColors.onSurfaceVariant,
                 textDecoration = TextDecoration.None,
