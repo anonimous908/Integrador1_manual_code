@@ -142,10 +142,8 @@ class SnippetDetailTab(
                             }
                         )
                     }
-                    if (!isEditing) {
-                        TagsAndMeta(currentSnippet, isEditing) { currentSnippet = it }
-                        Spacer(Modifier.height(16.dp))
-                    }
+                    TagsAndMeta(currentSnippet, isEditing) { currentSnippet = it }
+                    Spacer(Modifier.height(16.dp))
                     CodeBlockCard(currentSnippet, isEditing) { currentSnippet = it }
                 }
 
@@ -268,8 +266,6 @@ private fun GhostButton(icon: androidx.compose.ui.graphics.vector.ImageVector, l
 
 @Composable
 private fun TagsAndMeta(snippet: SnippetDetail, isEditing: Boolean, onSnippetChange: (SnippetDetail) -> Unit) {
-    if (isEditing) return
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -283,7 +279,7 @@ private fun TagsAndMeta(snippet: SnippetDetail, isEditing: Boolean, onSnippetCha
                         val newTags = it.split(" ").filter { tag -> tag.isNotBlank() }
                         onSnippetChange(snippet.copy(tags = newTags)) 
                     },
-                    placeholder = { Text("#etiquetas separadas por espacio") },
+                    placeholder = { Text("#etiquetas (ej. #Python #Tkinter)") },
                     textStyle = TextStyle(fontSize = 12.sp, fontFamily = FontFamily.Monospace),
                     modifier = Modifier.width(300.dp)
                 )
@@ -307,9 +303,11 @@ private fun TagsAndMeta(snippet: SnippetDetail, isEditing: Boolean, onSnippetCha
                 }
             }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            MetaItem(Icons.Default.CalendarToday, snippet.createdDate)
-            MetaItem(Icons.Default.ContentCopy, "${snippet.usageCount} usos")
+        if (!isEditing) {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                MetaItem(Icons.Default.CalendarToday, snippet.createdDate)
+                MetaItem(Icons.Default.ContentCopy, "${snippet.usageCount} usos")
+            }
         }
     }
 }
