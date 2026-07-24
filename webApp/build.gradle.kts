@@ -25,7 +25,16 @@ kotlin {
             implementation(libs.compose.ui)
         }
 
+        val webMain by creating {
+            dependsOn(commonMain.get())
+        }
+
+        val wasmJsMain by getting {
+            dependsOn(webMain)
+        }
+
         val jsMain by getting {
+            dependsOn(webMain)
             dependencies {
                 implementation(npm("firebase", "11.6.0"))
             }
